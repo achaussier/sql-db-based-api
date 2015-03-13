@@ -1,3 +1,6 @@
+# Compiled files
+web/js
+
 # Logs
 logs
 *.log
