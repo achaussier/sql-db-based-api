@@ -3,5 +3,7 @@ git:
   submodules: false
 node_js:
   - "0.10.29"
+before_install:
+  - sudo apt-get install uuid-dev libldap2-dev
 install:
   - npm install
