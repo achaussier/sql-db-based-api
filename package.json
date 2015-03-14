@@ -57,7 +57,7 @@
     "gulp-apidoc": ""
   },
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp unittests"
   },
   "apidoc": {
     "title": "Rackmonkey API - User documentation",
