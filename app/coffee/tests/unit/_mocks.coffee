@@ -6,9 +6,17 @@
 
 noop = ()->
 
+###*
+# A simple function mock
+###
 exports.noop = noop
 
+###*
+# An api mock
+###
 exports.api =
+    actions:
+        addPostProcessor: (postProcessor) ->
     actionheroVersion: 'foo'
     id: 'bar'
     config:
@@ -27,6 +35,9 @@ exports.api =
     utils:
         sqlDateTime: null
 
+###*
+# A common connection mock
+###
 exports.connection =
     response:
         id: null
@@ -35,6 +46,20 @@ exports.connection =
         queues: null
         workers: null
 
+###*
+# A connection with error array mock
+###
+exports.connectionWithErrorArray =
+    rawConnection: {}
+    error: [
+        {
+            code: 666
+        }
+    ]
+
+###*
+# A winston module mock
+###
 exports.winston =
     transports:
         Console: () ->
