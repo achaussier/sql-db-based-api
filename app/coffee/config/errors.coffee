@@ -4,6 +4,7 @@
  * @fileoverview Errors config
 ###
 
+rmErrors = require '../lib/errors.js'
 ###*
  * Default configuration
  * @type {Object}
@@ -32,13 +33,31 @@ exports.default =
          * @type {Function}
         ###
         invalidParams: (params) ->
-            params.join ', '
+            errors = []
+            for invalidParam in params
+                errorObj = new rmErrors.ParameterError(
+                    invalidParam,
+                    undefined,
+                    null,
+                    'invalid-parameter'
+                )
+                errors.push errorObj
+            errors
         ###*
          * When a required param for an action is not provided
          * @type {Function}
         ###
         missingParams: (params) ->
-            params[0] + ' is a required parameter for this action'
+            errors = []
+            for missingParam in params
+                errorObj = new rmErrors.ParameterError(
+                    missingParam,
+                    undefined,
+                    null,
+                    'missing-parameter'
+                )
+                errors.push errorObj
+            errors
 
         ###*
          * User requested an unknown action
