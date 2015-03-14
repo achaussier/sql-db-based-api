@@ -13,6 +13,6 @@ describe 'Database structure classes export', ->
     it 'should exports all database structure classes', ->
         databaseStructureClasses.should.have.keys [
             'Table'
-            'ComplexType'
-            'SimpleType'
+            'ComplexField'
+            'SimpleField'
         ]
