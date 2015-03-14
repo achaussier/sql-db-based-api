@@ -23,6 +23,10 @@ exports.api =
         redis: {}
         general:
             serverName: 'foo'
+    database:
+        mysql:
+            poolCluster:
+                end: ->
     stats:
         getAll: (cb) ->
             cb null, { 'foo': 'bar'}
