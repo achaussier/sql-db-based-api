@@ -27,6 +27,13 @@ exports.api =
         mysql:
             poolCluster:
                 end: ->
+            readPool:
+                getConnection: (cb) ->
+                    cb null, {}
+            writePool:
+                getConnection: (cb) ->
+                    cb null, {}
+
     stats:
         getAll: (cb) ->
             cb null, { 'foo': 'bar'}
