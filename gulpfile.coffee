@@ -84,12 +84,13 @@ gulp.task 'cleanlocaldb', [], ->
 #
 # unit tests coverage
 #
-gulp.task 'unitcoverage', ['coffeelintfortests', 'coffeelint', 'cleancoffee', 'coffee', 'cleanlocaldb', 'copy', 'createExportPath'], ->
+gulp.task 'unitcov', [], ->
 
     process.env['PROJECT_ROOT'] = __dirname + config.paths.COMPILED_CODE
     process.env['ACTIONHERO_CONFIG'] = process.env['PROJECT_ROOT'] + config.paths.API_CONFIG
     process.env['NODE_ENV'] = 'local'
     process.env['GULP_TEST'] = true
+    process.env['SPECHELPER'] = true
 
     gulp
         .src [
@@ -115,7 +116,7 @@ gulp.task 'unitcoverage', ['coffeelintfortests', 'coffeelint', 'cleancoffee', 'c
                     reporters: [
                         'lcov'
                         'json'
-                        #'text'
+                        'text'
                         'text-summary'
                     ]
                 .on 'error', (err)->
@@ -131,12 +132,13 @@ gulp.task 'unitcoverage', ['coffeelintfortests', 'coffeelint', 'cleancoffee', 'c
 #
 # end to end tests coverage
 #
-gulp.task 'e2ecoverage', ['coffeelintfortests', 'cleancoffee', 'coffee', 'cleanlocaldb', 'copy', 'createExportPath'], ->
+gulp.task 'e2ecov', [], ->
 
     process.env['PROJECT_ROOT'] = __dirname + config.paths.COMPILED_CODE
     process.env['ACTIONHERO_CONFIG'] = process.env['PROJECT_ROOT'] + config.paths.API_CONFIG
     process.env['NODE_ENV'] = 'local'
     process.env['GULP_TEST'] = true
+    process.env['SPECHELPER'] = true
 
     gulp
         .src [
@@ -178,11 +180,12 @@ gulp.task 'e2ecoverage', ['coffeelintfortests', 'cleancoffee', 'coffee', 'cleanl
 #
 # unit tests
 #
-gulp.task 'unittests', ['coffeelintfortests', 'cleancoffee', 'coffee', 'cleanlocaldb', 'copy', 'createExportPath'], ->
+gulp.task 'unittest', [], ->
 
     process.env['PROJECT_ROOT'] = __dirname + config.paths.COMPILED_CODE
     process.env['ACTIONHERO_CONFIG'] = process.env['PROJECT_ROOT'] + config.paths.API_CONFIG
     process.env['NODE_ENV'] = 'local'
+    process.env['SPECHELPER'] = true
 
     gulp
         .src [
@@ -199,12 +202,12 @@ gulp.task 'unittests', ['coffeelintfortests', 'cleancoffee', 'coffee', 'cleanloc
 #
 # end to end tests
 #
-gulp.task 'e2etests', ['coffeelintfortests', 'cleancoffee', 'coffee', 'cleanlocaldb', 'copy', 'createExportPath'], ->
+gulp.task 'e2etest', [], ->
 
     process.env['PROJECT_ROOT'] = __dirname + config.paths.COMPILED_CODE
     process.env['ACTIONHERO_CONFIG'] = process.env['PROJECT_ROOT'] + config.paths.API_CONFIG
     process.env['NODE_ENV'] = 'local'
-
+    process.env['SPECHELPER'] = true
 
     gulp
         .src [
@@ -282,7 +285,11 @@ gulp.task "jslint", ->
 # clean
 #
 gulp.task "cleancoffee", [], (cb) ->
-    del ['web/js/*'], cb
+    del [
+        'web/js/config/servers/**'
+        'web/js/config'
+        'web/js'
+    ], cb
 
 #
 # apidoc
@@ -363,3 +370,15 @@ gulp.task "build", ['cleancoffee', 'disableAhNodemon', 'coffeelint', 'jslint', '
 
 gulp.task "release", [], ->
     runSequence ['cleancoffee'], ['coffeelint', 'jslint', 'coffee', 'copy', 'apidoc', 'jsdoc', 'createExportPath'], ['gzip']
+
+gulp.task 'unitcoverage', [], ->
+    runSequence ['cleancoffee'], ['coffeelintfortests', 'coffeelint', 'coffee', 'cleanlocaldb', 'copy', 'createExportPath'], ['unitcov']
+
+gulp.task 'e2ecoverage', [], ->
+    runSequence ['cleancoffee'], ['coffeelintfortests', 'coffeelint', 'coffee', 'cleanlocaldb', 'copy', 'createExportPath'], ['e2ecov']
+
+gulp.task 'unittests', [], ->
+    runSequence ['cleancoffee'], ['coffeelintfortests', 'coffeelint', 'coffee', 'cleanlocaldb', 'copy', 'createExportPath'], ['unittest']
+
+gulp.task 'e2etests', [], ->
+    runSequence ['cleancoffee'], ['coffeelintfortests', 'coffeelint', 'coffee', 'cleanlocaldb', 'copy', 'createExportPath'], ['e2etest']
