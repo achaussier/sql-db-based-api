@@ -5,8 +5,8 @@
 ###
 
 # require packages
-postProcessor = require '../../../initializers/changeReturnCode.js'
-mocks = require '../_mocks.js'
+postProcessor = require '../../../../initializers/post/changeReturnCode.js'
+mocks = require '../../_mocks.js'
 should = require 'should'
 sinon = require 'sinon'
 
