@@ -13,4 +13,5 @@ describe 'Custom error classes export', ->
     it 'should exports all custom error classes', ->
         errorClasses.should.have.keys [
             'ParameterError'
+            'ServerError'
         ]

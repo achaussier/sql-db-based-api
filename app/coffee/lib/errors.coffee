@@ -5,3 +5,4 @@
 ###
 
 exports.ParameterError = require './errors/ParameterError.js'
+exports.ServerError = require './errors/ServerError.js'
