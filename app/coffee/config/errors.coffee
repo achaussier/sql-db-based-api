@@ -22,7 +22,11 @@ exports.default =
          * @type {Function}
         ###
         serverErrorMessage: ->
-            'The server experienced an internal error'
+            errors = []
+            errors.push(
+                new rmErrors.ServerError(null)
+            )
+            errors
 
         ###*
          * @description Action errors
@@ -64,21 +68,45 @@ exports.default =
          * @type {Function}
         ###
         unknownAction: (action) ->
-            'unknown action or invalid apiVersion'
+            errors = []
+            errors.push(
+                new rmErrors.ServerError(
+                    action,
+                    'unknown-action-or-invalid-api-version',
+                    501
+                )
+            )
+            errors
 
         ###*
          * Action not useable by this client/server type
          * @type {Function}
         ###
         unsupportedServerType: (type) ->
-            'this action does not support the ' + type + ' connection type'
+            errors = []
+            errors.push(
+                new rmErrors.ServerError(
+                    type,
+                    'unsupported-server-type',
+                    501
+                )
+            )
+            errors
 
         ###*
          * Action failed because server is mid-shutdown
          * @type {Function}
         ###
         serverShuttingDown: ->
-            'the server is shutting down'
+            errors = []
+            errors.push(
+                new rmErrors.ServerError(
+                    null,
+                    'server-shutting-down',
+                    503
+                )
+            )
+            errors
 
         ###*
          * Action failed because this client already has too many pending
@@ -86,14 +114,29 @@ exports.default =
          * @type {Function}
         ###
         tooManyPendingActions: ->
-            'you have too many pending requests'
+            errors = []
+            errors.push(
+                new rmErrors.ServerError(
+                    null,
+                    'too-many-pending-requests',
+                    509
+                )
+            )
+            errors
 
         ###*
          * A poorly designed action could try to call next() more than once
          * @type {Function}
         ###
         doubleCallbackError: ->
-            'Double callback prevented within action'
+            errors = []
+            errors.push(
+                new rmErrors.ServerError(
+                    null,
+                    'double-callback-prevented'
+                )
+            )
+            errors
 
         ###*
          * @description Server file errors
@@ -106,28 +149,60 @@ exports.default =
          * @type {Function}
         ###
         fileNotFound: ->
-            'Sorry, that file is not found :('
+            errors = []
+            errors.push(
+                new rmErrors.ServerError(
+                    null,
+                    'file-not-found',
+                    404
+                )
+            )
+            errors
 
         ###*
          * User didn't request a file
          * @type {Function}
         ###
         fileNotProvided: ->
-            'file is a required param to send a file'
+            errors = []
+            errors.push(
+                new rmErrors.ServerError(
+                    null,
+                    'no-file-parameter',
+                    400
+                )
+            )
+            errors
 
         ###*
          * User requested a file not in api.config.paths.public
          * @type {Function}
         ###
         fileInvalidPath: ->
-            'that is not a valid file path'
+            errors = []
+            errors.push(
+                new rmErrors.ServerError(
+                    null,
+                    'incorrect-file-path',
+                    422
+                )
+            )
+            errors
 
         ###*
          * Something went wrong trying to read the file
          * @type {Function}
         ###
         fileReadError: (err) ->
-            'error reading file: ' + String err
+            errors = []
+            errors.push(
+                new rmErrors.ServerError(
+                    err,
+                    'error-reading-file',
+                    424
+                )
+            )
+            errors
 
         ###*
          * @description Connection errors

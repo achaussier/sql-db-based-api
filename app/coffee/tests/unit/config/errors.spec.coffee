@@ -21,6 +21,23 @@ parameterErrors = [
     'missingParams'
 ]
 
+###*
+# ServerError returned when error call
+# @type {Array}
+###
+serverErrors = [
+    'serverErrorMessage'
+    'serverShuttingDown'
+    'tooManyPendingActions'
+    'unknownAction'
+    'unsupportedServerType'
+    'doubleCallbackError'
+    'fileNotFound'
+    'fileNotProvided'
+    'fileInvalidPath'
+    'fileReadError'
+]
+
 describe 'Config : errors', ->
 
     beforeEach (done) ->
@@ -49,6 +66,15 @@ describe 'Config : errors', ->
                             errors = errVal(['foo'])
                             errors.should.be.instanceof Array
                             errors[0].should.be.instanceof rmErrors.ParameterError
+
+                    else if serverErrors.indexOf(errName) isnt -1
+                        ###*
+                        # This error call should return a ServerError array
+                        ###
+                        it 'should return array of ServerError if ' + errName + ' error', ->
+                            errors = errVal(['foo'])
+                            errors.should.be.instanceof Array
+                            errors[0].should.be.instanceof rmErrors.ServerError
 
                     else
                         ###
