@@ -51,3 +51,17 @@ checkKeysHaveNotNullValues = (obj, keys) ->
             result
 
 exports.checkKeysHaveNotNullValues = checkKeysHaveNotNullValues
+
+###*
+# Validate if param is a not empty string
+# @param {String} element Element to test
+# @return {Boolean} True if element is a not empty string, else false
+###
+isNotEmptyString = (element) ->
+
+    if not element? or typeof element isnt 'string' or element is ''
+        false
+    else
+        true
+
+exports.isNotEmptyString = isNotEmptyString

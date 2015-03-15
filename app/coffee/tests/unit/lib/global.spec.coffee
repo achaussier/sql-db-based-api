@@ -98,3 +98,25 @@ describe 'Global lib', ->
                     ,(error) ->
                         throw new Error 'Should not be go here in this test'
                 )
+
+    describe 'isNotEmptyString', ->
+
+        beforeEach (done) ->
+            badObj = null
+            mocksUtils = clone mocks
+            val = undefined
+            done()
+
+        it 'should return false if no param', ->
+            val = globalUtils.isNotEmptyString()
+            val.should.be.false
+
+        for badString in mocksUtils.badNotEmptyStringParam
+            do (badString) ->
+                it 'should return false if bad string param', ->
+                    val = globalUtils.isNotEmptyString badString
+                    val.should.be.false
+
+        it 'should return true if not empty string param', ->
+            val = globalUtils.isNotEmptyString 'foo'
+            val.should.be.true
