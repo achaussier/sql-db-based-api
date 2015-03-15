@@ -4,6 +4,9 @@
 # @fileOverview Mocks used for unit tests
 ###
 
+Q = require 'q'
+rmErrors = require '../../lib/errors.js'
+
 noop = ()->
 
 ###*
@@ -20,6 +23,8 @@ exports.api =
     actionheroVersion: 'foo'
     id: 'bar'
     config:
+        database:
+            database: 'foo'
         redis: {}
         general:
             serverName: 'foo'
@@ -153,3 +158,37 @@ exports.badQueryDatas = [
 exports.sqlQueryData =
     sql: 'foo'
     values: []
+
+###*
+# A promise which reject DatabaseError
+###
+exports.rejectDatabaseError = ->
+    Q.fcall ->
+        throw new rmErrors.DatabaseError(null, null)
+
+###*
+# A promise which reject ParameterError
+###
+exports.rejectParameterError = ->
+    Q.fcall ->
+        throw new rmErrors.ParameterError(null, null)
+
+###*
+# A fake mysql result for db structure requests
+###
+exports.fakeDbStructureResultsFromDB = ->
+    Q.fcall ->
+        results: [
+            {TABLE_NAME: 'foo'}
+            {TABLE_NAME: 'bar'}
+        ],
+        fields: [
+            {}
+        ]
+
+###*
+# A fake mysql connection
+###
+exports.fakeSqlConnection = ->
+    Q.fcall ->
+        release: ->

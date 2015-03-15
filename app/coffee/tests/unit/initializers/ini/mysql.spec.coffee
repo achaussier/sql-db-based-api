@@ -51,6 +51,7 @@ describe 'Initializer : mysql', ->
         val.should.be.true
 
     it 'should return error if connection is not possible', ->
+        delete mocksUtils.api.config.database
         initializer.start(
             mocksUtils.api,
             cb
