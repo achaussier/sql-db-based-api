@@ -246,3 +246,11 @@ exports.dbStructureField =
     columnType         : null
     columnKey          : null
     extra              : null
+
+###*
+# Fake database structure unique index
+###
+exports.dbStructureUniqueIndex =
+    indexName   : 'foo'
+    tableName   : 'bar'
+    columnName  : 'foobar'
