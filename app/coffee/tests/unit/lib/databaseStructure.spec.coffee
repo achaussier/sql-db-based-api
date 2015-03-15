@@ -33,6 +33,8 @@ describe 'Database structure classes and functions', ->
             'getStructureFromDB'
             'getIndexesFromDB'
             'getInformationsFromDB'
+            'TableRelation'
+            'Relation'
         ]
 
     describe 'getTableNamesFromDB', ->
