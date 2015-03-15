@@ -28,7 +28,7 @@ describe 'SQL functions', ->
             done()
 
         for badApi in mocksUtils.badSqlApis
-            do ->
+            do (badApi) ->
                 it 'should throw if bad api param', ->
                     sqlUtils.getReadOnlyConnection badApi
                         .then(
@@ -62,7 +62,7 @@ describe 'SQL functions', ->
     describe 'getWriteConnection', ->
 
         for badApi in mocksUtils.badSqlApis
-            do ->
+            do (badApi) ->
                 it 'should throw if bad api param', ->
                     sqlUtils.getWriteConnection badApi
                         .then(
@@ -101,7 +101,7 @@ describe 'SQL functions', ->
             done()
 
         for badConnection in mocksUtils.badSqlConnections
-            do ->
+            do (badConnection) ->
                 it 'should return ParameterError if connection param is invalid', ->
                     sqlUtils.executeSelect badConnection, {}
                         .then(
@@ -112,7 +112,7 @@ describe 'SQL functions', ->
                         )
 
         for badQueryData in mocksUtils.badQueryDatas
-            do ->
+            do (badQueryData) ->
                 it 'should return ParameterError if queryData param is invalid', ->
                     sqlUtils.executeSelect mocksUtils.sqlConnection, badQueryData
                         .then(
