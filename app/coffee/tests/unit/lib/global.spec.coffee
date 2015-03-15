@@ -120,3 +120,46 @@ describe 'Global lib', ->
         it 'should return true if not empty string param', ->
             val = globalUtils.isNotEmptyString 'foo'
             val.should.be.true
+
+    describe 'areSameArrays', ->
+        beforeEach (done) ->
+            badObj = null
+            mocksUtils = clone mocks
+            val = undefined
+            done()
+
+        it 'should return false if no param', ->
+            val = globalUtils.areSameArrays()
+            val.should.be.false
+
+        for badArray in mocksUtils.badArrayParam
+            do (badArray) ->
+                it 'should return false if bad first param', ->
+                    val = globalUtils.areSameArrays(badArray, [])
+                    val.should.be.false
+
+        for badArray in mocksUtils.badArrayParam
+            do (badArray) ->
+                it 'should return false if bad second param', ->
+                    val = globalUtils.areSameArrays([], badArray)
+                    val.should.be.false
+
+        it 'should return false if length are differents', ->
+            val = globalUtils.areSameArrays([], ['1'])
+            val.should.be.false
+
+        it 'should return false if same size but not same data', ->
+            val = globalUtils.areSameArrays(['a'], ['b'])
+            val.should.be.false
+
+        it 'should return true if same string data', ->
+            val = globalUtils.areSameArrays(['a'], ['a'])
+            val.should.be.true
+
+        it 'should return true if same number data', ->
+            val = globalUtils.areSameArrays([1], [1])
+            val.should.be.true
+
+        it 'should return true if they are empty', ->
+            val = globalUtils.areSameArrays([], [])
+            val.should.be.true

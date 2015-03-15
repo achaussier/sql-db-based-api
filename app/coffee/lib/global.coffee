@@ -65,3 +65,20 @@ isNotEmptyString = (element) ->
         true
 
 exports.isNotEmptyString = isNotEmptyString
+
+###*
+# Check if values are same in these arrays
+# @param {Array} a Source array
+# @param {Array} b Array to compare
+# @return {Boolean} True if arrays have same values
+# @note This method does not work with Object if references are differents !
+# @note Take from http://stackoverflow.com/questions/11142666
+# @todo Complete the function to avoid the note problem
+###
+areSameArrays = (a, b) ->
+    if isArray(a) and isArray(b)
+        a.length is b.length and a.every (elem, i) -> elem is b[i]
+    else
+        false
+
+exports.areSameArrays = areSameArrays
