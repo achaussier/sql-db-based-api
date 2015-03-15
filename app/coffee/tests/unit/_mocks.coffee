@@ -213,3 +213,36 @@ exports.badArrayParam = [
     null
     undefined
 ]
+
+###*
+# Bad values for a non empty string check
+###
+exports.badNotEmptyStringParam = [
+    ''
+    {}
+    ->
+    null
+    undefined
+]
+
+###*
+# Fake database structure field
+###
+exports.dbStructureField =
+    tableSchema        : null
+    tableName          : null
+    columnName         : null
+    ordinalPosition    : null
+    defaultValue       : null
+    isNullable         : null
+    dataType           : null
+    charMaxLength      : null
+    charOctetLength    : null
+    numPrecision       : null
+    numScale           : null
+    datetimePrecision  : null
+    charSetName        : null
+    collationName      : null
+    columnType         : null
+    columnKey          : null
+    extra              : null
