@@ -74,3 +74,82 @@ exports.connectionWithErrorArray =
 exports.winston =
     transports:
         Console: () ->
+
+###*
+# Bad sql api objects
+###
+exports.badSqlApis = [
+    {},
+    {
+        database: null
+    },
+    {
+        database:
+            mysql: null
+    },
+    {
+        database:
+            mysql:
+                readPool: null
+                writePool: null
+    }
+]
+
+###*
+# Bad sql connections
+###
+exports.badSqlConnections = [
+    {},
+    {
+        query: null
+    }
+]
+
+###*
+# Good sql connection
+###
+exports.sqlConnection =
+    query: (query, cb) ->
+        cb(
+            null,
+            [],
+            []
+        )
+
+###*
+# sql query return an error
+###
+exports.sqlConnectionWithQueryError =
+    query: (query, cb) ->
+        cb(
+            'foo',
+            null,
+            null
+        )
+
+###*
+# Bad query data
+###
+exports.badQueryDatas = [
+    {},
+    {
+        sql: null
+    },
+    {
+        sql: ''
+    },
+    {
+        sql: 'foo'
+    },
+    {
+        sql: 'foo'
+        values: null
+    }
+]
+
+###*
+# Good query data
+###
+exports.sqlQueryData =
+    sql: 'foo'
+    values: []

@@ -85,3 +85,83 @@ getWriteConnection = (api) ->
     defer.promise
 
 exports.getWriteConnection = getWriteConnection
+
+###*
+# Validate params of executeSelect function
+# @param {Object} connection Database connection
+# @param {Object} queryData Query data (sql, option, values)
+# @return {Boolean} true if params are valid
+# @throw {Object} DatabaseError If parameter are not valid
+###
+validateExecuteSelect = (connection, queryData) ->
+
+    if not connection?.query?
+        errorObj = new rmErrors.ParameterError(
+            'connection',
+            'Object',
+            connection
+        )
+        errorObj
+
+    else if not queryData?.sql? or queryData.sql is '' or not queryData?.values?
+        ###*
+        # Check keys of queryData param and check the sql query isn't empty
+        ###
+        errorObj = new rmErrors.ParameterError(
+            'queryData',
+            'Object',
+            queryData
+        )
+        errorObj
+
+    else
+        true
+
+exports.validateExecuteSelect = validateExecuteSelect
+
+###*
+# Execute select sql query
+# @param {Object} connection Database connection
+# @param {Object} queryData Query data (sql, option, values)
+# @return {Object} dbResult Database result fo this query and fields
+# @throw {Object} DatabaseError If error occurs during query
+###
+executeSelect = (connection, queryData) ->
+
+    defer = Q.defer()
+
+    ###*
+    # Verify if params are valid
+    ###
+    validateParams = validateExecuteSelect(
+        connection,
+        queryData
+    )
+
+    if validateParams instanceof rmErrors.ParameterError
+        defer.reject validateParams
+
+    else
+        ###*
+        # If params are valid, execute query
+        ###
+        connection.query queryData, (error, results, fields) ->
+            if error
+                errorObj = new rmErrors.DatabaseError(
+                    {
+                        query: queryData,
+                        error : error
+                    },
+                    'error-during-query-execution'
+                )
+                defer.reject errorObj
+
+            else
+                defer.resolve(
+                    results: results
+                    fields: fields
+                )
+
+    defer.promise
+
+exports.executeSelect = executeSelect

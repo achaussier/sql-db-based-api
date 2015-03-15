@@ -11,24 +11,8 @@ rmErrors = require '../../../lib/errors.js'
 mocks = require '../_mocks.js'
 should = require 'should'
 
-mocksUtils = null
+mocksUtils = clone mocks
 
-badApis = [
-    {},
-    {
-        database: null
-    },
-    {
-        database:
-            mysql: null
-    },
-    {
-        database:
-            mysql:
-                readPool: null
-                writePool: null
-    }
-]
 describe 'SQL functions', ->
 
     beforeEach (done) ->
@@ -38,7 +22,12 @@ describe 'SQL functions', ->
 
     describe 'getReadOnlyConnection', ->
 
-        for badApi in badApis
+        beforeEach (done) ->
+            mocksUtils = clone mocks
+            val = undefined
+            done()
+
+        for badApi in mocksUtils.badSqlApis
             do ->
                 it 'should throw if bad api param', ->
                     sqlUtils.getReadOnlyConnection badApi
@@ -72,7 +61,7 @@ describe 'SQL functions', ->
 
     describe 'getWriteConnection', ->
 
-        for badApi in badApis
+        for badApi in mocksUtils.badSqlApis
             do ->
                 it 'should throw if bad api param', ->
                     sqlUtils.getWriteConnection badApi
@@ -100,6 +89,59 @@ describe 'SQL functions', ->
                 .then(
                     (writeConnection) ->
                         writeConnection.should.be.instanceof Object
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                )
+
+    describe 'executeSelect', ->
+
+        beforeEach (done) ->
+            mocksUtils = clone mocks
+            val = undefined
+            done()
+
+        for badConnection in mocksUtils.badSqlConnections
+            do ->
+                it 'should return ParameterError if connection param is invalid', ->
+                    sqlUtils.executeSelect badConnection, {}
+                        .then(
+                            (dbResults, fields) ->
+                                throw new Error 'Should not be go here in this test'
+                            ,(error) ->
+                                error.should.be.instanceof rmErrors.ParameterError
+                        )
+
+        for badQueryData in mocksUtils.badQueryDatas
+            do ->
+                it 'should return ParameterError if queryData param is invalid', ->
+                    sqlUtils.executeSelect mocksUtils.sqlConnection, badQueryData
+                        .then(
+                            (dbResults, fields) ->
+                                throw new Error 'Should not be go here in this test'
+                            ,(error) ->
+                                error.should.be.instanceof rmErrors.ParameterError
+                        )
+
+        it 'should return DatabaseError if query return an error', ->
+            sqlUtils.executeSelect mocksUtils.sqlConnectionWithQueryError, mocksUtils.sqlQueryData
+                .then(
+                    (dbResults) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof rmErrors.DatabaseError
+                )
+
+        it 'should execute query if params are valid', ->
+            sqlUtils.executeSelect mocksUtils.sqlConnection, mocksUtils.sqlQueryData
+                .then(
+                    (dbResults) ->
+                        dbResults.should.be.instanceof Object
+                        dbResults.should.have.keys [
+                            'results'
+                            'fields'
+                        ]
+                        dbResults.results.should.be.instanceof Array
+                        dbResults.fields.should.be.instanceof Array
                     ,(error) ->
                         throw new Error 'Should not be go here in this test'
                 )
