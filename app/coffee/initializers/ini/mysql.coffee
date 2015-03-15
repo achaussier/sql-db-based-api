@@ -9,7 +9,7 @@ rmErrors = require '../../lib/errors.js'
 
 module.exports =
     loadPriority:  1000
-    startPriority: 1000
+    startPriority: 100
     stopPriority:  1000
 
     initialize: (api, next) ->
