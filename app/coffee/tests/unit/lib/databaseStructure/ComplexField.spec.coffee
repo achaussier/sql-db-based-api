@@ -15,7 +15,7 @@ describe 'Database structure : ComplexField class', ->
 
     beforeEach (done) ->
         errorObj = null
-        vall = null
+        val = null
         done()
 
     it 'should create new complex field', ->

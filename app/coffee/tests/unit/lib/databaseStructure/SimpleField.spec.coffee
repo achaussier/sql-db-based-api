@@ -15,7 +15,7 @@ describe 'Database structure : SimpleField class', ->
 
     beforeEach (done) ->
         errorObj = null
-        vall = null
+        val = null
         done()
 
     it 'should create new simple field', ->

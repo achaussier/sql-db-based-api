@@ -15,7 +15,7 @@ describe 'Database structure : Relation class', ->
 
     beforeEach (done) ->
         errorObj = null
-        vall = null
+        val = null
         done()
 
     it 'should create new relation', ->
