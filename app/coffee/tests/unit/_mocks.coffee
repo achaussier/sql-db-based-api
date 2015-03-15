@@ -192,3 +192,24 @@ exports.fakeDbStructureResultsFromDB = ->
 exports.fakeSqlConnection = ->
     Q.fcall ->
         release: ->
+
+###*
+# Bad values for an object check
+###
+exports.badObjectParam = [
+    'foo'
+    []
+    ->
+    null
+]
+
+###*
+# Bad values for an array check
+###
+exports.badArrayParam = [
+    'foo'
+    {}
+    ->
+    null
+    undefined
+]
