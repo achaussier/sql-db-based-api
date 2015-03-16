@@ -56,7 +56,7 @@ class DatabaseStructure
             struct:
                 objects: {}
 
-        for table in @tables
+        for table in @tables when not table.isView
             do (table) ->
                 structure.struct.objects[table.name] = table.versionOneRender()
         structure
