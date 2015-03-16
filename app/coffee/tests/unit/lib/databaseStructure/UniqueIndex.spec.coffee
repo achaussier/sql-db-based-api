@@ -35,8 +35,10 @@ describe 'Database structure : UniqueIndex class', ->
         val = new UniqueIndex(mocksUtils.dbStructureUniqueIndex)
         val.should.be.instanceof UniqueIndex
         val.addColumn('foobar').should.be.false
+        val.columns.length.should.be.eql 1
 
      it 'should be possible to add another column', ->
         val = new UniqueIndex(mocksUtils.dbStructureUniqueIndex)
         val.should.be.instanceof UniqueIndex
         val.addColumn('foobar2').should.be.true
+        val.columns.length.should.be.eql 2

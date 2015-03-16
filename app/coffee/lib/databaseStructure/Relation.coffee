@@ -5,18 +5,17 @@
 ###
 
 class Relation
+
     ###*
     # Constructor of Relation class
-    # @param {String} originColumn Column of current table
-    # @param {String} destTable Table referenced by this relation
-    # @param {String} destColumn Column referenced by this relation
+    # @param {Object} relationData Data to use to create a new Relation object
     # @return {Object} A new relation object if params are valid
     # @throw {Object} ParameterError is invalid param
     ###
-    constructor: (originColumn, destTable, destColumn) ->
+    constructor: (relationData) ->
 
-        @originColumn = originColumn.toLowerCase()
-        @destTable = destTable.toLowerCase()
-        @destColumn = destColumn.toLowerCase()
+        @originColumn   = relationData.originColumn
+        @destTable      = relationData.destTable
+        @destColumn     = relationData.destColumn
 
 module.exports = Relation

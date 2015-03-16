@@ -6,7 +6,6 @@
 
 class Field
     constructor: (fieldData) ->
-
         @tableSchema        = fieldData.tableSchema
         @tableName          = fieldData.tableName
         @columnName         = fieldData.columnName
@@ -24,6 +23,17 @@ class Field
         @columnType         = fieldData.columnType
         @columnKey          = fieldData.columnKey
         @extra              = fieldData.extra
+        @refTableName       = fieldData.refTableName
+        @refColumnName      = fieldData.refColumnName
+        @tableType          = fieldData.tableType
+        @uniqueIndexName    = fieldData.uniqueIndexName
+
+    getMaxLength: ->
+
+        switch @dataType
+            when 'varchar', 'text' then @charMaxLength
+            when 'int' then @numPrecision
+            else null
 
     isAutoIncrement: ->
         @extra? and @extra is 'auto_increment'
@@ -35,6 +45,6 @@ class Field
         @columnKey is 'pri'
 
     isRequired: ->
-        @nullable? and @defaultValue is null
+        !@nullable? and !@defaultValue?
 
 module.exports = Field

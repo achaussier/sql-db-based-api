@@ -230,15 +230,15 @@ exports.badNotEmptyStringParam = [
 ###
 exports.dbStructureField =
     tableSchema        : null
-    tableName          : null
-    columnName         : null
+    tableName          : 'foo'
+    columnName         : 'bar'
     ordinalPosition    : null
     defaultValue       : null
     isNullable         : null
-    dataType           : null
-    charMaxLength      : null
+    dataType           : 'int'
+    charMaxLength      : 255
     charOctetLength    : null
-    numPrecision       : null
+    numPrecision       : 11
     numScale           : null
     datetimePrecision  : null
     charSetName        : null
@@ -246,6 +246,10 @@ exports.dbStructureField =
     columnType         : null
     columnKey          : null
     extra              : null
+    refTableName       : null
+    refColumnName      : null
+    tableType          : null
+    uniqueIndexName    : null
 
 ###*
 # Fake database structure unique index
@@ -254,3 +258,18 @@ exports.dbStructureUniqueIndex =
     indexName   : 'foo'
     tableName   : 'bar'
     columnName  : 'foobar'
+
+###*
+# Fake database structure unique index
+###
+exports.dbStructureTable =
+    name: 'foo'
+
+###*
+# Fake database structure unique index
+###
+exports.dbStructureRelation=
+    originColumn: 'foo'
+    destTable: 'bar'
+    destColumn: 'foobar'
+

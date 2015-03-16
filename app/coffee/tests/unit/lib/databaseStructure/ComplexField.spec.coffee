@@ -6,23 +6,31 @@
 
 # require packages
 ComplexField = require '../../../../lib/databaseStructure/ComplexField.js'
+clone = require 'clone'
+Field = require '../../../../lib/databaseStructure/Field.js'
+mocks = require '../../_mocks.js'
 should = require 'should'
 
 errorObj = null
+mocksUtils = null
 val = null
+val2 = null
 
 describe 'Database structure : ComplexField class', ->
 
     beforeEach (done) ->
         errorObj = null
+        mocksUtils = clone mocks
         val = null
+        val2 = null
         done()
 
     it 'should create new complex field', ->
-        val = new ComplexField('foo')
-        val.should.be.instanceof ComplexField
-        val.should.have.keys [
-            'name'
+        val = new Field(mocksUtils.dbStructureField)
+        val.should.be.instanceof Field
+        val2 = new ComplexField(val)
+        val2.should.be.instanceof ComplexField
+        val2.should.have.keys [
             'criticality'
             'type'
             'isNullable'

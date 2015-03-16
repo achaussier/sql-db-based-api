@@ -5,11 +5,11 @@
 ###
 
 class ComplexField
-    constructor: (@name) ->
-        @criticality = 0
-        @type = null
-        @isNullable = null
-        @isViewable = null
-        @isArray = null
+    constructor: (field) ->
+        @criticality    = 0
+        @type           = field.refTableName
+        @isNullable     = field.isNullable()
+        @isViewable     = false
+        @isArray        = null
 
 module.exports = ComplexField
