@@ -180,8 +180,7 @@ class Table
         ###
         optionalFields = []
         optionalFields.push field.columnName for field in @fields when (
-            field.isNullable() and field.defaultValue is null) or
-            field.isNullable()
+            field.isNullable())
 
         optionalFields
 

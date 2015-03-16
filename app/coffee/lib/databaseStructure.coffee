@@ -13,19 +13,11 @@ Q = require 'q'
 ###*
 # Require classes used to build database structure and export these classes
 ###
-ComplexField = require './databaseStructure/ComplexField.js'
-SimpleField = require './databaseStructure/SimpleField.js'
+DatabaseStructure = require './databaseStructure/DatabaseStructure.js'
 Relation = require './databaseStructure/Relation.js'
 Table = require './databaseStructure/Table.js'
 TableRelation = require './databaseStructure/TableRelation.js'
 Field = require './databaseStructure/Field.js'
-
-exports.ComplexField = ComplexField
-exports.SimpleField = SimpleField
-exports.Relation = Relation
-exports.Table = Table
-exports.TableRelation = TableRelation
-exports.Field = Field
 
 
 ###*
@@ -39,13 +31,14 @@ getStructureFromDB = (api) ->
 
     dbName = api.config.database.database
     dbNameLength = dbName.length + 2
+
     sql = 'SELECT DISTINCT
                 LOWER(ISC.TABLE_SCHEMA)             AS tableSchema,
                 LOWER(ISC.TABLE_NAME)               AS tableName,
                 LOWER(ISC.COLUMN_NAME)              AS columnName,
                 ISC.ORDINAL_POSITION                AS ordinalPosition,
                 ISC.COLUMN_DEFAULT                  AS defaultValue,
-                ISC.IS_NULLABLE                     AS isNullable,
+                LOWER(ISC.IS_NULLABLE)              AS isNullable,
                 LOWER(ISC.DATA_TYPE)                AS dataType,
                 ISC.CHARACTER_MAXIMUM_LENGTH        AS charMaxLength,
                 ISC.CHARACTER_OCTET_LENGTH          AS charOctetLength,
@@ -167,55 +160,6 @@ validateForeignKey = (fk) ->
     globalUtils.checkKeysHaveNotNullValues(fk, validKeys)
 
 ###*
-# Process database structure returned by database
-# @param {Array} databaseStructureParts Array with all database structure parts
-# @return {Object} A Tables object which contains all created Tables objects
-###
-processDatabaseStructureParts = (tableNames) ->
-    DatabaseStructure = new DatabaseStructure()
-
-    for tableName in tableNames
-        tableObjects.push new Table(tableName)
-
-    Q.fcall ->
-        tableObjects
-
-exports.processDatabaseStructureParts = processDatabaseStructureParts
-
-###*
-# Build Table objects
-# @param {Array} tableNames Array with all table names
-# @return {Array} An array with a table object for each table name received
-###
-buildTableObjects = (tableNames) ->
-    tableObjects = []
-
-    for tableName in tableNames
-        tableObjects.push new Table(tableName)
-
-    Q.fcall ->
-        tableObjects
-
-exports.buildTableObjects = buildTableObjects
-
-###*
-# Validate a foreign key structure
-# @param {Object} fk Foreign key to test
-# @return {Object} foreign key if valid
-# @throw {Object} ParameterError if foreign key is not valid
-###
-validateForeignKey = (fk) ->
-
-    validKeys = [
-        'originTable'
-        'originColumn'
-        'destTable'
-        'destColumn'
-    ]
-
-    globalUtils.checkKeysHaveNotNullValues(fk, validKeys)
-
-###*
 # Build relations for a foreign key result
 # @param {Object} fk A foreign key returned by database
 # @return {Object} Return an object with relation and inverse relation
@@ -318,85 +262,6 @@ buildTableRelations = (foreignKeys) ->
     defer.promise
 
 exports.buildTableRelations = buildTableRelations
-
-###*
-# Validate a field structure
-# @param {Object} field Field to test
-# @return {Object} Field if valid
-# @throw {Object} ParameterError if foreign key is not valid
-###
-validateField = (field) ->
-
-    validKeys = [
-        'tableSchema'
-        'tableName'
-        'columnName'
-        'ordinalPosition'
-        'defaultValue'
-        'isNullable'
-        'dataType'
-        'charMaxLength'
-        'charOctetLength'
-        'numPrecision'
-        'numScale'
-        'datetimePrecision'
-        'charSetName'
-        'collationName'
-        'columnType'
-        'columnKey'
-        'extra'
-    ]
-
-    sameArrays = globalUtils.areSameArrays validKeys, Object.keys(field)
-    if sameArrays and field.tableName? and field.columnName?
-        Q.fcall ->
-            field
-    else
-        Q.fcall ->
-            throw new rmErrors.ParameterError(
-                'field-keys',
-                validKeys,
-                Object.keys field
-            )
-
-exports.validateField = validateField
-
-###*
-# Build fields with database result
-# @param {Array} dbFields Fields returned by database
-# @return {Array} Return an array of Field objects
-###
-buildFields = (dbFields) ->
-
-    defer = Q.defer()
-    fields = []
-    promises = []
-
-    for field in dbFields
-        do (field) ->
-            promises.push(
-                validateField field
-                    .then(
-                        (field) ->
-                            fieldObj = new Field(field)
-                            fields.push field
-                            Q.fcall ->
-
-                        ,(error) ->
-                            defer.reject error
-                    )
-            )
-    Q.all promises
-        .then(
-            (results) ->
-                defer.resolve fields
-            ,(error) ->
-                defer.reject error
-        )
-
-    defer.promise
-
-exports.buildFields = buildFields
 
 ###*
 # Validate an index part

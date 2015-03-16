@@ -24,19 +24,9 @@ describe 'Database structure classes and functions', ->
 
     it 'should exports all database structure classes', ->
         dbStructUtils.should.have.keys [
-            'Table'
-            'ComplexField'
-            'SimpleField'
             'getStructureFromDB'
-            'TableRelation'
-            'Relation'
-            'Field'
-            'processDatabaseStructureParts'
-            'buildTableObjects'
             'buildRelations'
             'buildTableRelations'
-            'validateField'
-            'buildFields'
             'buildUniqueIndexes'
         ]
 
