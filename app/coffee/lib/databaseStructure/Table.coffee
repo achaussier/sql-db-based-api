@@ -136,19 +136,41 @@ class Table
     ###
     getComplexFieldsForV1: () ->
 
-        ###*
-        # Get all fields which match complex object specification of v1
-        ###
-        matchFields = []
-        matchFields.push field for field in @fields when field.refTableName?
+        render = {}
 
         ###*
-        # For each field, create a ComplexField object to render it for v1
+        # Get all fields which match fk complex object specification of v1
         ###
-        render = {}
-        for matchField in matchFields
-            do (matchField) ->
-                render[matchField.columnName] = new ComplexField(matchField)
+        fkFields = []
+        fkFields.push field for field in @fields when field.refTableName?
+
+        ###*
+        # For each fk field, create a ComplexField object to render it for v1
+        ###
+        for fkField in fkFields
+            do (fkField) ->
+                obj =
+                    refTableName: fkField.refTableName
+                    isArray: false
+                    isNullable: fkField.isNullable()
+                render[fkField.columnName] = new ComplexField(obj, false)
+
+        ###*
+        # Get all fields which match fk complex object specification of v1
+        ###
+        invRels = []
+        invRels.push rel for rel in @relations when rel.isInverse
+
+        ###*
+        # For each fk field, create a ComplexField object to render it for v1
+        ###
+        for invRel in invRels
+            do (invRel) ->
+                obj =
+                    refTableName: invRel.destTable
+                    isArray: true
+                    isNullable: true
+                render[invRel.destTable] = new ComplexField(obj)
 
         render
 

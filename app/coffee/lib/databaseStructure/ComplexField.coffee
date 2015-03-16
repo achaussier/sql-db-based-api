@@ -8,8 +8,8 @@ class ComplexField
     constructor: (field) ->
         @criticality    = 0
         @type           = field.refTableName
-        @isNullable     = field.isNullable()
+        @isNullable     = field.isNullable
         @isViewable     = false
-        @isArray        = null
+        @isArray        = field.isArray
 
 module.exports = ComplexField
