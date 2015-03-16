@@ -315,7 +315,7 @@ describe 'Database structure : Table class', ->
     it 'should return inverse foreign key if only one', ->
         val = new Table(mocksUtils.dbStructureTable)
         val2 = []
-        mocksUtils.dbStructureRelation.originColumn = null
+        mocksUtils.dbStructureRelation.isInverse = true
         val2.push(new Relation(mocksUtils.dbStructureRelation))
         val.should.be.instanceof Table
         val.addRelation(val2[0]).should.be.true
@@ -327,7 +327,7 @@ describe 'Database structure : Table class', ->
     it 'should return inverse foreign key if more than one', ->
         val = new Table(mocksUtils.dbStructureTable)
         val2 = []
-        mocksUtils.dbStructureRelation.originColumn = null
+        mocksUtils.dbStructureRelation.isInverse = true
         val2.push(new Relation(mocksUtils.dbStructureRelation))
         mocksUtils.dbStructureRelation.destTable = 'foobar2'
         val2.push(new Relation(mocksUtils.dbStructureRelation))

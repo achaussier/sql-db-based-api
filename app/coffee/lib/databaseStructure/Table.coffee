@@ -259,7 +259,7 @@ class Table
         ###
         invForeignKeys = []
         invForeignKeys.push rel.destTable for rel in @relations when (
-            rel.originColumn is null
+            rel.isInverse is true
         )
 
         invForeignKeys

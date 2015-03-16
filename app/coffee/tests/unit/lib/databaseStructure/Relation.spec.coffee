@@ -29,4 +29,5 @@ describe 'Database structure : Relation class', ->
             'originColumn'
             'destTable'
             'destColumn'
+            'isInverse'
         ]

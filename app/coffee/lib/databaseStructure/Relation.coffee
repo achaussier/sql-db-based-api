@@ -17,5 +17,6 @@ class Relation
         @originColumn   = relationData.originColumn
         @destTable      = relationData.destTable
         @destColumn     = relationData.destColumn
+        @isInverse      = relationData.isInverse
 
 module.exports = Relation
