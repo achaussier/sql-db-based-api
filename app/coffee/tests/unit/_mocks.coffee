@@ -229,7 +229,7 @@ exports.badNotEmptyStringParam = [
 # Fake database structure field
 ###
 exports.dbStructureField =
-    tableSchema        : null
+    tableSchema        : 'foobar'
     tableName          : 'foo'
     columnName         : 'bar'
     ordinalPosition    : null
@@ -244,11 +244,11 @@ exports.dbStructureField =
     charSetName        : null
     collationName      : null
     columnType         : null
-    columnKey          : null
-    extra              : null
+    columnKey          : 'foo'
+    extra              : ''
     refTableName       : null
     refColumnName      : null
-    tableType          : null
+    tableType          : 'view'
     uniqueIndexName    : null
 
 ###*
@@ -272,4 +272,3 @@ exports.dbStructureRelation=
     originColumn: 'foo'
     destTable: 'bar'
     destColumn: 'foobar'
-

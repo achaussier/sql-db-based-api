@@ -6,18 +6,20 @@
 
 globalUtils = require './global.js'
 mysql = require 'mysql'
+Q = require 'q'
 rmErrors = require './errors.js'
 sqlUtils = require './sql.js'
-Q = require 'q'
+
 
 ###*
-# Require classes used to build database structure and export these classes
+# Require classes used to build database structure
 ###
 DatabaseStructure = require './databaseStructure/DatabaseStructure.js'
+Field = require './databaseStructure/Field.js'
 Relation = require './databaseStructure/Relation.js'
 Table = require './databaseStructure/Table.js'
 TableRelation = require './databaseStructure/TableRelation.js'
-Field = require './databaseStructure/Field.js'
+
 
 
 ###*
@@ -126,12 +128,36 @@ getStructureFromDB = (api) ->
 exports.getStructureFromDB = getStructureFromDB
 
 ###*
-# Validate a part of structure returned by database
+# Validate mandatory values for a part of structure returned by database
 # @param {Object} structurePart Structure part to test
 # @return {Object} Structure part if valid
 # @throw {Object} ParameterError if structure part is invalid
 ###
-validateForeignKey = (fk) ->
+validatePartMandatoryValues = (part) ->
+
+    validKeys = [
+        'tableSchema'
+        'tableName'
+        'columnName'
+        'isNullable'
+        'dataType'
+        'columnType'
+        'columnKey'
+        'extra'
+        'tableType'
+    ]
+
+    globalUtils.checkKeysHaveNotNullValues(part, validKeys)
+
+exports.validatePartMandatoryValues = validatePartMandatoryValues
+
+###*
+# Validate keys for a part of structure returned by database
+# @param {Object} structurePart Structure part to test
+# @return {Object} Structure part if valid
+# @throw {Object} ParameterError if structure part is invalid
+###
+validatePartKeys = (part) ->
 
     validKeys = [
         'tableSchema'
@@ -157,161 +183,208 @@ validateForeignKey = (fk) ->
         'uniqueIndexName'
     ]
 
-    globalUtils.checkKeysHaveNotNullValues(fk, validKeys)
+    globalUtils.checkKeys(part, validKeys)
+
+exports.validatePartKeys = validatePartKeys
 
 ###*
-# Build relations for a foreign key result
-# @param {Object} fk A foreign key returned by database
-# @return {Object} Return an object with relation and inverse relation
+# Create Table if not exists and add it to DatabaseStructure
+# @param {Object} dbStructure Structure object
+# @param {Object} part Part of database structure returned by database
+# @return {Object} Table currently processing
 ###
-buildRelations = (fk) ->
+manageTableCreation = (dbStructure, part) ->
 
-    validateForeignKey fk
+    ###*
+    # If table not exists in DatabaseStruture, add it
+    ###
+    if not dbStructure.containsTable(part.tableName)
+        dbStructure.addTable(
+            new Table(
+                name: part.tableName
+                isView: part.tableType.toLowerCase() is 'view'
+            )
+        )
+
+    ###*
+    # Get table Object
+    ###
+    table = dbStructure.getTable(part.tableName)
+
+    ###*
+    # Table object should have been created during a relation build.
+    # So fix the good isView value beacause it's not know during an
+    # inverse relation creation
+    ###
+    table.isView = part.tableType.toLowerCase() is 'view'
+
+    if table
+        Q.fcall ->
+            table
+    else
+        Q.fcall ->
+            throw new rmErrors.ServerError(
+                part.tableName,
+                'table-not-found-in-database-structure'
+            )
+
+exports.manageTableCreation = manageTableCreation
+
+###*
+# Create field object and add it to table object
+# @param {Object} table Table object for this part
+# @param {Object} part Part of database structure returned by database
+# @return {Object} Table currently processing
+###
+addFieldToTable = (table, part) ->
+
+    field = new Field(part)
+    table.addField(field)
+
+    Q.fcall ->
+        table
+
+exports.addFieldToTable = addFieldToTable
+
+###*
+# Manage unique index for this part if exists
+# @param {Object} table Table object for this part
+# @param {Object} part Part of database structure returned by database
+# @return {Object} Table currently processing
+###
+managePartUniqueIndex = (table, part) ->
+
+    if part.uniqueIndexName?
+
+        ###*
+        # Object used to create unique index for part
+        ###
+        uniqueIndexPart =
+            indexName   : part.uniqueIndexName
+            tableName   : part.tableName
+            columnName  : part.columnName
+
+        table.addUniqueIndexPart uniqueIndexPart
+
+    Q.fcall ->
+        table
+
+exports.managePartUniqueIndex = managePartUniqueIndex
+
+###*
+# Manage unique index for this part if exists
+# @param {Object} dbStructure Structure object
+# @param {Object} table Table object for this part
+# @param {Object} part Part of database structure returned by database
+# @return {Object} Table currently processing
+###
+manageRelations = (dbStructure, table, part) ->
+
+    if part.refTableName?
+        ###*
+        # Build relation for origin table
+        ###
+        relation = new Relation(
+            originColumn:   part.tableName,
+            destTable:      part.refTableName,
+            destColumn:     part.refColumnName
+            isInverse:      false
+        )
+
+        ###*
+        # Build relation for dest table
+        ###
+        inverseRelation = new Relation(
+            originColumn:   part.refColumnName,
+            destTable:      part.tableName,
+            destColumn:     part.columnName
+            isInverse:      true
+        )
+
+        ###*
+        # If inverse table not exists in DatabaseStruture, add it
+        ###
+        if not DatabaseStructure.containsTable(part.refTableName)
+            DatabaseStructure.addTable(
+                new Table(
+                    name: part.refTableName
+                    isView: null
+                )
+            )
+        inverseTable = DatabaseStructure.getTable(part.refTableName)
+
+        ###*
+        # Add relations to tables
+        ###
+        table.addRelation(relation)
+        inverseTable.addRelation(inverseRelation)
+
+exports.manageRelations = manageRelations
+
+###*
+# Process database structure returned by database
+# @param {Array} databaseStructureParts Array with all database structure parts
+# @return {Object} A Tables object which contains all created Tables objects
+###
+processDatabaseStructureParts = (dbStructureParts) ->
+    DatabaseStructure = new DatabaseStructure()
+    promises = []
+
+    ###*
+    # Iterate over each database rows
+    ###
+    for part in dbStructureParts
+        do (part) ->
+
+            ###*
+            # Validate row structure
+            ###
+            promises.push(
+                validatePartMandatoryValues part
+                .then validatePartKeys
+                .then(
+                    (part) ->
+                        ###*
+                        # Create table if not exists, set isView and return
+                        # table
+                        ###
+                        manageTableCreation DatabaseStructure, part
+                )
+                .then(
+                    (table) ->
+                        ###*
+                        # Create field Object and add it to table
+                        ###
+                        addFieldToTable table, part
+                )
+                .then(
+                    (table) ->
+                        ###*
+                        # Set index informations
+                        ###
+                        managePartUniqueIndex table, part
+                )
+                .then(
+                    (table) ->
+                        ###*
+                        # Manage relations
+                        # @todo Add a isMultiple fields to know if subobject is
+                        # unique or an array
+                        ###
+                        manageRelations DatabaseStructure, table, part
+                )
+                .catch (error) ->
+                    throw error
+            )
+
+    Q.all promises
         .then(
-            (result) ->
-                ###*
-                # Build relation for origin table
-                ###
-                relation = new Relation(
-                    fk.originColumn,
-                    fk.destTable,
-                    fk.destColumn
-                )
-
-                ###*
-                # Build relation for dest table
-                ###
-                inverseRelation = new Relation(
-                    fk.destColumn,
-                    fk.originTable,
-                    fk.originColumn
-                )
-
-                ###*
-                # Return relations
-                # @type {Object}
-                ####
-                relations =
-                    relation: relation
-                    inverseRelation: inverseRelation
-
+            (results) ->
                 Q.fcall ->
-                    relations
-
+                    DatabaseStructure
             ,(error) ->
                 Q.fcall ->
                     throw error
         )
 
-exports.buildRelations = buildRelations
-
-###*
-# Build table relations
-# @param {Array} foreignKeys Array with all foreign keys for database
-# @return {Object} An object with all relations
-# @throw {Object} ParameterError if bad foreign key
-###
-buildTableRelations = (foreignKeys) ->
-
-    defer = Q.defer()
-    tableRels = {}
-    promises = []
-
-    for fk in foreignKeys
-        do (fk) ->
-            promises.push(
-                buildRelations fk
-                    .then(
-                        (relations) ->
-                            rel = relations.relation
-                            invRel = relations.inverseRelation
-
-                            ###*
-                            # If it's the first relation for origin table,
-                            # create a TableRelation Object
-                            ###
-                            if not tableRels[fk.originTable]?
-                                tableRel = new TableRelation(fk.originTable)
-                                tableRels[fk.originTable] = tableRel
-
-                            tableRels[fk.originTable].addRelation rel
-
-                            ###*
-                            # If it's the first relation for dest table, create
-                            # a TableRelation Object
-                            ###
-                            if not tableRels[fk.destTable]?
-                                tableRel = new TableRelation(fk.destTable)
-                                tableRels[fk.destTable] = tableRel
-
-                            tableRels[fk.destTable].addInverseRelation invRel
-                            Q.fcall ->
-
-                        ,(error) ->
-                            defer.reject error
-                    )
-            )
-    Q.all promises
-        .then(
-            (results) ->
-                defer.resolve tableRels
-            ,(error) ->
-                defer.reject error
-        )
-
-    defer.promise
-
-exports.buildTableRelations = buildTableRelations
-
-###*
-# Validate an index part
-# @param {Object} indexPart Index part to test
-# @return {Object} Index part if valid
-# @throw {Object} ParameterError if index part is not valid
-###
-validateIndexPart = (fk) ->
-
-    validKeys = [
-        'tableName:'
-        'indexName:'
-        'columnName:'
-    ]
-
-    globalUtils.checkKeysHaveNotNullValues(fk, validKeys)
-
-###*
-# Build unique indexes with database result
-# @param {Array} dbIndexParts Index parts returned by database
-# @return {Array} Return an array of UniqueIndex objects
-###
-buildUniqueIndexes = (dbIndexParts) ->
-
-    defer = Q.defer()
-    uniqueIndexes = []
-    promises = []
-
-    for indexPart in dbIndexParts
-        do (indexPart) ->
-            promises.push(
-                validateField indexPart
-                    .then(
-                        (indexPart) ->
-                            indexObj = new UniqueIndex(indexPart)
-                            indexes.push indexObj
-                            Q.fcall ->
-
-                        ,(error) ->
-                            defer.reject error
-                    )
-            )
-    Q.all promises
-        .then(
-            (results) ->
-                defer.resolve indexes
-            ,(error) ->
-                defer.reject error
-        )
-
-    defer.promise
-
-exports.buildUniqueIndexes = buildUniqueIndexes
+exports.processDatabaseStructureParts = processDatabaseStructureParts
