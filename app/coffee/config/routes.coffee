@@ -12,21 +12,16 @@ exports.default =
     routes: (api) ->
 
         routesObj =
-            get: []
-            post: []
-            put: []
+            get:    []
+            post:   []
+            put:    []
             delete: []
 
         ###*
-         * @description Routes for GET verb
-        ###
-
-
-        ###*
-         * @description Request to return true (allways authenticate)
+         * GET : Request to return status of API
         ###
         routesObj.get.push
-            path: "/status"
-            action: "status"
+            path:   '/status'
+            action: 'status'
 
         routesObj
