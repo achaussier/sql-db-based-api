@@ -60,7 +60,7 @@ describe 'Global lib', ->
                                 error.should.be.instanceof rmErrors.ParameterError
                         )
 
-        it 'should resolve false if some keys not exists', ->
+        it 'should reject if some keys not exists', ->
             obj =
                 foo: 'bar'
             arr = [ 'bar' ]
@@ -68,12 +68,14 @@ describe 'Global lib', ->
             globalUtils.checkKeysHaveNotNullValues obj, arr
                 .then(
                     (result) ->
-                        result.should.be.false
-                    ,(error) ->
                         throw new Error 'Should not be go here in this test'
+
+                    ,(error) ->
+                        error.should.be.instanceof rmErrors.ParameterError
+                        error.message.should.be.eql 'missing-mandatory-values-for-object'
                 )
 
-        it 'should resolve false if some keys have null value', ->
+        it 'should reject if some keys have null value', ->
             obj =
                 foo: null
             arr = [ 'foo' ]
@@ -81,12 +83,13 @@ describe 'Global lib', ->
             globalUtils.checkKeysHaveNotNullValues obj, arr
                 .then(
                     (result) ->
-                        result.should.be.false
-                    ,(error) ->
                         throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof rmErrors.ParameterError
+                        error.message.should.be.eql 'missing-mandatory-values-for-object'
                 )
 
-        it 'should resolve true if some keys have null value', ->
+        it 'should resolve if all keys have not null value', ->
             obj =
                 foo: 'bar'
             arr = [ 'foo' ]
@@ -94,10 +97,83 @@ describe 'Global lib', ->
             globalUtils.checkKeysHaveNotNullValues obj, arr
                 .then(
                     (result) ->
-                        result.should.be.true
+                        result.should.have.keys 'foo'
+                        result.foo.should.be.eql 'bar'
                     ,(error) ->
                         throw new Error 'Should not be go here in this test'
                 )
+
+    describe 'checkKeys', ->
+
+        beforeEach (done) ->
+            badObj = null
+            mocksUtils = clone mocks
+            val = undefined
+            done()
+
+        it 'should reject if no param', ->
+            globalUtils.checkKeys()
+                .then(
+                    (result) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof rmErrors.ParameterError
+                )
+
+        for badObj in mocksUtils.badObjectParam
+            do (badObj) ->
+
+                it 'should reject if bad obj param', ->
+                    globalUtils.checkKeys badObj
+                        .then(
+                            (result) ->
+                                throw new Error 'Should not be go here in this test'
+                            ,(error) ->
+                                error.should.be.instanceof rmErrors.ParameterError
+                        )
+
+        for badArray in mocksUtils.badArrayParam
+            do (badArray) ->
+                it 'should reject if bad array param', ->
+                    obj =
+                        foo: 'bar'
+                    globalUtils.checkKeys obj, badArray
+                        .then(
+                            (result) ->
+                                throw new Error 'Should not be go here in this test'
+                            ,(error) ->
+                                error.should.be.instanceof rmErrors.ParameterError
+                        )
+
+        it 'should reject if some keys not exists', ->
+            obj =
+                foo: 'bar'
+            arr = [ 'bar' ]
+
+            globalUtils.checkKeys obj, arr
+                .then(
+                    (result) ->
+                        throw new Error 'Should not be go here in this test'
+
+                    ,(error) ->
+                        error.should.be.instanceof rmErrors.ParameterError
+                        error.message.should.be.eql 'bad-keys-for-object'
+                )
+
+        it 'should resolve if some keys have null value', ->
+            obj =
+                foo: 'bar'
+            arr = [ 'foo' ]
+
+            globalUtils.checkKeys obj, arr
+                .then(
+                    (result) ->
+                        result.should.have.keys 'foo'
+                        result.foo.should.be.eql 'bar'
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                )
+
 
     describe 'isNotEmptyString', ->
 
