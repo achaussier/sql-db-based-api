@@ -34,6 +34,6 @@ class UniqueIndex
     # @return {Boolean} True if columnName already present, else false
     ###
     containsColumn: (columnName) ->
-        if @columns.indexOf(columnName) is -1 then false else true
+        @columns.indexOf(columnName) isnt -1
 
 module.exports = UniqueIndex
