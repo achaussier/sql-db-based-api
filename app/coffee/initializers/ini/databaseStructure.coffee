@@ -32,24 +32,20 @@ module.exports =
 
     start: (api, next) ->
 
-        errorObj = null
-
         dbStructUtils.getStructureFromDB api
             .then dbStructUtils.processDatabaseStructureParts
-            .then(
-                (dbStructure) ->
-                    ###*
-                    # Store DatabaseStructure instance
-                    ###
-                    api.rackmonkey.dbStructure.data = dbStructure
+            .then (dbStructure) ->
+                ###*
+                # Store DatabaseStructure instance
+                ###
+                api.rackmonkey.dbStructure.data = dbStructure
 
-                    ###*
-                    # Generate render for v1 backward compatibility an store it
-                    ###
-                    renderV1 = dbStructure.versionOneRender()
-                    api.rackmonkey.dbStructure.versionOneRender = renderV1
-                    next()
-            )
+                ###*
+                # Generate render for v1 backward compatibility an store it
+                ###
+                renderV1 = dbStructure.versionOneRender()
+                api.rackmonkey.dbStructure.versionOneRender = renderV1
+                next()
             .catch (error) ->
                 api.log inspect(error), 'error'
                 next(error)
