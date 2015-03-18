@@ -121,10 +121,7 @@ exports.checkKeys = checkKeys
 ###
 isNotEmptyString = (element) ->
 
-    if not element? or typeof element isnt 'string' or element is ''
-        false
-    else
-        true
+    element? and typeof element is 'string' and element isnt ''
 
 exports.isNotEmptyString = isNotEmptyString
 
