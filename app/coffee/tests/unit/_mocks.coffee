@@ -38,7 +38,7 @@ exports.api =
             writePool:
                 getConnection: (cb) ->
                     cb null, {}
-
+    log: ->
     stats:
         getAll: (cb) ->
             cb null, { 'foo': 'bar'}
