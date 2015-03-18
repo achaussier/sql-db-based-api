@@ -5,22 +5,22 @@
 ###
 
 # require packages
-clone = require 'clone'
-dbStructUtils = require '../../../lib/databaseStructure.js'
-DatabaseStructure = require '../../../lib/databaseStructure/DatabaseStructure.js'
-mocks = require '../_mocks.js'
-rmErrors = require '../../../lib/errors.js'
-sinon = require 'sinon'
-should = require 'should'
-sqlUtils = require '../../../lib/sql.js'
+clone               = require 'clone'
+dbStructUtils       = require '../../../lib/databaseStructure.js'
+DatabaseStructure   = require '../../../lib/databaseStructure/DatabaseStructure.js'
+mocks       = require '../_mocks.js'
+rmErrors    = require '../../../lib/errors.js'
+sinon       = require 'sinon'
+should      = require 'should'
+sqlUtils    = require '../../../lib/sql.js'
 
-mocksUtils = clone mocks
-cb = null
-spy = null
-stub = null
-stub2 = null
-val = null
-val2 = null
+mocksUtils  = clone mocks
+cb      = null
+spy     = null
+stub    = null
+stub2   = null
+val     = null
+val2    = null
 
 describe 'Database structure classes and functions', ->
 
@@ -39,13 +39,16 @@ describe 'Database structure classes and functions', ->
     describe 'getStructureFromDB', ->
 
         beforeEach (done) ->
-            cb = sinon.spy()
-            mocksUtils = clone mocks
-            val = null
-            val2 = null
-            spy = null
-            stub = null
-            stub2 = null
+            cb          = sinon.spy()
+            mocksUtils  = clone mocks
+            val         = null
+            val2        = null
+            spy         = null
+            done()
+
+        afterEach (done) ->
+            stub.restore()  if stub?
+            stub2.restore() if stub2?
             done()
 
         it 'should reject an error if connection is not mocked properly', ->
@@ -64,18 +67,15 @@ describe 'Database structure classes and functions', ->
                     (results) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        stub.restore()
                         error.should.be.instanceof rmErrors.DatabaseError
                 )
 
         it 'should resolve if all is ok', ->
-            stub = sinon.stub sqlUtils, 'executeSelect', mocksUtils.fakeDbStructureResultsFromDB
-            stub2 = sinon.stub sqlUtils, 'getReadOnlyConnection', mocksUtils.fakeSqlConnection
+            stub    = sinon.stub sqlUtils, 'executeSelect', mocksUtils.fakeDbStructureResultsFromDB
+            stub2   = sinon.stub sqlUtils, 'getReadOnlyConnection', mocksUtils.fakeSqlConnection
             dbStructUtils.getStructureFromDB mocksUtils.api
                 .then(
                     (results) ->
-                        stub.restore()
-                        stub2.restore()
                         results.should.be.instanceof Array
                     ,(error) ->
                         throw new Error 'Should not be go here in this test'
@@ -84,10 +84,10 @@ describe 'Database structure classes and functions', ->
     describe 'validatePartMandatoryValues', ->
 
         beforeEach (done) ->
-            badObj = null
-            mocksUtils = clone mocks
-            val = undefined
-            val2 = null
+            badObj      = null
+            mocksUtils  = clone mocks
+            val         = undefined
+            val2        = null
             done()
 
         it 'should reject if no param', ->
@@ -101,7 +101,6 @@ describe 'Database structure classes and functions', ->
 
         for badObj in mocksUtils.badObjectParam
             do (badObj) ->
-
                 it 'should reject if bad obj param', ->
                     dbStructUtils.validatePartMandatoryValues badObj
                         .then(
@@ -126,8 +125,8 @@ describe 'Database structure classes and functions', ->
                 )
 
         it 'should reject if some keys have null value', ->
-            obj = mocksUtils.dbStructureField
-            obj.tableName = null
+            obj             = mocksUtils.dbStructureField
+            obj.tableName   = null
 
             dbStructUtils.validatePartMandatoryValues obj
                 .then(
@@ -139,9 +138,9 @@ describe 'Database structure classes and functions', ->
                 )
 
         it 'should resolve if all keys have not null value', ->
-            obj = mocksUtils.dbStructureField
-            obj.columnType = 'foo'
-            obj.isNullable = 'foo'
+            obj             = mocksUtils.dbStructureField
+            obj.columnType  = 'foo'
+            obj.isNullable  = 'foo'
 
             dbStructUtils.validatePartMandatoryValues obj
                 .then(
@@ -154,10 +153,10 @@ describe 'Database structure classes and functions', ->
     describe 'validatePartKeys', ->
 
         beforeEach (done) ->
-            badObj = null
-            mocksUtils = clone mocks
-            val = undefined
-            val2 = null
+            badObj      = null
+            mocksUtils  = clone mocks
+            val         = undefined
+            val2        = null
             done()
 
         it 'should reject if no param', ->
@@ -171,7 +170,6 @@ describe 'Database structure classes and functions', ->
 
         for badObj in mocksUtils.badObjectParam
             do (badObj) ->
-
                 it 'should reject if bad obj param', ->
                     dbStructUtils.validatePartKeys badObj
                         .then(
@@ -209,16 +207,17 @@ describe 'Database structure classes and functions', ->
     describe 'manageTableCreation', ->
 
         beforeEach (done) ->
-            badObj = null
-            mocksUtils = clone mocks
-            val = undefined
-            val2 = null
+            badObj      = null
+            mocksUtils  = clone mocks
+            val         = undefined
+            val2        = null
             done()
 
         it 'should be create a table if not exists', ->
             val = new DatabaseStructure()
             obj = mocksUtils.dbStructureField
-            dbStructUtils.manageTableCreation( val, obj)
+
+            dbStructUtils.manageTableCreation(val, obj)
                 .then(
                     (result) ->
                         result.should.have.property 'name'

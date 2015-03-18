@@ -5,20 +5,20 @@
 ###
 
 globalUtils = require './global.js'
-mysql = require 'mysql'
-Q = require 'q'
-rmErrors = require './errors.js'
-sqlUtils = require './sql.js'
+mysql       = require 'mysql'
+Q           = require 'q'
+rmErrors    = require './errors.js'
+sqlUtils    = require './sql.js'
 
 
 ###*
 # Require classes used to build database structure
 ###
-DatabaseStructure = require './databaseStructure/DatabaseStructure.js'
-Field = require './databaseStructure/Field.js'
-Relation = require './databaseStructure/Relation.js'
-Table = require './databaseStructure/Table.js'
-TableRelation = require './databaseStructure/TableRelation.js'
+DatabaseStructure   = require './databaseStructure/DatabaseStructure.js'
+Field               = require './databaseStructure/Field.js'
+Relation            = require './databaseStructure/Relation.js'
+Table               = require './databaseStructure/Table.js'
+TableRelation       = require './databaseStructure/TableRelation.js'
 
 
 
@@ -31,8 +31,8 @@ TableRelation = require './databaseStructure/TableRelation.js'
 getStructureFromDB = (api) ->
     defer = Q.defer()
 
-    dbName = api.config.database.database
-    dbNameLength = dbName.length + 2
+    dbName          = api.config.database.database
+    dbNameLength    = dbName.length + 2
 
     sql = 'SELECT DISTINCT
                 LOWER(ISC.TABLE_SCHEMA)             AS tableSchema,
@@ -125,6 +125,7 @@ getStructureFromDB = (api) ->
             defer.reject error
     )
     defer.promise
+
 exports.getStructureFromDB = getStructureFromDB
 
 ###*
