@@ -21,8 +21,8 @@ nodeEnv = env.NODE_ENV
 ###
 exports.default =
     general: (api) ->
-        apiVersion: '4.0.0',
-        serverName: 'RackMonkey API - ' + nodeEnv.toUpperCase()
+        apiVersion: '0.0.0',
+        serverName: 'API - ' + nodeEnv.toUpperCase()
 
         ###*
          * Id can be set here, or it will be generated dynamically.
@@ -37,14 +37,13 @@ exports.default =
          * authenticate to each other
          * @type {String}
         ###
-        serverToken: 'criteo_rackmonkey_api_' + nodeEnv.toLowerCase()
+        serverToken: 'api_' + nodeEnv.toLowerCase()
 
         ###*
          * The welcome message seen by TCP and webSocket clients upon connection
          * @type {String}
         ###
-        welcomeMessage: 'Hello! Welcome to the ' + nodeEnv.toLowerCase() + '
-                        RackMonkey api'
+        welcomeMessage: 'Welcome to the ' + nodeEnv.toLowerCase() + ' api !'
 
         ###*
          * The redis prefix for actionhero's cache objects

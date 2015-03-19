@@ -5,21 +5,20 @@
 ###
 
 globalUtils = require './global.js'
-mysql = require 'mysql'
-Q = require 'q'
-rmErrors = require './errors.js'
-sqlUtils = require './sql.js'
+mysql       = require 'mysql'
+Q           = require 'q'
+rmErrors    = require './errors.js'
+sqlUtils    = require './sql.js'
 
 
 ###*
 # Require classes used to build database structure
 ###
-DatabaseStructure = require './databaseStructure/DatabaseStructure.js'
-Field = require './databaseStructure/Field.js'
-Relation = require './databaseStructure/Relation.js'
-Table = require './databaseStructure/Table.js'
-TableRelation = require './databaseStructure/TableRelation.js'
-
+DatabaseStructure   = require './databaseStructure/DatabaseStructure.js'
+Field               = require './databaseStructure/Field.js'
+Relation            = require './databaseStructure/Relation.js'
+Table               = require './databaseStructure/Table.js'
+TableRelation       = require './databaseStructure/TableRelation.js'
 
 
 ###*
@@ -31,8 +30,8 @@ TableRelation = require './databaseStructure/TableRelation.js'
 getStructureFromDB = (api) ->
     defer = Q.defer()
 
-    dbName = api.config.database.database
-    dbNameLength = dbName.length + 2
+    dbName          = api.config.database.database
+    dbNameLength    = dbName.length + 2
 
     sql = 'SELECT DISTINCT
                 LOWER(ISC.TABLE_SCHEMA)             AS tableSchema,
@@ -125,15 +124,16 @@ getStructureFromDB = (api) ->
             defer.reject error
     )
     defer.promise
+
 exports.getStructureFromDB = getStructureFromDB
 
 ###*
-# Validate mandatory values for a part of structure returned by database
+# Check mandatory values for a part of structure returned by database
 # @param {Object} structurePart Structure part to test
 # @return {Object} Structure part if valid
 # @throw {Object} ParameterError if structure part is invalid
 ###
-validatePartMandatoryValues = (part) ->
+checkPartMandatoryValues = (part) ->
 
     validKeys = [
         'tableSchema'
@@ -149,15 +149,15 @@ validatePartMandatoryValues = (part) ->
 
     globalUtils.checkKeysHaveNotNullValues(part, validKeys)
 
-exports.validatePartMandatoryValues = validatePartMandatoryValues
+exports.checkPartMandatoryValues = checkPartMandatoryValues
 
 ###*
-# Validate keys for a part of structure returned by database
+# Check keys for a part of structure returned by database
 # @param {Object} structurePart Structure part to test
 # @return {Object} Structure part if valid
 # @throw {Object} ParameterError if structure part is invalid
 ###
-validatePartKeys = (part) ->
+checkPartKeys = (part) ->
 
     validKeys = [
         'tableSchema'
@@ -185,7 +185,7 @@ validatePartKeys = (part) ->
 
     globalUtils.checkKeys(part, validKeys)
 
-exports.validatePartKeys = validatePartKeys
+exports.checkPartKeys = checkPartKeys
 
 ###*
 # Create Table if not exists and add it to DatabaseStructure
@@ -193,7 +193,7 @@ exports.validatePartKeys = validatePartKeys
 # @param {Object} part Part of database structure returned by database
 # @return {Object} Table currently processing
 ###
-manageTableCreation = (dbStructure, part) ->
+setTable = (dbStructure, part) ->
 
     ###*
     # If table not exists in DatabaseStruture, add it
@@ -211,15 +211,14 @@ manageTableCreation = (dbStructure, part) ->
     ###
     table = dbStructure.getTable(part.tableName)
 
-    ###*
-    # Table object should have been created during a relation build.
-    # So fix the good isView value beacause it's not know during an
-    # inverse relation creation
-    ###
-    table.isView = part.tableType.toLowerCase() is 'view'
-
     if table
         Q.fcall ->
+            ###*
+            # Table object should have been created during a relation build.
+            # So fix the good isView value beacause it's not know during an
+            # inverse relation creation
+            ###
+            table.isView = part.tableType.toLowerCase() is 'view'
             table
     else
         Q.fcall ->
@@ -228,7 +227,7 @@ manageTableCreation = (dbStructure, part) ->
                 'table-not-found-in-database-structure'
             )
 
-exports.manageTableCreation = manageTableCreation
+exports.setTable = setTable
 
 ###*
 # Create field object and add it to table object
@@ -236,7 +235,7 @@ exports.manageTableCreation = manageTableCreation
 # @param {Object} part Part of database structure returned by database
 # @return {Object} Table currently processing
 ###
-addFieldToTable = (table, part) ->
+setField = (table, part) ->
 
     field = new Field(part)
     table.addField(field)
@@ -244,15 +243,15 @@ addFieldToTable = (table, part) ->
     Q.fcall ->
         table
 
-exports.addFieldToTable = addFieldToTable
+exports.setField = setField
 
 ###*
-# Manage unique index for this part if exists
+# Create or update unique index for this part if exists
 # @param {Object} table Table object for this part
 # @param {Object} part Part of database structure returned by database
 # @return {Object} Table currently processing
 ###
-managePartUniqueIndex = (table, part) ->
+setUniqueIndex = (table, part) ->
 
     if part.uniqueIndexName?
 
@@ -269,16 +268,16 @@ managePartUniqueIndex = (table, part) ->
     Q.fcall ->
         table
 
-exports.managePartUniqueIndex = managePartUniqueIndex
+exports.setUniqueIndex = setUniqueIndex
 
 ###*
-# Manage unique index for this part if exists
+# Add unique index for this part if exists
 # @param {Object} dbStructure Structure object
 # @param {Object} table Table object for this part
 # @param {Object} part Part of database structure returned by database
 # @return {Object} Table currently processing
 ###
-manageRelations = (dbStructure, table, part) ->
+setRelations = (dbStructure, table, part) ->
 
     if part.refTableName?
         ###*
@@ -304,14 +303,14 @@ manageRelations = (dbStructure, table, part) ->
         ###*
         # If inverse table not exists in DatabaseStruture, add it
         ###
-        if not DatabaseStructure.containsTable(part.refTableName)
-            DatabaseStructure.addTable(
+        if not dbStructure.containsTable part.refTableName
+            dbStructure.addTable(
                 new Table(
                     name: part.refTableName
                     isView: null
                 )
             )
-        inverseTable = DatabaseStructure.getTable(part.refTableName)
+        inverseTable = dbStructure.getTable part.refTableName
 
         ###*
         # Add relations to tables
@@ -319,7 +318,10 @@ manageRelations = (dbStructure, table, part) ->
         table.addRelation(relation)
         inverseTable.addRelation(inverseRelation)
 
-exports.manageRelations = manageRelations
+    Q.fcall ->
+        table
+
+exports.setRelations = setRelations
 
 ###*
 # Process database structure returned by database
@@ -327,7 +329,7 @@ exports.manageRelations = manageRelations
 # @return {Object} A Tables object which contains all created Tables objects
 ###
 processDatabaseStructureParts = (dbStructureParts) ->
-    DatabaseStructure = new DatabaseStructure()
+    dbStructure = new DatabaseStructure()
     promises = []
 
     ###*
@@ -337,32 +339,32 @@ processDatabaseStructureParts = (dbStructureParts) ->
         do (part) ->
 
             ###*
-            # Validate row structure
+            # Check row structure
             ###
             promises.push(
-                validatePartMandatoryValues part
-                .then validatePartKeys
+                checkPartMandatoryValues part
+                .then checkPartKeys
                 .then(
                     (part) ->
                         ###*
                         # Create table if not exists, set isView and return
                         # table
                         ###
-                        manageTableCreation DatabaseStructure, part
+                        setTable dbStructure, part
                 )
                 .then(
                     (table) ->
                         ###*
                         # Create field Object and add it to table
                         ###
-                        addFieldToTable table, part
+                        setField table, part
                 )
                 .then(
                     (table) ->
                         ###*
                         # Set index informations
                         ###
-                        managePartUniqueIndex table, part
+                        setUniqueIndex table, part
                 )
                 .then(
                     (table) ->
@@ -371,7 +373,7 @@ processDatabaseStructureParts = (dbStructureParts) ->
                         # @todo Add a isMultiple fields to know if subobject is
                         # unique or an array
                         ###
-                        manageRelations DatabaseStructure, table, part
+                        setRelations dbStructure, table, part
                 )
                 .catch (error) ->
                     throw error
@@ -381,7 +383,7 @@ processDatabaseStructureParts = (dbStructureParts) ->
         .then(
             (results) ->
                 Q.fcall ->
-                    DatabaseStructure
+                    dbStructure
             ,(error) ->
                 Q.fcall ->
                     throw error
