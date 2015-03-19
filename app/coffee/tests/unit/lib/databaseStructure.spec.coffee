@@ -8,19 +8,26 @@
 clone               = require 'clone'
 dbStructUtils       = require '../../../lib/databaseStructure.js'
 DatabaseStructure   = require '../../../lib/databaseStructure/DatabaseStructure.js'
+Field       = require '../../../lib/databaseStructure/Field.js'
 mocks       = require '../_mocks.js'
+Q           = require 'q'
 rmErrors    = require '../../../lib/errors.js'
 sinon       = require 'sinon'
 should      = require 'should'
 sqlUtils    = require '../../../lib/sql.js'
+Table       = require '../../../lib/databaseStructure/Table.js'
 
 mocksUtils  = clone mocks
-cb      = null
-spy     = null
-stub    = null
-stub2   = null
-val     = null
-val2    = null
+cb          = null
+dbStructure = null
+parts       = null
+spy         = null
+stub        = null
+stub2       = null
+table1      = null
+table2      = null
+val         = null
+val2        = null
 
 describe 'Database structure classes and functions', ->
 
@@ -207,10 +214,14 @@ describe 'Database structure classes and functions', ->
     describe 'manageTableCreation', ->
 
         beforeEach (done) ->
-            badObj      = null
             mocksUtils  = clone mocks
-            val         = undefined
+            val         = null
             val2        = null
+            stub        = null
+            done()
+
+        afterEach (done) ->
+            stub.restore() if stub? and stub.restore?
             done()
 
         it 'should be create a table if not exists', ->
@@ -224,4 +235,203 @@ describe 'Database structure classes and functions', ->
                         result.name.should.be.eql 'foo'
                     ,(error) ->
                         throw new Error 'Should not be go here in this test'
+                    )
+
+        it 'should be reject if table not exists after Get', ->
+            val  = new DatabaseStructure()
+            obj  = mocksUtils.dbStructureField
+            stub = sinon.stub(
+                val,
+                'getTable',
+                ->
+                    null
+            )
+
+            dbStructUtils.manageTableCreation(val, obj)
+                .then(
+                    (result) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof rmErrors.ServerError
+                    )
+
+        it 'should add a new field to a table', ->
+            val = new Table mocksUtils.dbStructureTable
+
+            dbStructUtils.addFieldToTable val, mocksUtils.dbStructureField
+                .then(
+                    (result) ->
+                        result.fields.length.should.be.eql 1
+                    (error) ->
+                        throw new Error 'Should not be go here in this test'
+                )
+
+    describe 'managePartUniqueIndex', ->
+
+        beforeEach (done) ->
+            mocksUtils  = clone mocks
+            val         = undefined
+            spy         = null
+            stub        = null
+            done()
+
+        afterEach (done) ->
+            stub.restore() if stub? and stub.restore?
+            spy.restore() if spy? and spy.restore?
+            done()
+
+        it 'should not call addUniqueIndexPart if no index data', ->
+            val = new Table mocksUtils.dbStructureTable
+            spy = sinon.spy val, 'addUniqueIndexPart'
+
+            dbStructUtils.managePartUniqueIndex val, {}
+                .then(
+                    (result) ->
+                        spy.called.should.be.false
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                    )
+
+        it 'should add part if index data', ->
+            val = new Table mocksUtils.dbStructureTable
+            obj =
+                uniqueIndexName: 'foo'
+                tableName      : 'foo'
+                columnName     : 'bar'
+            spy = sinon.spy val, 'addUniqueIndexPart'
+
+            dbStructUtils.managePartUniqueIndex val, obj
+                .then(
+                    (result) ->
+                        spy.called.should.be.true
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                    )
+
+    describe 'manageRelations', ->
+
+        beforeEach (done) ->
+            mocksUtils  = clone mocks
+            dbStructure = null
+            table1      = null
+            table2      = null
+            spy         = null
+            spy2        = null
+            done()
+
+        afterEach (done) ->
+            spy.restore()  if spy?  and spy.restore?
+            spy2.restore() if spy2? and spy2.restore?
+            done()
+
+        it 'should not call addRelation', ->
+            dbStructure = new DatabaseStructure()
+            table1      = new Table mocksUtils.dbStructureTable
+            spy         = sinon.spy table1, 'addRelation'
+
+            dbStructUtils.manageRelations dbStructure, table1, {}
+                .then(
+                    (result) ->
+                        spy.called.should.be.false
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                    )
+
+        it 'should add relation', ->
+            dbStructure = new DatabaseStructure()
+            table1      = new Table { name: 'foo'  }
+            table2      = new Table { name: 'foo2' }
+
+            dbStructure.addTable table1
+            dbStructure.addTable table2
+
+            spy  = sinon.spy table1, 'addRelation'
+            spy2 = sinon.spy table2, 'addRelation'
+
+            obj  =
+                tableName    : 'foo'
+                columnName   : 'bar'
+                refTableName : 'foo2'
+                refColumnName: 'bar2'
+
+
+            dbStructUtils.manageRelations dbStructure, table1, obj
+                .then(
+                    (result) ->
+                        spy.called.should.be.true
+                        spy2.called.should.be.true
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                    )
+
+        it 'should add relation and create ref table if not exists', ->
+            dbStructure = new DatabaseStructure()
+            table1      = new Table { name: 'foo'  }
+
+            dbStructure.addTable table1
+
+            spy = sinon.spy table1, 'addRelation'
+            obj =
+                tableName    : 'foo'
+                columnName   : 'bar'
+                refTableName : 'foo2'
+                refColumnName: 'bar2'
+
+
+            dbStructUtils.manageRelations dbStructure, table1, obj
+                .then(
+                    (result) ->
+                        spy.called.should.be.true
+                        dbStructure.tables.length.should.be.eql 2
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                    )
+
+    describe 'processDatabaseStructureParts', ->
+
+        beforeEach (done) ->
+            mocksUtils  = clone mocks
+            parts       = null
+            spy         = null
+            spy2        = null
+            done()
+
+        afterEach (done) ->
+            spy.restore()  if spy?  and spy.restore?
+            spy2.restore() if spy2? and spy2.restore?
+            done()
+
+        it 'should executed without data returned', ->
+            dbStructUtils.processDatabaseStructureParts []
+                .then(
+                    (result) ->
+                        result.should.be.instanceof DatabaseStructure
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                    )
+
+        it 'should executed with one part', ->
+            parts = [
+                mocksUtils.dbStructureField
+            ]
+            dbStructUtils.processDatabaseStructureParts parts
+                .then(
+                    (result) ->
+                        result.should.be.instanceof DatabaseStructure
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                    )
+
+        it 'should reject if error occurs', ->
+            mocksUtils.dbStructureField.isNullable = null
+            parts = [
+                mocksUtils.dbStructureField
+            ]
+            dbStructUtils.processDatabaseStructureParts parts
+                .then(
+                    (result) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof rmErrors.ParameterError
+                        error.message.should.be.eql 'missing-mandatory-values-for-object'
                     )

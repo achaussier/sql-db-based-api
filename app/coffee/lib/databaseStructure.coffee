@@ -21,7 +21,6 @@ Table               = require './databaseStructure/Table.js'
 TableRelation       = require './databaseStructure/TableRelation.js'
 
 
-
 ###*
 # Get structure from database
 # @param {Object} api Main api object
@@ -212,15 +211,14 @@ manageTableCreation = (dbStructure, part) ->
     ###
     table = dbStructure.getTable(part.tableName)
 
-    ###*
-    # Table object should have been created during a relation build.
-    # So fix the good isView value beacause it's not know during an
-    # inverse relation creation
-    ###
-    table.isView = part.tableType.toLowerCase() is 'view'
-
     if table
         Q.fcall ->
+            ###*
+            # Table object should have been created during a relation build.
+            # So fix the good isView value beacause it's not know during an
+            # inverse relation creation
+            ###
+            table.isView = part.tableType.toLowerCase() is 'view'
             table
     else
         Q.fcall ->
@@ -305,20 +303,23 @@ manageRelations = (dbStructure, table, part) ->
         ###*
         # If inverse table not exists in DatabaseStruture, add it
         ###
-        if not DatabaseStructure.containsTable(part.refTableName)
-            DatabaseStructure.addTable(
+        if not dbStructure.containsTable part.refTableName
+            dbStructure.addTable(
                 new Table(
                     name: part.refTableName
                     isView: null
                 )
             )
-        inverseTable = DatabaseStructure.getTable(part.refTableName)
+        inverseTable = dbStructure.getTable part.refTableName
 
         ###*
         # Add relations to tables
         ###
         table.addRelation(relation)
         inverseTable.addRelation(inverseRelation)
+
+    Q.fcall ->
+        table
 
 exports.manageRelations = manageRelations
 
@@ -328,7 +329,7 @@ exports.manageRelations = manageRelations
 # @return {Object} A Tables object which contains all created Tables objects
 ###
 processDatabaseStructureParts = (dbStructureParts) ->
-    DatabaseStructure = new DatabaseStructure()
+    dbStructure = new DatabaseStructure()
     promises = []
 
     ###*
@@ -349,7 +350,7 @@ processDatabaseStructureParts = (dbStructureParts) ->
                         # Create table if not exists, set isView and return
                         # table
                         ###
-                        manageTableCreation DatabaseStructure, part
+                        manageTableCreation dbStructure, part
                 )
                 .then(
                     (table) ->
@@ -372,7 +373,7 @@ processDatabaseStructureParts = (dbStructureParts) ->
                         # @todo Add a isMultiple fields to know if subobject is
                         # unique or an array
                         ###
-                        manageRelations DatabaseStructure, table, part
+                        manageRelations dbStructure, table, part
                 )
                 .catch (error) ->
                     throw error
@@ -382,7 +383,7 @@ processDatabaseStructureParts = (dbStructureParts) ->
         .then(
             (results) ->
                 Q.fcall ->
-                    DatabaseStructure
+                    dbStructure
             ,(error) ->
                 Q.fcall ->
                     throw error
