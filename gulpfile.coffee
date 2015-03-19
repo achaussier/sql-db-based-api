@@ -1,118 +1,141 @@
-"use strict"
+'use strict'
 
 ###*
  * @fileOverview Gulp config file
 ###
-fs          = require 'fs'
-gulp        = require 'gulp'
-apidoc      = require 'gulp-apidoc'
-jsdoc       = require 'gulp-jsdoc'
-gutil       = require 'gulp-util'
-coffee      = require 'gulp-coffee'
-coffeelint  = require 'gulp-coffeelint'
-jshint      = require 'gulp-jshint'
-changed     = require 'gulp-changed'
-nodemon     = require 'gulp-nodemon'
-rename      = require 'gulp-rename'
-replace     = require 'gulp-replace'
-tar         = require "gulp-tar"
-gzip        = require 'gulp-gzip'
-path        = require 'path'
-del         = require 'del'
-mocha       = require 'gulp-mocha'
-istanbul    = require 'gulp-coffee-istanbul'
-protractor  = require("gulp-protractor").protractor
-concat      = require 'gulp-concat'
-exec        = require('child_process').exec
-livereload  = require "gulp-livereload"
-plumber     = require "gulp-plumber"
-notify      = require "gulp-notify"
-gulpif      = require "gulp-if"
-runSequence = require "run-sequence"
+
+###*
+# Require modules to use with gulp
+###
 argv        = require 'yargs'
     .default 'target', 'local'
     .argv
+apidoc      = require 'gulp-apidoc'
+changed     = require 'gulp-changed'
+coffee      = require 'gulp-coffee'
+coffeelint  = require 'gulp-coffeelint'
+concat      = require 'gulp-concat'
+del         = require 'del'
+exec        = require('child_process').exec
+fs          = require 'fs'
+gulp        = require 'gulp'
+gulpif      = require 'gulp-if'
+gutil       = require 'gulp-util'
+gzip        = require 'gulp-gzip'
+istanbul    = require 'gulp-coffee-istanbul'
+jsdoc       = require 'gulp-jsdoc'
+jshint      = require 'gulp-jshint'
+livereload  = require 'gulp-livereload'
+mocha       = require 'gulp-mocha'
+nodemon     = require 'gulp-nodemon'
+notify      = require 'gulp-notify'
+path        = require 'path'
+plumber     = require 'gulp-plumber'
+protractor  = require('gulp-protractor').protractor
+rename      = require 'gulp-rename'
+replace     = require 'gulp-replace'
+runSequence = require 'run-sequence'
+tar         = require 'gulp-tar'
+
+###*
+# Require app constants
+###
 config = require './app/coffee/constants/config'
 
+###*
+# Set event listeners
+###
 require('events').EventEmitter.prototype._maxListeners = 100
-#
-# gzip
-#
-gulp.task "gzip", [], ->
-    d = new Date()
-    c_date = d.getDate()
+
+###*
+# Set some env variables
+# @todo Check if it's a good idea
+###
+process.env.PROJECT_ROOT        = __dirname + config.paths.COMPILED_CODE
+process.env.ACTIONHERO_CONFIG   = process.env.PROJECT_ROOT + config.paths.API_CONFIG
+process.env.NODE_ENV            = 'local'
+process.env.GULP_TEST           = true
+process.env.SPECHELPER          = true
+
+###*
+# Paths for coverage inspection
+###
+coveragePaths = [
+    'web/actions/**/*.js'
+    'web/initializers/**/*.js'
+    'web/lib/**/*.js'
+    'web/config/**/*.js'
+]
+
+###*
+# GZIP task : used to zip files after build
+###
+gulp.task 'gzip', [], ->
+    d       = new Date()
+    c_date  = d.getDate()
     c_month = d.getMonth() + 1
-    c_year = d.getFullYear()
-    c_date = '0' + c_date if c_date <= 9
+    c_year  = d.getFullYear()
+    c_date  = '0' + c_date if c_date <= 9
     c_month = '0' + c_month if c_month <= 9
-    now = c_year + "-" + c_month + "-" + c_date
+    now     = c_year + "-" + c_month + "-" + c_date
     gulp
-        .src 'web/**/*'
+        .src 'dist/**/*'
         .pipe plumber()
-        .pipe tar 'rackmonkey-api-' + now + '.' + argv.target + '.tar'
+        .pipe tar 'asset-api-' + now + '.' + argv.target + '.tar'
         .pipe gzip()
         .pipe gulp.dest '.'
 
-#
-# copy
-#
-gulp.task "copy", [], ->
+
+###*
+# Copy package.json file to launch npm instal command on install
+###
+gulp.task 'copy', [], ->
     gulp
-        .src([
-            "./app/js/**"
-            "./package.json"
-        ])
-        .pipe changed './web/js/', { hasChanged: changed.compareSha1Digest }
-        .pipe gulp.dest './web/js/'
+        .src './package.json'
+        .pipe changed './dist/', { hasChanged: changed.compareSha1Digest }
+        .pipe gulp.dest './dist/'
         .pipe gulpif argv.target in ['local','dev'], livereload()
 
-#
-# disable actionhero nodemon
-#
-gulp.task "disableAhNodemon", [], ->
+
+###*
+# Rename README.md to help.txt to display help after release
+###
+gulp.task 'renameReadme', [], ->
+    gulp
+        .src [
+            './README.md'
+        ]
+        .pipe rename('help.txt')
+        .pipe gulp.dest './dist'
+
+###*
+# Disable actionhero nodemon, conflict with livereload
+###
+gulp.task 'disableAhNodemon', [], ->
     gulp
         .src './node_modules/actionhero/bin/methods/start.js'
         .pipe replace(/(.*SIGUSR2.*)restartServer(.*)/, '$1stopProcess$2')
         .pipe gulp.dest './node_modules/actionhero/bin/methods/'
 
-#
-# cleanlocaldb
-#
-gulp.task 'cleanlocaldb', [], ->
-    exec './scripts/clean_db_test.sh'
 
-#
-# unit tests coverage
-#
+###*
+# Unit tests coverage
+###
 gulp.task 'unitcov', [], ->
-
-    process.env['PROJECT_ROOT'] = __dirname + config.paths.COMPILED_CODE
-    process.env['ACTIONHERO_CONFIG'] = process.env['PROJECT_ROOT'] + config.paths.API_CONFIG
-    process.env['NODE_ENV'] = 'local'
-    process.env['GULP_TEST'] = true
-    process.env['SPECHELPER'] = true
-
     gulp
-        .src [
-            "web/js/actions/**/*.js"
-            "web/js/initializers/**/*.js"
-            "web/js/lib/**/*.js"
-            "web/js/config/**/*.js"
-        ]
+        .src coveragePaths
         .pipe plumber()
         .pipe istanbul
             includeUntested: true
         .pipe istanbul.hookRequire()
         .on 'finish', ->
             gulp
-                .src [
-                    "web/js/tests/unit/**/*.js"
-                ]
+                .src 'dist/tests/unit/**/*.js'
                 .pipe plumber()
                 .pipe mocha
                     reporter: 'spec'
                 .pipe istanbul.writeReports
-                    dir: "web/coverage-unit"
+                    dir: 'dist/public/coverage/unit'
                     reporters: [
                         'lcov'
                         'json'
@@ -129,38 +152,25 @@ gulp.task 'unitcov', [], ->
             gutil.beep()
             @.emit 'end'
 
-#
-# end to end tests coverage
-#
+
+###*
+# End to end tests coverage
+###
 gulp.task 'e2ecov', [], ->
-
-    process.env['PROJECT_ROOT'] = __dirname + config.paths.COMPILED_CODE
-    process.env['ACTIONHERO_CONFIG'] = process.env['PROJECT_ROOT'] + config.paths.API_CONFIG
-    process.env['NODE_ENV'] = 'local'
-    process.env['GULP_TEST'] = true
-    process.env['SPECHELPER'] = true
-
     gulp
-        .src [
-            "web/js/actions/**/*.js"
-            "web/js/initializers/**/*.js"
-            "web/js/lib/**/*.js"
-            "web/js/config/**/*.js"
-        ]
+        .src coveragePaths
         .pipe plumber()
         .pipe istanbul
             includeUntested: true
         .pipe istanbul.hookRequire()
         .on 'finish', ->
             gulp
-                .src [
-                    "web/js/tests/e2e/**/*.js"
-                ]
+                .src 'dist/tests/e2e/**/*.js'
                 .pipe plumber()
                 .pipe mocha
                     reporter: 'spec'
                 .pipe istanbul.writeReports
-                    dir: "web/coverage-e2e"
+                    dir: 'dist/public/coverage/e2e'
                     reporters: [
                         'lcov'
                         'json'
@@ -177,20 +187,13 @@ gulp.task 'e2ecov', [], ->
             gutil.beep()
             @.emit 'end'
 
-#
-# unit tests
-#
+
+###*
+# Unit tests
+###
 gulp.task 'unittest', [], ->
-
-    process.env['PROJECT_ROOT'] = __dirname + config.paths.COMPILED_CODE
-    process.env['ACTIONHERO_CONFIG'] = process.env['PROJECT_ROOT'] + config.paths.API_CONFIG
-    process.env['NODE_ENV'] = 'local'
-    process.env['SPECHELPER'] = true
-
     gulp
-        .src [
-            "web/js/tests/unit/**/*.js"
-        ]
+        .src 'dist/tests/unit/**/*.js'
         .pipe plumber()
         .pipe mocha
             reporter: 'spec'
@@ -199,20 +202,13 @@ gulp.task 'unittest', [], ->
             gutil.beep()
             @.emit 'end'
 
-#
-# end to end tests
-#
+
+###*
+# End to end tests
+###
 gulp.task 'e2etest', [], ->
-
-    process.env['PROJECT_ROOT'] = __dirname + config.paths.COMPILED_CODE
-    process.env['ACTIONHERO_CONFIG'] = process.env['PROJECT_ROOT'] + config.paths.API_CONFIG
-    process.env['NODE_ENV'] = 'local'
-    process.env['SPECHELPER'] = true
-
     gulp
-        .src [
-            "web/js/tests/e2e/**/*.js"
-        ]
+        .src 'dist/tests/e2e/**/*.js'
         .pipe plumber()
         .pipe mocha
             reporter: 'spec'
@@ -221,10 +217,11 @@ gulp.task 'e2etest', [], ->
             gutil.beep()
             @.emit 'end'
 
-#
-# coffee lint
-#
-gulp.task "coffeelint", [], ->
+
+###*
+# Coffee lint for code
+###
+gulp.task 'coffeelint', [], ->
     gulp
         .src([
             'app/coffee/**/*.coffee'
@@ -235,8 +232,8 @@ gulp.task "coffeelint", [], ->
         .pipe(coffeelint(
             opt:
                 'indentation' :
-                    "value": 4
-                    "level": "error"
+                    'value': 4
+                    'level': 'error'
 
                 'no_trailing_whitespace' :
                     'level' : 'error'
@@ -246,20 +243,19 @@ gulp.task "coffeelint", [], ->
         ))
         .pipe coffeelint.reporter()
 
-#
-# coffee lint
-#
-gulp.task "coffeelintfortests", [], ->
+
+###*
+# Coffee lint for tests
+###
+gulp.task 'coffeelintfortests', [], ->
     gulp
-        .src([
-            'app/coffee/tests/**/*'
-        ])
+        .src 'app/coffee/tests/**/*'
         .pipe plumber()
         .pipe(coffeelint(
             opt:
                 'indentation' :
-                    "value": 4
-                    "level": "error"
+                    'value': 4
+                    'level': 'error'
 
                 'no_trailing_whitespace' :
                     'level' : 'error'
@@ -269,116 +265,162 @@ gulp.task "coffeelintfortests", [], ->
         ))
         .pipe coffeelint.reporter()
 
-#
-# js lint
-#
-gulp.task "jslint", ->
-    gulp
-        .src([
-            'app/js/**/*.js'
-        ])
-            .pipe plumber()
-            .pipe jshint()
-            .pipe jshint.reporter()
 
-#
-# clean
-#
-gulp.task "cleancoffee", [], (cb) ->
-    del [
-        'web/js/config/servers/**'
-        'web/js/config'
-        'web/js'
-    ], cb
+###*
+# Clean compiled dir
+###
+gulp.task 'clean', [], (cb) ->
+    del [ './dist/**/*' ], cb
 
-#
-# apidoc
-#
-gulp.task "apidoc", [], ->
+
+###*
+# Apidoc to generate documentation for api actions
+###
+gulp.task 'apidoc', [], ->
     apidoc
         .exec
-            src: "app/js"
-            dest: "web/doc/user"
-            debug: false
-            includeFilters: [ ".*\\.js$" ]
+            src             : 'dist/actions'
+            dest            : 'dist/public/doc/user'
+            debug           : false
+            includeFilters  : [ '*.js' ]
 
-#
-# jsdoc
-#
-gulp.task "jsdoc", (done) ->
-    gulp
-        .src "web/js/**/*.js"
-        .pipe jsdoc "web/doc/dev"
 
-#
-# coffee
-#
-gulp.task "coffee", [], ->
+###*
+# JSdoc to generate development documentation
+###
+gulp.task 'jsdoc', (done) ->
     gulp
-        .on "error", gutil.log
-        .src "./app/coffee/**/*.coffee"
+        .src [
+            'dist/actions/**/*.js'
+            'dist/config/**/*.js'
+            'dist/initializers/**/*.js'
+            'dist/lib/**/*.js'
+        ]
+        .pipe jsdoc 'dist/public/doc/dev'
+
+
+###*
+# Coffeescript compilation
+###
+gulp.task 'coffee', [], ->
+    gulp
+        .on 'error', gutil.log
+        .src './app/coffee/**/*.coffee'
         .pipe plumber()
         .pipe coffee bare: true
-        .pipe changed './web/js/', { hasChanged: changed.compareSha1Digest }
-        .pipe gulp.dest "./web/js/"
+        .pipe changed './dist/', { hasChanged: changed.compareSha1Digest }
+        .pipe gulp.dest './dist/'
         .pipe gulpif argv.target in ['local','dev'], livereload()
 
-#
-# createExportPath
-#
+
+###*
+# Create paths for exports
+###
 gulp.task "createExportPath", ['coffee'], ->
     compiledCodeDir = __dirname + config.paths.COMPILED_CODE
-    publicDir = compiledCodeDir + config.paths.API_PUBLIC_FOLDER
-    exportDir = compiledCodeDir + config.paths.API_EXPORT_FOLDER
+    publicDir       = compiledCodeDir + config.paths.API_PUBLIC_FOLDER
+    exportDir       = compiledCodeDir + config.paths.API_EXPORT_FOLDER
 
     fs.mkdir publicDir, 0o0775, () ->
         fs.mkdir exportDir, 0o0775, () ->
 
-#
-# serve
-#
-gulp.task "serve", ['coffee', 'copy'], ->
+
+###*
+# Serve a local instance of api
+###
+gulp.task 'serve', ['coffee', 'copy'], ->
     nodemon(
         env:
-            'ACTIONHERO_CONFIG': __dirname + config.paths.COMPILED_CODE + config.paths.API_CONFIG
-            'NODE_ENV': 'local'
-            'PROJECT_ROOT': __dirname + config.paths.COMPILED_CODE
-        script: "node_modules/actionhero/bin/actionhero"
+            'ACTIONHERO_CONFIG' : __dirname + config.paths.COMPILED_CODE + config.paths.API_CONFIG
+            'NODE_ENV'          : 'local'
+            'PROJECT_ROOT'      : __dirname + config.paths.COMPILED_CODE
+        script: 'node_modules/actionhero/bin/actionhero'
         ignore: ['./web/', './node_modules/']
         options: '--delay 1'
     )
-    .on "change", []
-    .on "restart", ->
+    .on 'change', []
+    .on 'restart', ->
 
-#
-# watch coffee
-#
-gulp.task "watch", ['serve'], ->
+
+###*
+# Watch coffee
+###
+gulp.task 'watch', ['serve'], ->
     livereload.listen() if argv.target in ['local','dev']
     gulp.watch './app/coffee/**/*.coffee', ['coffee']
-    gulp.watch './app/js/**/*.js', ['copy']
 
-#
-# default
-#
+
+###*
+# Default task if no task specified
+###
 gulp.task 'default', [], ->
-    runSequence ['cleancoffee'], ['disableAhNodemon', 'coffeelint', 'coffee', 'copy', 'jsdoc', 'apidoc', 'createExportPath'], 'watch'
+    runSequence(
+        ['clean'],
+        ['renameReadme', 'disableAhNodemon', 'coffeelint', 'coffee', 'copy', 'jsdoc', 'apidoc', 'createExportPath'],
+        'watch'
+    )
 
-gulp.task "build", ['cleancoffee', 'disableAhNodemon', 'coffeelint', 'jslint', 'coffee', 'copy', 'createExportPath'], (done)->
-    done() if done
-    process.exit()
 
-gulp.task "release", [], ->
-    runSequence ['cleancoffee'], ['coffeelint', 'jslint', 'coffee', 'copy', 'apidoc', 'jsdoc', 'createExportPath'], ['gzip']
+###*
+# Build task
+###
+gulp.task 'build', [], ->
+    runSequence(
+        ['clean'],
+        ['renameReadme', 'coffeelint', 'coffee', 'copy', 'createExportPath']
+    )
 
+
+###*
+# Release task. Generate a tgz file to deploy.
+###
+gulp.task 'release', [], ->
+    runSequence(
+        ['clean'],
+        ['renameReadme', 'coffeelint', 'coffee', 'copy', 'apidoc', 'jsdoc', 'createExportPath'],
+        ['gzip']
+    )
+
+
+###*
+# Unit test coverage
+###
 gulp.task 'unitcoverage', [], ->
-    runSequence ['cleancoffee'], ['coffeelintfortests', 'coffeelint', 'coffee', 'cleanlocaldb', 'copy', 'createExportPath'], ['unitcov']
+    runSequence(
+        ['clean'],
+        ['renameReadme', 'coffeelintfortests', 'coffeelint', 'coffee', 'copy', 'createExportPath'],
+        ['unitcov']
+    )
 
+
+###*
+# End to end code coverage
+###
 gulp.task 'e2ecoverage', [], ->
-    runSequence ['cleancoffee'], ['coffeelintfortests', 'coffeelint', 'coffee', 'cleanlocaldb', 'copy', 'createExportPath'], ['e2ecov']
+    runSequence(
+        ['clean'],
+        ['renameReadme', 'coffeelintfortests', 'coffeelint', 'coffee', 'copy', 'createExportPath'],
+        ['e2ecov']
+    )
 
+
+###*
+# Unit tests task
+###
 gulp.task 'unittests', [], ->
-    runSequence ['cleancoffee'], ['coffeelintfortests', 'coffeelint', 'coffee', 'cleanlocaldb', 'copy', 'createExportPath'], ['unittest']
+    runSequence(
+        ['clean'],
+        ['renameReadme', 'coffeelintfortests', 'coffeelint', 'coffee', 'copy', 'createExportPath'],
+        ['unittest']
+    )
 
+
+###*
+# End to end tests
+###
 gulp.task 'e2etests', [], ->
-    runSequence ['cleancoffee'], ['coffeelintfortests', 'coffeelint', 'coffee', 'cleanlocaldb', 'copy', 'createExportPath'], ['e2etest']
+    runSequence(
+        ['clean'],
+        ['renameReadme', 'coffeelintfortests', 'coffeelint', 'coffee', 'copy', 'createExportPath'],
+        ['e2etest']
+    )
