@@ -193,7 +193,7 @@ exports.validatePartKeys = validatePartKeys
 # @param {Object} part Part of database structure returned by database
 # @return {Object} Table currently processing
 ###
-manageTableCreation = (dbStructure, part) ->
+setTable = (dbStructure, part) ->
 
     ###*
     # If table not exists in DatabaseStruture, add it
@@ -227,7 +227,7 @@ manageTableCreation = (dbStructure, part) ->
                 'table-not-found-in-database-structure'
             )
 
-exports.manageTableCreation = manageTableCreation
+exports.setTable = setTable
 
 ###*
 # Create field object and add it to table object
@@ -235,7 +235,7 @@ exports.manageTableCreation = manageTableCreation
 # @param {Object} part Part of database structure returned by database
 # @return {Object} Table currently processing
 ###
-addFieldToTable = (table, part) ->
+setField = (table, part) ->
 
     field = new Field(part)
     table.addField(field)
@@ -243,15 +243,15 @@ addFieldToTable = (table, part) ->
     Q.fcall ->
         table
 
-exports.addFieldToTable = addFieldToTable
+exports.setField = setField
 
 ###*
-# Manage unique index for this part if exists
+# Create or update unique index for this part if exists
 # @param {Object} table Table object for this part
 # @param {Object} part Part of database structure returned by database
 # @return {Object} Table currently processing
 ###
-managePartUniqueIndex = (table, part) ->
+setUniqueIndex = (table, part) ->
 
     if part.uniqueIndexName?
 
@@ -268,16 +268,16 @@ managePartUniqueIndex = (table, part) ->
     Q.fcall ->
         table
 
-exports.managePartUniqueIndex = managePartUniqueIndex
+exports.setUniqueIndex = setUniqueIndex
 
 ###*
-# Manage unique index for this part if exists
+# Add unique index for this part if exists
 # @param {Object} dbStructure Structure object
 # @param {Object} table Table object for this part
 # @param {Object} part Part of database structure returned by database
 # @return {Object} Table currently processing
 ###
-manageRelations = (dbStructure, table, part) ->
+setRelations = (dbStructure, table, part) ->
 
     if part.refTableName?
         ###*
@@ -321,7 +321,7 @@ manageRelations = (dbStructure, table, part) ->
     Q.fcall ->
         table
 
-exports.manageRelations = manageRelations
+exports.setRelations = setRelations
 
 ###*
 # Process database structure returned by database
@@ -350,21 +350,21 @@ processDatabaseStructureParts = (dbStructureParts) ->
                         # Create table if not exists, set isView and return
                         # table
                         ###
-                        manageTableCreation dbStructure, part
+                        setTable dbStructure, part
                 )
                 .then(
                     (table) ->
                         ###*
                         # Create field Object and add it to table
                         ###
-                        addFieldToTable table, part
+                        setField table, part
                 )
                 .then(
                     (table) ->
                         ###*
                         # Set index informations
                         ###
-                        managePartUniqueIndex table, part
+                        setUniqueIndex table, part
                 )
                 .then(
                     (table) ->
@@ -373,7 +373,7 @@ processDatabaseStructureParts = (dbStructureParts) ->
                         # @todo Add a isMultiple fields to know if subobject is
                         # unique or an array
                         ###
-                        manageRelations dbStructure, table, part
+                        setRelations dbStructure, table, part
                 )
                 .catch (error) ->
                     throw error

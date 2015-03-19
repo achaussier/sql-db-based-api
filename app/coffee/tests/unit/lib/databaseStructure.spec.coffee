@@ -35,10 +35,10 @@ describe 'Database structure classes and functions', ->
         dbStructUtils.should.have.keys [
             'getStructureFromDB'
             'processDatabaseStructureParts'
-            'manageTableCreation'
-            'addFieldToTable'
-            'managePartUniqueIndex'
-            'manageRelations'
+            'setField'
+            'setTable'
+            'setUniqueIndex'
+            'setRelations'
             'validatePartMandatoryValues'
             'validatePartKeys'
         ]
@@ -211,7 +211,7 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
                 )
 
-    describe 'manageTableCreation', ->
+    describe 'setTable', ->
 
         beforeEach (done) ->
             mocksUtils  = clone mocks
@@ -228,7 +228,7 @@ describe 'Database structure classes and functions', ->
             val = new DatabaseStructure()
             obj = mocksUtils.dbStructureField
 
-            dbStructUtils.manageTableCreation(val, obj)
+            dbStructUtils.setTable(val, obj)
                 .then(
                     (result) ->
                         result.should.have.property 'name'
@@ -247,7 +247,7 @@ describe 'Database structure classes and functions', ->
                     null
             )
 
-            dbStructUtils.manageTableCreation(val, obj)
+            dbStructUtils.setTable(val, obj)
                 .then(
                     (result) ->
                         throw new Error 'Should not be go here in this test'
@@ -258,7 +258,7 @@ describe 'Database structure classes and functions', ->
         it 'should add a new field to a table', ->
             val = new Table mocksUtils.dbStructureTable
 
-            dbStructUtils.addFieldToTable val, mocksUtils.dbStructureField
+            dbStructUtils.setField val, mocksUtils.dbStructureField
                 .then(
                     (result) ->
                         result.fields.length.should.be.eql 1
@@ -266,7 +266,7 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
                 )
 
-    describe 'managePartUniqueIndex', ->
+    describe 'setUniqueIndex', ->
 
         beforeEach (done) ->
             mocksUtils  = clone mocks
@@ -284,7 +284,7 @@ describe 'Database structure classes and functions', ->
             val = new Table mocksUtils.dbStructureTable
             spy = sinon.spy val, 'addUniqueIndexPart'
 
-            dbStructUtils.managePartUniqueIndex val, {}
+            dbStructUtils.setUniqueIndex val, {}
                 .then(
                     (result) ->
                         spy.called.should.be.false
@@ -300,7 +300,7 @@ describe 'Database structure classes and functions', ->
                 columnName     : 'bar'
             spy = sinon.spy val, 'addUniqueIndexPart'
 
-            dbStructUtils.managePartUniqueIndex val, obj
+            dbStructUtils.setUniqueIndex val, obj
                 .then(
                     (result) ->
                         spy.called.should.be.true
@@ -308,7 +308,7 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
                     )
 
-    describe 'manageRelations', ->
+    describe 'setRelations', ->
 
         beforeEach (done) ->
             mocksUtils  = clone mocks
@@ -329,7 +329,7 @@ describe 'Database structure classes and functions', ->
             table1      = new Table mocksUtils.dbStructureTable
             spy         = sinon.spy table1, 'addRelation'
 
-            dbStructUtils.manageRelations dbStructure, table1, {}
+            dbStructUtils.setRelations dbStructure, table1, {}
                 .then(
                     (result) ->
                         spy.called.should.be.false
@@ -355,7 +355,7 @@ describe 'Database structure classes and functions', ->
                 refColumnName: 'bar2'
 
 
-            dbStructUtils.manageRelations dbStructure, table1, obj
+            dbStructUtils.setRelations dbStructure, table1, obj
                 .then(
                     (result) ->
                         spy.called.should.be.true
@@ -378,7 +378,7 @@ describe 'Database structure classes and functions', ->
                 refColumnName: 'bar2'
 
 
-            dbStructUtils.manageRelations dbStructure, table1, obj
+            dbStructUtils.setRelations dbStructure, table1, obj
                 .then(
                     (result) ->
                         spy.called.should.be.true
