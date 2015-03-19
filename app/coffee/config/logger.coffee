@@ -4,7 +4,7 @@
  * @fileoverview Logger config
 ###
 
-fs = require 'fs'
+fs      = require 'fs'
 cluster = require 'cluster'
 winston = require 'winston'
 
@@ -15,15 +15,22 @@ winston = require 'winston'
 exports.default =
     logger: (api) ->
 
+        ###*
+        # Initialize transports for logger
+        ###
         logger =
             transports: []
 
+        ###*
+        # Active transports
+        ###
         logger.transports.push (api, winston) ->
             new (winston.transports.Console)(
-                colorize: true
-                level: 'debug'
-                timestamp: api.utils.sqlDateTime
+                colorize    : true
+                level       : 'debug'
+                timestamp   : api.utils.sqlDateTime
             )
+
         logger
 
 ###*
@@ -41,13 +48,20 @@ exports.local =
 exports.production =
     logger: (api) ->
 
+        ###*
+        # Initialize transports for logger
+        ###
         logger =
             transports: []
 
+        ###*
+        # Active transports
+        ###
         logger.transports.push (api, winston) ->
             new (winston.transports.Console)(
-                colorize: true
-                level: 'info'
-                timestamp: api.utils.sqlDateTime
+                colorize    : true
+                level       : 'info'
+                timestamp   : api.utils.sqlDateTime
             )
+
         logger

@@ -7,9 +7,9 @@
 class ServerError
     constructor: (
         @data,
-        @message = 'internal-server-error',
-        @code = 500,
-        @category = 'server-error'
+        @message    = 'internal-server-error',
+        @code       = 500,
+        @category   = 'server-error'
     ) ->
         Error.captureStackTrace(@,@,@,@)
 

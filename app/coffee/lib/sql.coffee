@@ -4,8 +4,8 @@
 # @fileOverview High level functions to work with the database
 ###
 
-Q = require 'q'
-rmErrors = require './errors.js'
+Q           = require 'q'
+rmErrors    = require './errors.js'
 
 ###*
 # Return a promise connection from a read only pool
@@ -149,8 +149,8 @@ executeSelect = (connection, queryData) ->
             if error
                 errorObj = new rmErrors.DatabaseError(
                     {
-                        query: queryData,
-                        error : error
+                        query   : queryData,
+                        error   : error
                     },
                     'error-during-query-execution'
                 )
@@ -158,8 +158,8 @@ executeSelect = (connection, queryData) ->
 
             else
                 defer.resolve(
-                    results: results
-                    fields: fields
+                    results : results
+                    fields  : fields
                 )
 
     defer.promise

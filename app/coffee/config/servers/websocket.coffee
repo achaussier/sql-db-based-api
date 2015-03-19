@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 ###*
  * @fileoverview Tasks config
@@ -49,17 +49,17 @@ exports.default =
              * @type {Object}
             ###
             server:
-                authorization: null
-                pathname:      '/primus'
-                parser:        'JSON'
-                transformer:   'websockets'
-                plugin:        {}
-                timeout:       35000
-                origins:       '*'
-                methods:       ['GET','HEAD','PUT','POST','DELETE','OPTIONS']
-                credentials:   true
-                maxAge:        '30 days'
-                exposed:       false
+                authorization   : null
+                pathname        : '/primus'
+                parser          : 'JSON'
+                transformer     : 'websockets'
+                plugin          : {}
+                timeout         : 35000
+                origins         : '*'
+                methods         : ['GET','HEAD','PUT','POST','DELETE','OPTIONS']
+                credentials     : true
+                maxAge          : '30 days'
+                exposed         : false
 
             ###*
              * Primus Client Options
@@ -70,14 +70,14 @@ exports.default =
                  * The api base endpoint on your actionhero server
                  * @type {String}
                 ###
-                apiPath: '/api'
-                reconnect:        {}
-                timeout:          10000
-                ping:             25000
-                pong:             10000
-                strategy:         "online"
-                manual:           false
-                websockets:       true
-                network:          true
-                transport:        {}
-                queueSize:        Infinity
+                apiPath     : '/api'
+                reconnect   : {}
+                timeout     : 10000
+                ping        : 25000
+                pong        : 10000
+                strategy    : 'online'
+                manual      : false
+                websockets  : true
+                network     : true
+                transport   : {}
+                queueSize   : Infinity

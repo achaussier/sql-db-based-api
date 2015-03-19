@@ -9,9 +9,9 @@ class ParameterError
         @name,
         @expected,
         @received,
-        @message = 'bad-parameter-received',
-        @code = 400,
-        @category = 'parameter-error'
+        @message    = 'bad-parameter-received',
+        @code       = 400,
+        @category   = 'parameter-error'
     ) ->
         Error.captureStackTrace(@,@,@,@,@,@)
 

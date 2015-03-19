@@ -4,9 +4,9 @@
 # @fileOverview Function can be used in others lib
 ###
 
-Q = require 'q'
-isArray = require('util').isArray
-rmErrors = require './errors.js'
+Q           = require 'q'
+isArray     = require('util').isArray
+rmErrors    = require './errors.js'
 
 ###*
 # Validate if all keys exists and have not null value in this object
@@ -17,8 +17,8 @@ rmErrors = require './errors.js'
 ###
 checkKeysHaveNotNullValues = (obj, keys) ->
 
-    result = true
-    errorObj = null
+    result      = true
+    errorObj    = null
 
     ###*
     # Check parameters
@@ -70,8 +70,8 @@ exports.checkKeysHaveNotNullValues = checkKeysHaveNotNullValues
 ###
 checkKeys = (obj, keys) ->
 
-    result = true
-    errorObj = null
+    result      = true
+    errorObj    = null
 
     ###*
     # Check parameters

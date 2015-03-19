@@ -50,20 +50,20 @@ exports.default =
              * Any additional headers you want actionhero to respond with
              * @type {Object}
             ###
-            httpHeaders :
-                'X-Powered-By'                : api.config.general.serverName
-                'Access-Control-Allow-Origin' : '*'
-                'Access-Control-Allow-Methods': 'HEAD,
-                                                GET,
-                                                POST,
-                                                PUT,
-                                                PATCH,
-                                                DELETE,
-                                                OPTIONS,
-                                                TRACE'
-                'Access-Control-Allow-Headers': 'Content-Type,
-                                                Access-Control-Allow-Origin,
-                                                Authorization'
+            httpHeaders =
+                'X-Powered-By'                  : api.config.general.serverName
+                'Access-Control-Allow-Origin'   : '*'
+                'Access-Control-Allow-Methods'  : 'HEAD,
+                                                    GET,
+                                                    POST,
+                                                    PUT,
+                                                    PATCH,
+                                                    DELETE,
+                                                    OPTIONS,
+                                                    TRACE'
+                'Access-Control-Allow-Headers'  : 'Content-Type,
+                                                    Access-Control-Allow-Origin,
+                                                    Authorization'
 
 
             ###*
@@ -116,12 +116,12 @@ exports.default =
              * @type {Object}
             ###
             fingerprintOptions :
-                cookieKey: 'sessionID'
-                toSetCookie: true
-                onlyStaticElements: false
+                cookieKey           : 'sessionID'
+                toSetCookie         : true
+                onlyStaticElements  : false
                 settings:
-                    path: '/'
-                    expires: 3600000
+                    path    : '/'
+                    expires : 3600000
 
             ###*
              * Options to be applied to incoming file uploads.
@@ -130,9 +130,9 @@ exports.default =
              * @type {Object}
             ###
             formOptions:
-                uploadDir: '/tmp'
-                keepExtensions: false
-                maxFieldsSize: 1024 * 1024 * 100
+                uploadDir       : '/tmp'
+                keepExtensions  : false
+                maxFieldsSize   : 1024 * 1024 * 100
 
             ###*
              * Should we pad JSON responses with whitespace to make them more
@@ -147,7 +147,7 @@ exports.default =
              * @type {Object}
             ###
             metadataOptions:
-                serverInformation: false
+                serverInformation   : false
                 requesterInformation: false
 
             ###*
@@ -193,7 +193,7 @@ exports.development =
              * @type {Object}
             ###
             metadataOptions:
-                serverInformation: true
+                serverInformation   : true
                 requesterInformation: true
 
             ###*

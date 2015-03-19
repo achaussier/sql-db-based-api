@@ -19,9 +19,8 @@ changeReturnCode = (connection, actionTemplate, toRender, next) ->
     if isArray(connection.error) and not isNaN(connection.error[0]?.code)
         returnCode = connection.error[0].code
         connection.rawConnection.responseHttpCode = returnCode
-        next connection, true
-    else
-        next connection, true
+
+    next connection, true
 
 exports.changeReturnCode = changeReturnCode
 
