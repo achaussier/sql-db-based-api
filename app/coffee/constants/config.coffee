@@ -21,6 +21,6 @@ config =
         API_PUBLIC_FOLDER:  '/public/'
         API_SERVERS:        '/servers/'
         API_TASKS:          '/tasks/'
-        COMPILED_CODE:      '/web/js/'
+        COMPILED_CODE:      '/dist/'
 
 module.exports = config

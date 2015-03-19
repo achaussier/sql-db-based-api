@@ -4,10 +4,10 @@
 # @fileOverview Tables objects used to build database structure
 ###
 
-ComplexField = require './ComplexField.js'
-SimpleField = require './SimpleField.js'
-UniqueIndex = require './UniqueIndex.js'
-isArray = require('util').isArray
+ComplexField    = require './ComplexField.js'
+SimpleField     = require './SimpleField.js'
+UniqueIndex     = require './UniqueIndex.js'
+isArray         = require('util').isArray
 
 class Table
 
@@ -46,9 +46,9 @@ class Table
         # Search if relation already exists
         ###
         relation.push rel for rel in @relations when (
-            rel.originColumn is relationToAdd.originColumn and
-            rel.destTable is relationToAdd.destTable and
-            rel.destColumn is relationToAdd.destColumn
+            rel.originColumn    is relationToAdd.originColumn and
+            rel.destTable       is relationToAdd.destTable and
+            rel.destColumn      is relationToAdd.destColumn
         )
 
         if relation.length is 0
@@ -93,7 +93,11 @@ class Table
             # If index is incomplet, update it
             ###
             addReturn = indexes[0].addColumn indexPart.columnName
-            if addReturn and indexes[0].columns.length is 2 then true else false
+
+            if not addReturn or indexes[0].columns.length isnt 2
+                false
+            else
+                true
 
     ###*
     # Check if this table contains a field where name equal to param
@@ -104,7 +108,7 @@ class Table
         match = []
         match.push field for field in @fields when field.columnName is fieldName
 
-        if match.length > 0 then true else false
+        match.length > 0
 
     ###*
     # To populate versionOneRender object
