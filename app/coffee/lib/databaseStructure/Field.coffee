@@ -45,6 +45,6 @@ class Field
         @columnKey is 'pri'
 
     isRequired: ->
-        !@nullable? and !@defaultValue?
+        !@isNullable() and !@defaultValue?
 
 module.exports = Field

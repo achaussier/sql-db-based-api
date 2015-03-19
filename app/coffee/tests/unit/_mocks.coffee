@@ -234,7 +234,7 @@ exports.dbStructureField =
     columnName         : 'bar'
     ordinalPosition    : null
     defaultValue       : null
-    isNullable         : null
+    isNullable         : 'no'
     dataType           : 'int'
     charMaxLength      : 255
     charOctetLength    : null
@@ -243,7 +243,7 @@ exports.dbStructureField =
     datetimePrecision  : null
     charSetName        : null
     collationName      : null
-    columnType         : null
+    columnType         : 'varchar'
     columnKey          : 'foo'
     extra              : ''
     refTableName       : null
