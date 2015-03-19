@@ -7,9 +7,9 @@
 class DatabaseError
     constructor: (
         @data,
-        @message = 'query-error',
-        @code = 400,
-        @category = 'database-error'
+        @message    = 'query-error',
+        @code       = 400,
+        @category   = 'database-error'
     ) ->
         Error.captureStackTrace(@,@,@,@)
 
