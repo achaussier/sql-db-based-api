@@ -5,26 +5,26 @@
 ###
 
 # require packages
-clone = require 'clone'
-sqlUtils = require '../../../lib/sql.js'
-rmErrors = require '../../../lib/errors.js'
-mocks = require '../_mocks.js'
-should = require 'should'
+clone       = require 'clone'
+sqlUtils    = require '../../../lib/sql.js'
+rmErrors    = require '../../../lib/errors.js'
+mocks       = require '../_mocks.js'
+should      = require 'should'
 
 mocksUtils = clone mocks
 
 describe 'SQL functions', ->
 
     beforeEach (done) ->
-        mocksUtils = clone mocks
-        val = undefined
+        mocksUtils  = clone mocks
+        val         = undefined
         done()
 
     describe 'getReadOnlyConnection', ->
 
         beforeEach (done) ->
-            mocksUtils = clone mocks
-            val = undefined
+            mocksUtils  = clone mocks
+            val         = undefined
             done()
 
         for badApi in mocksUtils.badSqlApis

@@ -23,9 +23,8 @@ exports.default =
         ###
         serverErrorMessage: ->
             errors = []
-            errors.push(
-                new rmErrors.ServerError(null)
-            )
+            errorObj = new rmErrors.ServerError null
+            errors.push errorObj
             errors
 
         ###*
@@ -69,13 +68,12 @@ exports.default =
         ###
         unknownAction: (action) ->
             errors = []
-            errors.push(
-                new rmErrors.ServerError(
-                    action,
-                    'unknown-action-or-invalid-api-version',
-                    501
-                )
+            errorObj = new rmErrors.ServerError(
+                action,
+                'unknown-action-or-invalid-api-version',
+                501
             )
+            errors.push errorObj
             errors
 
         ###*
@@ -84,13 +82,12 @@ exports.default =
         ###
         unsupportedServerType: (type) ->
             errors = []
-            errors.push(
-                new rmErrors.ServerError(
-                    type,
-                    'unsupported-server-type',
-                    501
-                )
+            errorObj = new rmErrors.ServerError(
+                type,
+                'unsupported-server-type',
+                501
             )
+            errors.push errorObj
             errors
 
         ###*
@@ -99,13 +96,12 @@ exports.default =
         ###
         serverShuttingDown: ->
             errors = []
-            errors.push(
-                new rmErrors.ServerError(
-                    null,
-                    'server-shutting-down',
-                    503
-                )
+            errorObj = new rmErrors.ServerError(
+                null,
+                'server-shutting-down',
+                503
             )
+            errors.push errorObj
             errors
 
         ###*
@@ -115,13 +111,12 @@ exports.default =
         ###
         tooManyPendingActions: ->
             errors = []
-            errors.push(
-                new rmErrors.ServerError(
-                    null,
-                    'too-many-pending-requests',
-                    509
-                )
+            errorObj = new rmErrors.ServerError(
+                null,
+                'too-many-pending-requests',
+                509
             )
+            errors.push errorObj
             errors
 
         ###*
@@ -130,12 +125,11 @@ exports.default =
         ###
         doubleCallbackError: ->
             errors = []
-            errors.push(
-                new rmErrors.ServerError(
-                    null,
-                    'double-callback-prevented'
-                )
+            errorObj = new rmErrors.ServerError(
+                null,
+                'double-callback-prevented'
             )
+            errors.push errorObj
             errors
 
         ###*
@@ -150,13 +144,12 @@ exports.default =
         ###
         fileNotFound: ->
             errors = []
-            errors.push(
-                new rmErrors.ServerError(
-                    null,
-                    'file-not-found',
-                    404
-                )
+            errorObj = new rmErrors.ServerError(
+                null,
+                'file-not-found',
+                404
             )
+            errors.push errorObj
             errors
 
         ###*
@@ -165,13 +158,12 @@ exports.default =
         ###
         fileNotProvided: ->
             errors = []
-            errors.push(
-                new rmErrors.ServerError(
-                    null,
-                    'no-file-parameter',
-                    400
-                )
+            errorObj = new rmErrors.ServerError(
+                null,
+                'no-file-parameter',
+                400
             )
+            errors.push errorObj
             errors
 
         ###*
@@ -180,13 +172,12 @@ exports.default =
         ###
         fileInvalidPath: ->
             errors = []
-            errors.push(
-                new rmErrors.ServerError(
-                    null,
-                    'incorrect-file-path',
-                    422
-                )
+            errorObj = new rmErrors.ServerError(
+                null,
+                'incorrect-file-path',
+                422
             )
+            errors.push errorObj
             errors
 
         ###*
@@ -195,13 +186,12 @@ exports.default =
         ###
         fileReadError: (err) ->
             errors = []
-            errors.push(
-                new rmErrors.ServerError(
-                    err,
-                    'error-reading-file',
-                    424
-                )
+            errorObj = new rmErrors.ServerError(
+                err,
+                'error-reading-file',
+                424
             )
+            errors.push errorObj
             errors
 
         ###*
