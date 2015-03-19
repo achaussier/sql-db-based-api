@@ -61,10 +61,10 @@ process.env.SPECHELPER          = true
 # Paths for coverage inspection
 ###
 coveragePaths = [
-    'web/actions/**/*.js'
-    'web/initializers/**/*.js'
-    'web/lib/**/*.js'
-    'web/config/**/*.js'
+    'dist/actions/**/*.js'
+    'dist/initializers/**/*.js'
+    'dist/lib/**/*.js'
+    'dist/config/**/*.js'
 ]
 
 ###*
@@ -335,7 +335,7 @@ gulp.task 'serve', ['coffee', 'copy'], ->
             'NODE_ENV'          : 'local'
             'PROJECT_ROOT'      : __dirname + config.paths.COMPILED_CODE
         script: 'node_modules/actionhero/bin/actionhero'
-        ignore: ['./web/', './node_modules/']
+        ignore: ['./dist/', './node_modules/']
         options: '--delay 1'
     )
     .on 'change', []
