@@ -128,12 +128,12 @@ getStructureFromDB = (api) ->
 exports.getStructureFromDB = getStructureFromDB
 
 ###*
-# Validate mandatory values for a part of structure returned by database
+# Check mandatory values for a part of structure returned by database
 # @param {Object} structurePart Structure part to test
 # @return {Object} Structure part if valid
 # @throw {Object} ParameterError if structure part is invalid
 ###
-validatePartMandatoryValues = (part) ->
+checkPartMandatoryValues = (part) ->
 
     validKeys = [
         'tableSchema'
@@ -149,15 +149,15 @@ validatePartMandatoryValues = (part) ->
 
     globalUtils.checkKeysHaveNotNullValues(part, validKeys)
 
-exports.validatePartMandatoryValues = validatePartMandatoryValues
+exports.checkPartMandatoryValues = checkPartMandatoryValues
 
 ###*
-# Validate keys for a part of structure returned by database
+# Check keys for a part of structure returned by database
 # @param {Object} structurePart Structure part to test
 # @return {Object} Structure part if valid
 # @throw {Object} ParameterError if structure part is invalid
 ###
-validatePartKeys = (part) ->
+checkPartKeys = (part) ->
 
     validKeys = [
         'tableSchema'
@@ -185,7 +185,7 @@ validatePartKeys = (part) ->
 
     globalUtils.checkKeys(part, validKeys)
 
-exports.validatePartKeys = validatePartKeys
+exports.checkPartKeys = checkPartKeys
 
 ###*
 # Create Table if not exists and add it to DatabaseStructure
@@ -339,11 +339,11 @@ processDatabaseStructureParts = (dbStructureParts) ->
         do (part) ->
 
             ###*
-            # Validate row structure
+            # Check row structure
             ###
             promises.push(
-                validatePartMandatoryValues part
-                .then validatePartKeys
+                checkPartMandatoryValues part
+                .then checkPartKeys
                 .then(
                     (part) ->
                         ###*

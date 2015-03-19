@@ -33,14 +33,14 @@ describe 'Database structure classes and functions', ->
 
     it 'should exports all database structure classes', ->
         dbStructUtils.should.have.keys [
+            'checkPartKeys'
+            'checkPartMandatoryValues'
             'getStructureFromDB'
             'processDatabaseStructureParts'
             'setField'
             'setTable'
             'setUniqueIndex'
             'setRelations'
-            'validatePartMandatoryValues'
-            'validatePartKeys'
         ]
 
     describe 'getStructureFromDB', ->
@@ -88,7 +88,7 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
                 )
 
-    describe 'validatePartMandatoryValues', ->
+    describe 'checkPartMandatoryValues', ->
 
         beforeEach (done) ->
             badObj      = null
@@ -98,7 +98,7 @@ describe 'Database structure classes and functions', ->
             done()
 
         it 'should reject if no param', ->
-            dbStructUtils.validatePartMandatoryValues()
+            dbStructUtils.checkPartMandatoryValues()
                 .then(
                     (result) ->
                         throw new Error 'Should not be go here in this test'
@@ -109,7 +109,7 @@ describe 'Database structure classes and functions', ->
         for badObj in mocksUtils.badObjectParam
             do (badObj) ->
                 it 'should reject if bad obj param', ->
-                    dbStructUtils.validatePartMandatoryValues badObj
+                    dbStructUtils.checkPartMandatoryValues badObj
                         .then(
                             (result) ->
                                 throw new Error 'Should not be go here in this test'
@@ -121,7 +121,7 @@ describe 'Database structure classes and functions', ->
             obj = mocksUtils.dbStructureField
             delete obj.tableName
 
-            dbStructUtils.validatePartMandatoryValues obj
+            dbStructUtils.checkPartMandatoryValues obj
                 .then(
                     (result) ->
                         throw new Error 'Should not be go here in this test'
@@ -135,7 +135,7 @@ describe 'Database structure classes and functions', ->
             obj             = mocksUtils.dbStructureField
             obj.tableName   = null
 
-            dbStructUtils.validatePartMandatoryValues obj
+            dbStructUtils.checkPartMandatoryValues obj
                 .then(
                     (result) ->
                         throw new Error 'Should not be go here in this test'
@@ -149,7 +149,7 @@ describe 'Database structure classes and functions', ->
             obj.columnType  = 'foo'
             obj.isNullable  = 'foo'
 
-            dbStructUtils.validatePartMandatoryValues obj
+            dbStructUtils.checkPartMandatoryValues obj
                 .then(
                     (result) ->
                         result.should.have.property 'tableName'
@@ -157,7 +157,7 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
                 )
 
-    describe 'validatePartKeys', ->
+    describe 'checkPartKeys', ->
 
         beforeEach (done) ->
             badObj      = null
@@ -167,7 +167,7 @@ describe 'Database structure classes and functions', ->
             done()
 
         it 'should reject if no param', ->
-            dbStructUtils.validatePartKeys()
+            dbStructUtils.checkPartKeys()
                 .then(
                     (result) ->
                         throw new Error 'Should not be go here in this test'
@@ -178,7 +178,7 @@ describe 'Database structure classes and functions', ->
         for badObj in mocksUtils.badObjectParam
             do (badObj) ->
                 it 'should reject if bad obj param', ->
-                    dbStructUtils.validatePartKeys badObj
+                    dbStructUtils.checkPartKeys badObj
                         .then(
                             (result) ->
                                 throw new Error 'Should not be go here in this test'
@@ -190,7 +190,7 @@ describe 'Database structure classes and functions', ->
             obj = mocksUtils.dbStructureField
             delete obj.tableName
 
-            dbStructUtils.validatePartKeys obj
+            dbStructUtils.checkPartKeys obj
                 .then(
                     (result) ->
                         throw new Error 'Should not be go here in this test'
@@ -203,7 +203,7 @@ describe 'Database structure classes and functions', ->
         it 'should resolve if all keys have not null value', ->
             obj = mocksUtils.dbStructureField
 
-            dbStructUtils.validatePartKeys obj
+            dbStructUtils.checkPartKeys obj
                 .then(
                     (result) ->
                         result.should.have.property 'tableName'
