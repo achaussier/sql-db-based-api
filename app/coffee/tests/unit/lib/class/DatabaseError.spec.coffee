@@ -5,7 +5,7 @@
 ###
 
 # require packages
-DatabaseError = require '../../../../lib/errors/DatabaseError.js'
+DatabaseError = require '../../../../lib/class/DatabaseError.js'
 should = require 'should'
 
 errorObj = null

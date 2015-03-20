@@ -1,14 +1,14 @@
 'use strict'
 
 ###*
-# @fileOverview Tests about database structure SimpleField class
+# @fileOverview Tests about database structure ComplexField class
 ###
 
 # require packages
+ComplexField = require '../../../../lib/class/ComplexField.js'
 clone = require 'clone'
-Field = require '../../../../lib/databaseStructure/Field.js'
+Field = require '../../../../lib/class/Field.js'
 mocks = require '../../_mocks.js'
-SimpleField = require '../../../../lib/databaseStructure/SimpleField.js'
 should = require 'should'
 
 errorObj = null
@@ -16,7 +16,7 @@ mocksUtils = null
 val = null
 val2 = null
 
-describe 'Database structure : SimpleField class', ->
+describe 'Database structure : ComplexField class', ->
 
     beforeEach (done) ->
         errorObj = null
@@ -25,17 +25,15 @@ describe 'Database structure : SimpleField class', ->
         val2 = null
         done()
 
-    it 'should create new simple field', ->
+    it 'should create new complex field', ->
         val = new Field(mocksUtils.dbStructureField)
         val.should.be.instanceof Field
-        val2 = new SimpleField(val)
-        val2.should.be.instanceof SimpleField
+        val2 = new ComplexField(val)
+        val2.should.be.instanceof ComplexField
         val2.should.have.keys [
             'criticality'
             'type'
             'isNullable'
             'isViewable'
-            'maxLength'
-            'defaultValue'
-            'isAutoIncrement'
+            'isArray'
         ]

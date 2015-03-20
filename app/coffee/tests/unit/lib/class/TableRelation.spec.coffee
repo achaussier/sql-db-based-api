@@ -5,7 +5,7 @@
 ###
 
 # require packages
-TableRelation = require '../../../../lib/databaseStructure/TableRelation.js'
+TableRelation = require '../../../../lib/class/TableRelation.js'
 should = require 'should'
 
 errorObj = null

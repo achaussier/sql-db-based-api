@@ -5,7 +5,7 @@
 ###
 
 # require packages
-paramError = require '../../../../lib/errors/ParameterError.js'
+paramError = require '../../../../lib/class/ParameterError.js'
 should = require 'should'
 
 errorObj = null

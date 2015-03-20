@@ -7,8 +7,8 @@
 # require packages
 clone = require 'clone'
 mocks = require '../../_mocks.js'
-DatabaseStructure = require '../../../../lib/databaseStructure/DatabaseStructure.js'
-Table = require '../../../../lib/databaseStructure/Table.js'
+DatabaseStructure = require '../../../../lib/class/DatabaseStructure.js'
+Table = require '../../../../lib/class/Table.js'
 should = require 'should'
 
 errorObj = null
