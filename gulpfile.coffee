@@ -91,12 +91,20 @@ gulp.task 'gzip', [], ->
 ###*
 # Copy package.json file to launch npm instal command on install
 ###
-gulp.task 'copy', [], ->
+gulp.task 'copyPackageJson', [], ->
     gulp
         .src './package.json'
         .pipe changed './dist/', { hasChanged: changed.compareSha1Digest }
         .pipe gulp.dest './dist/'
         .pipe gulpif argv.target in ['local','dev'], livereload()
+
+###*
+# Copy changelog.txt to public folder
+###
+gulp.task 'copyChangelog', [], ->
+    gulp
+        .src './package.json'
+        .pipe gulp.dest './dist/public/'
 
 
 ###*
@@ -359,7 +367,17 @@ gulp.task 'watch', ['serve'], ->
 gulp.task 'default', [], ->
     runSequence(
         ['clean'],
-        ['renameReadme', 'disableAhNodemon', 'coffeelint', 'coffee', 'copy', 'jsdoc', 'apidoc', 'createExportPath'],
+        [
+            'renameReadme'
+            'disableAhNodemon'
+            'coffeelint'
+            'coffee'
+            'copyPackageJson'
+            'copyChangelog'
+            'jsdoc'
+            'apidoc'
+            'createExportPath'
+        ],
         'watch'
     )
 
@@ -370,7 +388,14 @@ gulp.task 'default', [], ->
 gulp.task 'build', [], ->
     runSequence(
         ['clean'],
-        ['renameReadme', 'coffeelint', 'coffee', 'copy', 'createExportPath']
+        [
+            'renameReadme'
+            'coffeelint'
+            'coffee'
+            'copyPackageJson'
+            'copyChangelog'
+            'createExportPath'
+        ]
     )
 
 
@@ -380,7 +405,16 @@ gulp.task 'build', [], ->
 gulp.task 'release', [], ->
     runSequence(
         ['clean'],
-        ['renameReadme', 'coffeelint', 'coffee', 'copy', 'apidoc', 'jsdoc', 'createExportPath'],
+        [
+            'renameReadme'
+            'coffeelint'
+            'coffee'
+            'copyPackageJson'
+            'copyChangelog'
+            'apidoc'
+            'jsdoc'
+            'createExportPath'
+        ],
         ['gzip']
     )
 
@@ -391,7 +425,15 @@ gulp.task 'release', [], ->
 gulp.task 'unitcoverage', [], ->
     runSequence(
         ['clean'],
-        ['renameReadme', 'coffeelintfortests', 'coffeelint', 'coffee', 'copy', 'createExportPath'],
+        [
+            'renameReadme'
+            'coffeelintfortests'
+            'coffeelint'
+            'coffee'
+            'copyPackageJson'
+            'copyChangelog'
+            'createExportPath'
+        ],
         ['unitcov']
     )
 
@@ -402,7 +444,15 @@ gulp.task 'unitcoverage', [], ->
 gulp.task 'e2ecoverage', [], ->
     runSequence(
         ['clean'],
-        ['renameReadme', 'coffeelintfortests', 'coffeelint', 'coffee', 'copy', 'createExportPath'],
+        [
+            'renameReadme'
+            'coffeelintfortests'
+            'coffeelint'
+            'coffee'
+            'copyPackageJson'
+            'copyChangelog'
+            'createExportPath'
+        ],
         ['e2ecov']
     )
 
@@ -413,7 +463,15 @@ gulp.task 'e2ecoverage', [], ->
 gulp.task 'unittests', [], ->
     runSequence(
         ['clean'],
-        ['renameReadme', 'coffeelintfortests', 'coffeelint', 'coffee', 'copy', 'createExportPath'],
+        [
+            'renameReadme'
+            'coffeelintfortests'
+            'coffeelint'
+            'coffee'
+            'copyPackageJson'
+            'copyChangelog'
+            'createExportPath'
+        ],
         ['unittest']
     )
 
@@ -424,6 +482,14 @@ gulp.task 'unittests', [], ->
 gulp.task 'e2etests', [], ->
     runSequence(
         ['clean'],
-        ['renameReadme', 'coffeelintfortests', 'coffeelint', 'coffee', 'copy', 'createExportPath'],
+        [
+            'renameReadme'
+            'coffeelintfortests'
+            'coffeelint'
+            'coffee'
+            'copyPackageJson'
+            'copyChangelog'
+            'createExportPath'
+        ],
         ['e2etest']
     )
