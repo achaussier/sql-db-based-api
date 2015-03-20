@@ -65,6 +65,8 @@ coveragePaths = [
     'dist/initializers/**/*.js'
     'dist/lib/**/*.js'
     'dist/config/**/*.js'
+    'dist/app.js'
+
 ]
 
 ###*
@@ -295,6 +297,7 @@ gulp.task 'jsdoc', (done) ->
             'dist/config/**/*.js'
             'dist/initializers/**/*.js'
             'dist/lib/**/*.js'
+            'dist/app.js'
         ]
         .pipe jsdoc 'dist/public/doc/dev'
 
