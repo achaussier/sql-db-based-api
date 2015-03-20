@@ -141,3 +141,18 @@ areSameArrays = (a, b) ->
         false
 
 exports.areSameArrays = areSameArrays
+
+###*
+# Check if object contains errors values (one level check)
+# @param    {Object}    obj Source array
+# @return   {Boolean}       True if error found in values, else false
+###
+containsErrorValue = (obj) ->
+    errors = []
+
+    for key, value of obj
+        if rmErrors.isJsError(value) or rmErrors.isCustomError(value)
+            errors.push value
+    errors
+
+exports.containsErrorValue = containsErrorValue

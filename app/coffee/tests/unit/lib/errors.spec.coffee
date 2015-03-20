@@ -5,14 +5,60 @@
 ###
 
 # require packages
-errorClasses = require '../../../lib/errors.js'
+errorUtils = require '../../../lib/errors.js'
 should = require 'should'
+
+obj = null
 
 describe 'Custom error classes export', ->
 
     it 'should exports all custom error classes', ->
-        errorClasses.should.have.keys [
+        errorUtils.should.have.keys [
             'DatabaseError'
+            'isCustomError'
+            'isJsError'
             'ParameterError'
             'ServerError'
         ]
+
+    describe 'isJsError', ->
+
+        beforeEach (done) ->
+            obj = null
+            done()
+
+        it 'should return true if JS error', ->
+            obj = new Error 'foo'
+            errorUtils.isJsError(obj).should.be.true
+
+        it 'should return false if Custom error', ->
+            obj = new errorUtils.ParameterError 'foo'
+            errorUtils.isJsError(obj).should.be.false
+
+        it 'should return false if empty param', ->
+            errorUtils.isJsError().should.be.false
+
+    describe 'isCustomError', ->
+
+        beforeEach (done) ->
+            obj = null
+            done()
+
+        it 'should return true if custom error', ->
+            obj = new errorUtils.ParameterError 'foo'
+            errorUtils.isCustomError(obj).should.be.true
+
+        it 'should return true if custom error', ->
+            obj = new errorUtils.ServerError 'foo'
+            errorUtils.isCustomError(obj).should.be.true
+
+        it 'should return true if custom error', ->
+            obj = new errorUtils.DatabaseError 'foo'
+            errorUtils.isCustomError(obj).should.be.true
+
+        it 'should return false if js error', ->
+            obj = new Error 'foo'
+            errorUtils.isCustomError(obj).should.be.false
+
+        it 'should return false if custom error', ->
+            errorUtils.isCustomError().should.be.false
