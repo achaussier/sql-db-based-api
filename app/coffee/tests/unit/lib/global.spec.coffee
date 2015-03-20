@@ -239,3 +239,32 @@ describe 'Global lib', ->
         it 'should return true if they are empty', ->
             val = globalUtils.areSameArrays([], [])
             val.should.be.true
+
+    describe 'containsErrorValue', ->
+        beforeEach (done) ->
+            badObj = null
+            mocksUtils = clone mocks
+            val = undefined
+            done()
+
+        it 'should return an array with one error if JS error', ->
+            badObj = new Error 'foo'
+            val = globalUtils.containsErrorValue { foo: badObj }
+            val.should.be.instanceof Array
+            val.length.should.be.eql 1
+
+        it 'should return an array with one error if custom error', ->
+            badObj = new rmErrors.ParameterError 'foo'
+            val = globalUtils.containsErrorValue { foo: badObj }
+            val.should.be.instanceof Array
+            val.length.should.be.eql 1
+
+        it 'should return an empty array if no error', ->
+            val = globalUtils.containsErrorValue { foo: null }
+            val.should.be.instanceof Array
+            val.length.should.be.eql 0
+
+        it 'should return an empty array if no key', ->
+            val = globalUtils.containsErrorValue {}
+            val.should.be.instanceof Array
+            val.length.should.be.eql 0
