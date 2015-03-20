@@ -4,7 +4,7 @@
 # @fileOverview Script to start and stop api server
 ###
 
-ApiServer   = require './lib/ApiServer.js'
+ApiServer   = require './lib/class/ApiServer.js'
 helpFile    = './help.txt'
 minimist    = require 'minimist'
 

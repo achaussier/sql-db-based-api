@@ -7,8 +7,8 @@
 # require packages
 clone       = require 'clone'
 fs          = require 'fs'
-mocks       = require '../_mocks.js'
-ApiServer   = require '../../../lib/ApiServer.js'
+mocks       = require '../../_mocks.js'
+ApiServer   = require '../../../../lib/class/ApiServer.js'
 sinon       = require 'sinon'
 should      = require 'should'
 

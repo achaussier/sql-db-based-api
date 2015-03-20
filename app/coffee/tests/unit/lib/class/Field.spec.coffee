@@ -6,7 +6,7 @@
 
 # require packages
 clone = require 'clone'
-Field = require '../../../../lib/databaseStructure/Field.js'
+Field = require '../../../../lib/class/Field.js'
 mocks = require '../../_mocks.js'
 should = require 'should'
 

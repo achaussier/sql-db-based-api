@@ -7,15 +7,15 @@
 # require packages
 clone               = require 'clone'
 dbStructUtils       = require '../../../lib/databaseStructure.js'
-DatabaseStructure   = require '../../../lib/databaseStructure/DatabaseStructure.js'
-Field       = require '../../../lib/databaseStructure/Field.js'
+DatabaseStructure   = require '../../../lib/class/DatabaseStructure.js'
+Field       = require '../../../lib/class/Field.js'
 mocks       = require '../_mocks.js'
 Q           = require 'q'
 rmErrors    = require '../../../lib/errors.js'
 sinon       = require 'sinon'
 should      = require 'should'
 sqlUtils    = require '../../../lib/sql.js'
-Table       = require '../../../lib/databaseStructure/Table.js'
+Table       = require '../../../lib/class/Table.js'
 
 mocksUtils  = clone mocks
 cb          = null

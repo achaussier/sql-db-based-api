@@ -14,11 +14,11 @@ sqlUtils    = require './sql.js'
 ###*
 # Require classes used to build database structure
 ###
-DatabaseStructure   = require './databaseStructure/DatabaseStructure.js'
-Field               = require './databaseStructure/Field.js'
-Relation            = require './databaseStructure/Relation.js'
-Table               = require './databaseStructure/Table.js'
-TableRelation       = require './databaseStructure/TableRelation.js'
+DatabaseStructure   = require './class/DatabaseStructure.js'
+Field               = require './class/Field.js'
+Relation            = require './class/Relation.js'
+Table               = require './class/Table.js'
+TableRelation       = require './class/TableRelation.js'
 
 
 ###*

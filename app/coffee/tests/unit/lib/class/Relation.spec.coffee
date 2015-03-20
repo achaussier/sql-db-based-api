@@ -7,7 +7,7 @@
 # require packages
 clone = require 'clone'
 mocks = require '../../_mocks.js'
-Relation = require '../../../../lib/databaseStructure/Relation.js'
+Relation = require '../../../../lib/class/Relation.js'
 should = require 'should'
 
 errorObj = null

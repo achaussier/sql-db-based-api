@@ -6,7 +6,7 @@
 
 # require packages
 clone = require 'clone'
-UniqueIndex = require '../../../../lib/databaseStructure/UniqueIndex.js'
+UniqueIndex = require '../../../../lib/class/UniqueIndex.js'
 mocks = require '../../_mocks.js'
 should = require 'should'
 

@@ -5,7 +5,7 @@
 ###
 
 # require packages
-serverError = require '../../../../lib/errors/ServerError.js'
+serverError = require '../../../../lib/class/ServerError.js'
 should = require 'should'
 
 errorObj = null

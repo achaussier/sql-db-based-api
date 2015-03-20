@@ -7,7 +7,7 @@
 
 ActionHero  = require('actionhero').actionheroPrototype
 fs          = require 'fs'
-rmErrors    = require './errors.js'
+rmErrors    = require '../errors.js'
 
 
 class ApiServer extends ActionHero
