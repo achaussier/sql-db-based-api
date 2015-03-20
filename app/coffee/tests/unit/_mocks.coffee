@@ -272,3 +272,11 @@ exports.dbStructureRelation=
     originColumn: 'foo'
     destTable: 'bar'
     destColumn: 'foobar'
+
+###*
+# Fake cunstum config
+###
+exports.configChanges =
+    configChanges:
+        general:
+            serverName: 'FOO server !'

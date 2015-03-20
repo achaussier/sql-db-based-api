@@ -61,10 +61,12 @@ process.env.SPECHELPER          = true
 # Paths for coverage inspection
 ###
 coveragePaths = [
-    'web/actions/**/*.js'
-    'web/initializers/**/*.js'
-    'web/lib/**/*.js'
-    'web/config/**/*.js'
+    'dist/actions/**/*.js'
+    'dist/initializers/**/*.js'
+    'dist/lib/**/*.js'
+    'dist/config/**/*.js'
+    'dist/app.js'
+
 ]
 
 ###*
@@ -295,6 +297,7 @@ gulp.task 'jsdoc', (done) ->
             'dist/config/**/*.js'
             'dist/initializers/**/*.js'
             'dist/lib/**/*.js'
+            'dist/app.js'
         ]
         .pipe jsdoc 'dist/public/doc/dev'
 
@@ -335,7 +338,7 @@ gulp.task 'serve', ['coffee', 'copy'], ->
             'NODE_ENV'          : 'local'
             'PROJECT_ROOT'      : __dirname + config.paths.COMPILED_CODE
         script: 'node_modules/actionhero/bin/actionhero'
-        ignore: ['./web/', './node_modules/']
+        ignore: ['./dist/', './node_modules/']
         options: '--delay 1'
     )
     .on 'change', []
