@@ -103,7 +103,7 @@ gulp.task 'copyPackageJson', [], ->
 ###
 gulp.task 'copyChangelog', [], ->
     gulp
-        .src './package.json'
+        .src './changelog.txt'
         .pipe gulp.dest './dist/public/'
 
 
