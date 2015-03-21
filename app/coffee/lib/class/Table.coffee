@@ -13,7 +13,8 @@ class Table
 
     ###*
     # Constructor used to create new Table object
-    # @param {Object} tableData Table data used to build object
+    # @param    {Object}    tableData   Table data used to build object
+    # @return   {Object}                Table instance of Table
     ###
     constructor: (tableData) ->
         @name           = tableData.name
@@ -24,8 +25,8 @@ class Table
 
     ###*
     # Add a new field if not already exists
-    # @param {Object} Field to add
-    # @return {Boolean} True if field added, else false
+    # @param    {Object}    field   Field to add
+    # @return   {Boolean}           True if field added, else false
     ###
     addField: (field) ->
         if @containsField(field.columnName)
@@ -36,8 +37,8 @@ class Table
 
     ###*
     # Add a new relation if not already exists
-    # @param {Object} Relation to add
-    # @return {Boolean} True if relation added, else false
+    # @param    {Object}    relationToAdd   Relation to add
+    # @return   {Boolean}                   True if relation added, else false
     ###
     addRelation: (relationToAdd) ->
         relation = []
@@ -62,9 +63,9 @@ class Table
 
 
     ###*
-    # Add a new filed if not already exists
-    # @param {Object} Field to add
-    # @return {Boolean} True if field added, else false
+    # Add a new unique index or update it
+    # @param    {Object}    indexPart   Field to add
+    # @return   {Boolean}               True if field added, else false
     ###
     addUniqueIndexPart: (indexPart) ->
         ###*
@@ -92,17 +93,12 @@ class Table
             ###*
             # If index is incomplet, update it
             ###
-            addReturn = indexes[0].addColumn indexPart.columnName
-
-            if not addReturn or indexes[0].columns.length isnt 2
-                false
-            else
-                true
+            indexes[0].addColumn indexPart.columnName
 
     ###*
     # Check if this table contains a field where name equal to param
-    # @param {String} fieldName Requested name
-    # @return {Boolean} True if field exists
+    # @param    {String}    fieldName   Requested name
+    # @return   {Boolean}               True if field exists
     ###
     containsField: (fieldName) ->
         match = []
@@ -111,8 +107,19 @@ class Table
         match.length > 0
 
     ###*
+    # Return field if exists or null
+    # @param    {String}        fieldName   Requested name
+    # @return   {Object|null}               True if field exists
+    ###
+    getField: (fieldName) ->
+        match = []
+        match.push field for field in @fields when field.columnName is fieldName
+
+        match[0] or null
+
+    ###*
     # To populate versionOneRender object
-    # @return {Object} Simple fields for versionOneRender
+    # @return   {Object}    Simple fields for versionOneRender
     # @todo Delete this method when v1 of database structure cease to be used
     ###
     getSimpleFieldsForV1: () ->
@@ -135,7 +142,7 @@ class Table
 
     ###*
     # To populate versionOneRender object
-    # @return {Object} Complex fields for versionOneRender
+    # @return   {Object}    Complex fields for versionOneRender
     # @todo Delete this method when v1 of database structure cease to be used
     ###
     getComplexFieldsForV1: () ->
@@ -180,7 +187,7 @@ class Table
 
     ###*
     # Return required fields for this table
-    # @return {Array} Array with all required fields name
+    # @return   {Array}     Array with all required fields name
     ###
     getRequiredFieldsName: () ->
 
@@ -196,7 +203,7 @@ class Table
 
     ###*
     # Return optional fields name for this table
-    # @return {Array} Array with all optional fields name
+    # @return   {Array}     Array with all optional fields name
     ###
     getOptionalFieldsName: () ->
 
@@ -212,7 +219,7 @@ class Table
 
     ###*
     # Return aliases fields name for this table
-    # @return {Object} Object with all aliases
+    # @return   {Object}    Object with all aliases
     # @todo Delete this method when v1 of database structure cease to be used
     ###
     getAliasesForV1: () ->
@@ -229,7 +236,7 @@ class Table
 
     ###*
     # Return inverse aliases for this table
-    # @return {Array} Array with all inverse aliases
+    # @return   {Array}     Array with all inverse aliases
     # @todo Delete this method when v1 of database structure cease to be used
     ###
     getInverseAliasesForV1: () ->
@@ -246,7 +253,7 @@ class Table
 
     ###*
     # Return primary keys for this table
-    # @return {Array} Array with all primary keys name
+    # @return   {Array}     Array with all primary keys name
     ###
     getPrimaryKeys: () ->
 
@@ -262,7 +269,7 @@ class Table
 
     ###*
     # Return foreign keys for this table
-    # @return {Array} Array with all foreign keys name
+    # @return   {Array}     Array with all foreign keys name
     ###
     getForeignKeys: () ->
 
@@ -276,12 +283,12 @@ class Table
 
     ###*
     # Return inverse foreign keys for this table
-    # @return {Array} Array with all inverse foreign keys name
+    # @return   {Array}     Array with all inverse foreign keys name
     ###
     getInverseForeignKeys: () ->
 
         ###*
-        # Get all destTable with originColumn is null
+        # Get all destTable which are inverse relations
         ###
         invForeignKeys = []
         invForeignKeys.push rel.destTable for rel in @relations when (
@@ -291,8 +298,34 @@ class Table
         invForeignKeys
 
     ###*
+    # Check if a field is a foreign key
+    # @param    {String}    field   Field to test
+    # @return   {Boolean}           True if field is a foreign key, else false
+    ###
+    isForeignKey: (field) ->
+        foreignKeys = @getForeignKeys()
+        foreignKeys.indexOf(field) isnt -1
+
+    ###*
+    # Check if a field is a foreign key
+    # @param    {String}    field   Field to test
+    # @return   {Boolean}           True if field is a foreign key, else false
+    ###
+    isInverseForeignKey: (tableName) ->
+        inverseForeignKeys = @getInverseForeignKeys()
+        inverseForeignKeys.indexOf(tableName) isnt -1
+
+    ###*
+    # Check if a field is an inverse relation or a foreign key
+    # @param    {String}    field   Table to test
+    # @return   {Boolean}           True if relation exists, else false
+    ###
+    isRelationExists: (field) ->
+        @isForeignKey(field) or @isInverseForeignKey(field)
+
+    ###*
     # Return unique indexes by columnName for this table
-    # @return {Object} Object with all unique indexes
+    # @return   {Object}    Object with all unique indexes
     ###
     getUniqueIndexesByColumn: () ->
 
@@ -314,7 +347,7 @@ class Table
 
     ###*
     # Return unique indexes by name for this table
-    # @return {Object} Object with all unique indexes
+    # @return   {Object}    Object with all unique indexes
     ###
     getUniqueIndexesByName: () ->
 
@@ -328,7 +361,7 @@ class Table
 
     ###*
     # To assure backward compatibility
-    # @return {Object} An object same as v1 database structure
+    # @return   {Object}    An object same as v1 database structure
     # @todo Delete this method when v1 of database structure cease to be used
     ###
     versionOneRender: () ->
