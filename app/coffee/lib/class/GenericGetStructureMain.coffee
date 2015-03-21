@@ -138,9 +138,16 @@ class GenericGetStructureMain
     ###
     addSelect: (path, dbStructure) ->
         ###*
-        # Check if selectPath param is valid
+        # Check if params are valid
         ###
-        if not (dbStructure instanceof DatabaseStructure)
+        if not isNotEmptyString path
+            Q.fcall ->
+                throw new rmErrors.ParameterError(
+                    'path',
+                    'string'
+                    path
+                )
+        else if not (dbStructure instanceof DatabaseStructure)
             Q.fcall ->
                 throw new rmErrors.ParameterError(
                     'dbStructure',
@@ -169,7 +176,6 @@ class GenericGetStructureMain
         ###*
         # Check if optionsObj param is valid
         ###
-        console.log('optionsobj => ',optionsObj)
         if not optionsObj? or  not optionsObj instanceof GenericGetStructureOptions
             Q.fcall ->
                 throw new rmErrors.ParameterError(

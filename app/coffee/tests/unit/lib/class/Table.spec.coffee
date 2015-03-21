@@ -5,25 +5,28 @@
 ###
 
 # require packages
-clone = require 'clone'
-mocks = require '../../_mocks.js'
-Field = require '../../../../lib/class/Field.js'
-Relation = require '../../../../lib/class/Relation.js'
-Table = require '../../../../lib/class/Table.js'
-should = require 'should'
+clone       = require 'clone'
+mocks       = require '../../_mocks.js'
+Field       = require '../../../../lib/class/Field.js'
+Relation    = require '../../../../lib/class/Relation.js'
+Table       = require '../../../../lib/class/Table.js'
+should      = require 'should'
 
-errorObj = null
-mocksUtils = null
-val = null
-val2 = null
+errorObj    = null
+field       = null
+mocksUtils  = null
+relation    = null
+table       = null
+val         = null
+val2        = null
 
 describe 'Database structure : Table class', ->
 
     beforeEach (done) ->
-        errorObj = null
-        mocksUtils = clone mocks
-        val = null
-        val2 = null
+        errorObj    = null
+        mocksUtils  = clone mocks
+        val         = null
+        val2        = null
         done()
 
     it 'should create new table', ->
@@ -38,48 +41,48 @@ describe 'Database structure : Table class', ->
         ]
 
     it 'should add a new field if not exists', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = new Field(mocksUtils.dbStructureField)
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = new Field(mocksUtils.dbStructureField)
         val.should.be.instanceof Table
         val2.should.be.instanceof Field
         val.addField(val2).should.be.true
 
     it 'should not add a new field if already exists', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = new Field(mocksUtils.dbStructureField)
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = new Field(mocksUtils.dbStructureField)
         val.should.be.instanceof Table
         val2.should.be.instanceof Field
         val.addField(val2).should.be.true
         val.addField(val2).should.be.false
 
     it 'should add a new relation if not exists', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = new Relation(mocksUtils.dbStructureRelation)
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = new Relation(mocksUtils.dbStructureRelation)
         val.should.be.instanceof Table
         val2.should.be.instanceof Relation
         val.addRelation(val2).should.be.true
 
     it 'should not add a new relation if already exists', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = new Relation(mocksUtils.dbStructureRelation)
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = new Relation(mocksUtils.dbStructureRelation)
         val.should.be.instanceof Table
         val2.should.be.instanceof Relation
         val.addRelation(val2).should.be.true
         val.addRelation(val2).should.be.false
 
     it 'should add a new index part if not exists', ->
-        val = new Table(mocksUtils.dbStructureTable)
+        val     = new Table(mocksUtils.dbStructureTable)
         val.should.be.instanceof Table
         val.addUniqueIndexPart(mocksUtils.dbStructureUniqueIndex).should.be.true
 
     it 'should not add a new index part if part already exists', ->
-        val = new Table(mocksUtils.dbStructureTable)
+        val     = new Table(mocksUtils.dbStructureTable)
         val.should.be.instanceof Table
         val.addUniqueIndexPart(mocksUtils.dbStructureUniqueIndex).should.be.true
         val.addUniqueIndexPart(mocksUtils.dbStructureUniqueIndex).should.be.false
 
     it 'should add a new index part if part not exists', ->
-        val = new Table(mocksUtils.dbStructureTable)
+        val     = new Table(mocksUtils.dbStructureTable)
         val.should.be.instanceof Table
         val.addUniqueIndexPart(mocksUtils.dbStructureUniqueIndex).should.be.true
 
@@ -87,8 +90,8 @@ describe 'Database structure : Table class', ->
         val.addUniqueIndexPart(mocksUtils.dbStructureUniqueIndex).should.be.true
 
     it 'should return v1 simple fields', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = []
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = []
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
@@ -117,8 +120,8 @@ describe 'Database structure : Table class', ->
         ]
 
     it 'should return v1 complex fields', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = []
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = []
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
@@ -144,8 +147,8 @@ describe 'Database structure : Table class', ->
         ]
 
     it 'should return required fields', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = []
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = []
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
@@ -165,8 +168,8 @@ describe 'Database structure : Table class', ->
         val2.indexOf('foobar2').should.not.be.eql -1
 
     it 'should return optional fields', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = []
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = []
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
@@ -185,8 +188,8 @@ describe 'Database structure : Table class', ->
         val2.indexOf('foobar').should.not.be.eql -1
 
     it 'should return aliases for v1 render', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = []
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = []
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
@@ -204,8 +207,8 @@ describe 'Database structure : Table class', ->
         val2.bar.should.be.eql 'foobar2'
 
     it 'should return inverse aliases for v1 render', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = []
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = []
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
@@ -223,8 +226,8 @@ describe 'Database structure : Table class', ->
         val2.foobar2.should.be.eql 'bar'
 
     it 'should return primary key if only one', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = []
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = []
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
@@ -244,8 +247,8 @@ describe 'Database structure : Table class', ->
         val2.indexOf('foobar').should.not.be.eql -1
 
     it 'should return primary key if more than one', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = []
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = []
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
@@ -267,8 +270,8 @@ describe 'Database structure : Table class', ->
         val2.indexOf('foobar2').should.not.be.eql -1
 
     it 'should return foreign key if only one', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = []
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = []
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
@@ -288,8 +291,8 @@ describe 'Database structure : Table class', ->
         val2.indexOf('foobar2').should.not.be.eql -1
 
     it 'should return foreign key if more than one', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = []
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = []
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
         val2.push(new Field(mocksUtils.dbStructureField))
@@ -313,8 +316,8 @@ describe 'Database structure : Table class', ->
         val2.indexOf('foobar2').should.not.be.eql -1
 
     it 'should return inverse foreign key if only one', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = []
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = []
         mocksUtils.dbStructureRelation.isInverse = true
         val2.push(new Relation(mocksUtils.dbStructureRelation))
         val.should.be.instanceof Table
@@ -325,8 +328,8 @@ describe 'Database structure : Table class', ->
         val2[0].should.be.eql 'bar'
 
     it 'should return inverse foreign key if more than one', ->
-        val = new Table(mocksUtils.dbStructureTable)
-        val2 = []
+        val     = new Table(mocksUtils.dbStructureTable)
+        val2    = []
         mocksUtils.dbStructureRelation.isInverse = true
         val2.push(new Relation(mocksUtils.dbStructureRelation))
         mocksUtils.dbStructureRelation.destTable = 'foobar2'
@@ -403,3 +406,101 @@ describe 'Database structure : Table class', ->
         val2.parameters.optional.should.be.instanceof Array
         val2.parameters.required.should.be.instanceof Array
         val2.primaryKeys.should.be.instanceof Array
+
+    describe 'getField', ->
+        beforeEach (done) ->
+            errorObj    = null
+            mocksUtils  = clone mocks
+            table       = null
+            field       = null
+            done()
+
+        it 'should get a field', ->
+            table   = new Table(mocksUtils.dbStructureTable)
+            field   = new Field(mocksUtils.dbStructureField)
+            table.addField field
+            should.exists table.getField(mocksUtils.dbStructureField.columnName)
+
+        it 'should get null', ->
+            table   = new Table(mocksUtils.dbStructureTable)
+            field   = new Field(mocksUtils.dbStructureField)
+            table.addField field
+            should.not.exists table.getField('foo')
+
+    describe 'isForeignKey', ->
+        beforeEach (done) ->
+            errorObj    = null
+            mocksUtils  = clone mocks
+            table       = null
+            field       = null
+            done()
+
+        it 'should return true', ->
+            mocksUtils.dbStructureField.refTableName    = 'refTableName'
+            mocksUtils.dbStructureField.refTableColumn  = 'refTableColumn'
+            table   = new Table(mocksUtils.dbStructureTable)
+            field   = new Field(mocksUtils.dbStructureField)
+            table.addField field
+            table.isForeignKey(mocksUtils.dbStructureField.columnName).should.be.true
+
+        it 'should return false', ->
+            table   = new Table(mocksUtils.dbStructureTable)
+            field   = new Field(mocksUtils.dbStructureField)
+            table.addField field
+            table.isForeignKey(mocksUtils.dbStructureField.columnName).should.be.false
+
+    describe 'isInverseForeignKey', ->
+        beforeEach (done) ->
+            errorObj    = null
+            mocksUtils  = clone mocks
+            relation    = null
+            table       = null
+            field       = null
+            done()
+
+        it 'should return true', ->
+            mocksUtils.dbStructureRelation.isInverse = true
+            table       = new Table(mocksUtils.dbStructureTable)
+            relation    = new Relation(mocksUtils.dbStructureRelation)
+            table.addRelation relation
+            table.isInverseForeignKey(mocksUtils.dbStructureRelation.destTable).should.be.true
+
+        it 'should return false', ->
+            table       = new Table(mocksUtils.dbStructureTable)
+            field       = new Field(mocksUtils.dbStructureField)
+            relation    = new Relation(mocksUtils.dbStructureRelation)
+            table.addRelation relation
+            table.addField field
+            table.isInverseForeignKey('bar').should.be.false
+
+    describe 'isRelationExists', ->
+        beforeEach (done) ->
+            errorObj    = null
+            mocksUtils  = clone mocks
+            relation    = null
+            table       = null
+            field       = null
+            done()
+
+        it 'should return true', ->
+            mocksUtils.dbStructureField.refTableName    = 'refTableName'
+            mocksUtils.dbStructureField.refTableColumn  = 'refTableColumn'
+            table   = new Table(mocksUtils.dbStructureTable)
+            field   = new Field(mocksUtils.dbStructureField)
+            table.addField field
+            table.isRelationExists(mocksUtils.dbStructureField.columnName).should.be.true
+
+        it 'should return true', ->
+            mocksUtils.dbStructureRelation.isInverse = true
+            table       = new Table(mocksUtils.dbStructureTable)
+            relation    = new Relation(mocksUtils.dbStructureRelation)
+            table.addRelation relation
+            table.isRelationExists(mocksUtils.dbStructureRelation.destTable).should.be.true
+
+        it 'should return false', ->
+            table       = new Table(mocksUtils.dbStructureTable)
+            field       = new Field(mocksUtils.dbStructureField)
+            relation    = new Relation(mocksUtils.dbStructureRelation)
+            table.addRelation relation
+            table.addField field
+            table.isRelationExists('bar').should.be.false
