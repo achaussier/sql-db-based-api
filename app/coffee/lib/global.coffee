@@ -156,3 +156,20 @@ containsErrorValue = (obj) ->
     errors
 
 exports.containsErrorValue = containsErrorValue
+
+###*
+# Check if contains only string
+# @param    {Array}    arrayToTest  Source array
+# @return   {Boolean}               True if array contains only strings
+###
+isStringArray = (arrayToTest) ->
+    onlyString = true
+
+    if not arrayToTest? or not isArray(arrayToTest)
+        return false
+
+    for value of arrayToTest
+        if typeof value isnt 'string'
+            onlyString = false
+
+exports.isStringArray = isStringArray

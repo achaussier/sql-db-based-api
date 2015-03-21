@@ -1,2 +1,8 @@
+2015-03-21 Alexandre Chaussier <a.chaussier@infopen.pro>
+- Add GenericGetStructureMain
+- Add a function to check if element is a string array
+
 2015-03-20 Alexandre Chaussier <a.chaussier@infopen.pro>
 - Add start script
+- Reorganize classes
+- Add new error check functions

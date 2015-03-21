@@ -61,4 +61,7 @@ class DatabaseStructure
                 structure.struct.objects[table.name] = table.versionOneRender()
         structure
 
+    checkPath: (path, parentTable) ->
+
+
 module.exports = DatabaseStructure
