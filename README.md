@@ -1,11 +1,13 @@
 
-# ASSET SOFTWARE API
-====================
+# SQL DATABASE BASED API
+========================
 
 ## Status
 ---------
 
-Travis build status : ![](https://magnum.travis-ci.com/achaussier/rackmonkey-api-new.svg?token=QMQztRpZauNjeThdZvz2&branch=master)
+Travis build status :
+- master        : ![](https://travis-ci.org/achaussier/sql-db-based-api.svg?branch=orm_rewrite)
+- orm_rewrite   : ![](https://travis-ci.org/achaussier/sql-db-based-api.svg?branch=orm_rewrite)
 
 
 ## Installation
