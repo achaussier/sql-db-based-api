@@ -1,6 +1,7 @@
 2015-03-21 Alexandre Chaussier <a.chaussier@infopen.pro>
 - Add GenericGetStructureMain
 - Add a function to check if element is a string array
+- Add a function to check if path in select is valid
 
 2015-03-20 Alexandre Chaussier <a.chaussier@infopen.pro>
 - Add start script
