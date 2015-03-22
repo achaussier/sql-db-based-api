@@ -260,18 +260,29 @@ exports.dbStructureUniqueIndex =
     columnName  : 'foobar'
 
 ###*
-# Fake database structure unique index
+# Fake database Table new object
 ###
 exports.dbStructureTable =
     name: 'foo'
 
 ###*
-# Fake database structure unique index
+# Fake GenericGetStructureConstraint
 ###
-exports.dbStructureRelation=
-    originColumn: 'foo'
-    destTable: 'bar'
-    destColumn: 'foobar'
+exports.GenericGetStructureConstraint =
+    type        : 'field'
+    field       : 'foo'
+    link        : null
+    value       : 'bar'
+    operator    : '='
+
+###*
+# Fake database structure relation
+###
+exports.dbStructureRelation =
+    originColumn    : 'foo'
+    destTable       : 'bar'
+    destColumn      : 'foobar'
+
 
 ###*
 # Fake cunstum config
