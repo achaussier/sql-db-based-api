@@ -6,8 +6,7 @@
 ---------
 
 Travis build status :
-- master        : ![](https://travis-ci.org/achaussier/sql-db-based-api.svg?branch=orm_rewrite)
-- orm_rewrite   : ![](https://travis-ci.org/achaussier/sql-db-based-api.svg?branch=orm_rewrite)
+- ![](https://travis-ci.org/achaussier/sql-db-based-api.svg?branch=orm_rewrite) : **MASTER**
 
 
 ## Installation
