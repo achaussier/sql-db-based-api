@@ -434,4 +434,4 @@ describe 'Generic GET : GenericGetStructureMain', ->
             getStructureMain.isConstraintArray(getStructureOptions).should.be.false
 
         it 'should be false', ->
-            getStructureMain.isConstraintArray(null).should.be.false
+            getStructureMain.isConstraintArray([null]).should.be.false

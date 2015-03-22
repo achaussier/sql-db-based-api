@@ -176,7 +176,7 @@ class GenericGetStructureMain
         ###*
         # Check if optionsObj param is valid
         ###
-        if not optionsObj? or  not optionsObj instanceof GenericGetStructureOptions
+        if not optionsObj? or not (optionsObj instanceof GenericGetStructureOptions)
             Q.fcall ->
                 throw new rmErrors.ParameterError(
                     'optionsObj',
@@ -220,7 +220,7 @@ class GenericGetStructureMain
         ###*
         # Check if constraint param is valid
         ###
-        if not constraint? or not constraint instanceof GenericGetStructureConstraint
+        if not constraint? or not (constraint instanceof GenericGetStructureConstraint)
             Q.fcall ->
                 throw new rmErrors.ParameterError(
                     'constraint',
@@ -258,8 +258,7 @@ class GenericGetStructureMain
         ###
         validContent = true
         for constraint in constraints
-            if not constraint instanceof GenericGetStructureConstraint
-                console.log 'bad constraint : ',constraint
+            if not (constraint instanceof GenericGetStructureConstraint)
                 validContent = false
         validContent
 

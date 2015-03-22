@@ -104,8 +104,17 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                 dbStructure,
                 'checkPath',
                 ->
+                    true
+            )
+            getStructureOrder = new GenericGetStructureOrder('foo', 'bar', 'asc', dbStructure)
+            stub.restore()
+            stub = sinon.stub(
+                dbStructure,
+                'checkPath',
+                ->
                     false
             )
+
             getStructureOptions.setOrder('foo', [getStructureOrder], dbStructure)
                 .then(
                     (result) ->
@@ -124,6 +133,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                 ->
                     true
             )
+            getStructureOrder = new GenericGetStructureOrder('foo', 'bar', 'asc', dbStructure)
             getStructureOptions.setOrder('foo', [getStructureOrder], dbStructure)
                 .then(
                     (result) ->
@@ -174,6 +184,13 @@ describe 'Generic GET : GenericGetStructureOptions', ->
         # Check with missing dbStructure param
         ###
         it 'should return ParameterError', ->
+            stub = sinon.stub(
+                dbStructure,
+                'checkPath',
+                ->
+                    true
+            )
+            getStructureOrder = new GenericGetStructureOrder('foo', 'bar', 'asc', dbStructure)
             getStructureOptions.addOrder('foo', getStructureOrder)
                 .then(
                     (result) ->
@@ -186,6 +203,14 @@ describe 'Generic GET : GenericGetStructureOptions', ->
         # Check with bad order.field content
         ###
         it 'should return false', ->
+            stub = sinon.stub(
+                dbStructure,
+                'checkPath',
+                ->
+                    true
+            )
+            getStructureOrder = new GenericGetStructureOrder('foo', 'bar', 'asc', dbStructure)
+            stub.restore()
             stub = sinon.stub(
                 dbStructure,
                 'checkPath',
@@ -210,6 +235,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                 ->
                     true
             )
+            getStructureOrder = new GenericGetStructureOrder('foo', 'bar', 'asc', dbStructure)
             getStructureOptions.addOrder('foo', getStructureOrder, dbStructure)
                 .then(
                     (result) ->
@@ -234,6 +260,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                 ->
                     true
             )
+            getStructureOrder = new GenericGetStructureOrder('foo', 'bar', 'asc', dbStructure)
             getStructureOptions.addOrder('foo', getStructureOrder, dbStructure)
                 .then(
                     (result) ->
@@ -271,6 +298,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                 ->
                     true
             )
+            getStructureOrder = new GenericGetStructureOrder('foo', 'bar', 'asc', dbStructure)
             getStructureOptions.addOrder('foo', getStructureOrder, dbStructure)
                 .then(
                     (result) ->
