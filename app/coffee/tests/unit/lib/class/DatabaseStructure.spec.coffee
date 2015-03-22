@@ -215,7 +215,136 @@ describe 'Database structure : DatabaseStructure class', ->
                     true
             )
 
+    describe 'containsInverseRelation', ->
+
+        beforeEach (done) ->
+            errorObj    = null
+            mocksUtils  = clone mocks
+            dbStructure = null
+            field       = null
+            fieldName   = null
+            stub        = null
+            stub2       = null
+            table       = null
+            table2      = null
+            table2Mock  = null
+            tableName   = null
+            v1render    = null
+            done()
+
+        afterEach (done) ->
+            stub.restore()  if stub?.restore?
+            stub2.restore() if stub2?.restore?
+            done()
+
+        ###*
+        # Check without param
+        ###
+        it 'should return false', ->
+            dbStructure     = new DatabaseStructure()
+            table           = new Table(mocksUtils.dbStructureTable)
+            dbStructure.containsInverseRelation().should.be.false
+
+        ###*
+        # Check with a table without field
+        ###
+        it 'should return false', ->
+            dbStructure     = new DatabaseStructure()
+            table           = new Table(mocksUtils.dbStructureTable)
+            dbStructure.addTable table
+            dbStructure.containsInverseRelation('foo', mocksUtils.dbStructureTable).should.be.false
+
+        ###*
+        # Check with a field not exists in table
+        ###
+        it 'should return false', ->
+            dbStructure     = new DatabaseStructure()
+            field           = new Field(mocksUtils.dbStructureField)
+            table           = new Table(mocksUtils.dbStructureTable)
+            table.addField field
+            dbStructure.addTable table
+            dbStructure.containsInverseRelation('foo', mocksUtils.dbStructureTable).should.be.false
+
+        ###*
+        # Check with a valid field
+        ###
+        it 'should return false', ->
+            dbStructure     = new DatabaseStructure()
+            field           = new Field(mocksUtils.dbStructureField)
+            table           = new Table(mocksUtils.dbStructureTable)
+            fieldName       = mocksUtils.dbStructureField.columnName
+            tableName       = mocksUtils.dbStructureTable.name
+            table.addField(field).should.be.true
+            dbStructure.addTable(table).should.be.true
+            dbStructure.containsInverseRelation(fieldName, tableName).should.be.false
+
+        ###*
+        # Check with a valid foreign key field
+        ###
+        it 'should return false', ->
+            table2Mock      = clone mocksUtils.dbStructureTable
+            table2Mock.name = 'foo2'
+            mocksUtils.dbStructureField.refTableName    = 'foo2'
+            mocksUtils.dbStructureField.refColumnName   = 'bar2'
+
+            dbStructure     = new DatabaseStructure()
+            field           = new Field(mocksUtils.dbStructureField)
+            table           = new Table(mocksUtils.dbStructureTable)
+            table2          = new Table(table2Mock)
+            fieldName       = mocksUtils.dbStructureField.columnName
+            tableName       = mocksUtils.dbStructureTable.name
+            table.addField(field).should.be.true
+            dbStructure.addTable(table).should.be.true
+            dbStructure.addTable(table2).should.be.true
+            dbStructure.containsInverseRelation(fieldName + '.foo2', tableName).should.be.false
+
+        ###*
+        # Check with an invalid inverse foreign key
+        ###
+        it 'should return false', ->
+            table2Mock      = clone mocksUtils.dbStructureTable
+            table2Mock.name = 'foo2'
+
+            dbStructure     = new DatabaseStructure()
+            table           = new Table(mocksUtils.dbStructureTable)
+            tableName       = mocksUtils.dbStructureTable.name
+            table2          = new Table(table2Mock)
+            stub            = sinon.stub(
+                table,
+                'isInverseForeignKey'
+                ->
+                    false
+            )
+            stub2           = sinon.stub(
+                table,
+                'getField'
+                ->
+                    {}
+            )
 
             dbStructure.addTable(table).should.be.true
             dbStructure.addTable(table2).should.be.true
-            dbStructure.checkPath(fieldName + '.foo2', tableName).should.be.true
+            dbStructure.containsInverseRelation(fieldName + '.foo3', tableName).should.be.false
+
+        ###*
+        # Check with a valid inverse foreign key
+        ###
+        it 'should return true', ->
+            table2Mock      = clone mocksUtils.dbStructureTable
+            table2Mock.name = 'foo2'
+
+            dbStructure     = new DatabaseStructure()
+            table           = new Table(mocksUtils.dbStructureTable)
+            tableName       = mocksUtils.dbStructureTable.name
+            table2          = new Table(table2Mock)
+            stub            = sinon.stub(
+                table,
+                'isInverseForeignKey'
+                ->
+                    true
+            )
+
+
+            dbStructure.addTable(table).should.be.true
+            dbStructure.addTable(table2).should.be.true
+            dbStructure.containsInverseRelation(fieldName + '.foo2', tableName).should.be.true

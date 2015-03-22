@@ -68,7 +68,7 @@ class GenericGetStructureOrder
                 'string'
                 field
             )
-        else if not (asc is 'asc') and not (asc is 'desc') and asc?
+        else if not (asc is 'asc') and not (asc is 'desc')
             errors.push new rmErrors.ParameterError(
                 'asc',
                 'string'
