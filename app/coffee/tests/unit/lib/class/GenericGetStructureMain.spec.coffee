@@ -380,9 +380,22 @@ describe 'Generic GET : GenericGetStructureMain', ->
             stub                    = null
             done()
 
+        afterEach (done) ->
+            stub.restore() if stub?.restore?
+            done()
 
         it 'should set structure options', ->
-            getStructureConstraint = new GenericGetStructureConstraint('foo')
+            stub = sinon.stub(
+                dbStructure,
+                'checkPath',
+                ->
+                    true
+            )
+            getStructureConstraint = new GenericGetStructureConstraint(
+                'foo',
+                mocksUtils.GenericGetStructureConstraint,
+                dbStructure
+            )
             getStructureMain.addConstraint(getStructureConstraint)
                 .then(
                     (result) ->
@@ -421,9 +434,22 @@ describe 'Generic GET : GenericGetStructureMain', ->
             stub                    = null
             done()
 
+        afterEach (done) ->
+            stub.restore() if stub?.restore?
+            done()
 
         it 'should return true', ->
-            getStructureConstraint = new GenericGetStructureConstraint('foo')
+            stub = sinon.stub(
+                dbStructure,
+                'checkPath',
+                ->
+                    true
+            )
+            getStructureConstraint = new GenericGetStructureConstraint(
+                'foo',
+                mocksUtils.GenericGetStructureConstraint,
+                dbStructure
+            )
             getStructureMain.isConstraintArray([getStructureConstraint]).should.be.true
 
         it 'should be false', ->
