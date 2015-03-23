@@ -298,18 +298,35 @@ class Table
         invForeignKeys
 
     ###*
+    # Return inverse foreign key for this table and this dest table
+    # @param    {String}    Dest table name of relation to return
+    # @return   {Object}    Relation object match destination table name param
+    ###
+    getInverseForeignKey: (tableName) ->
+
+        ###*
+        # Get relation match
+        ###
+        invForeignKeys = []
+        invForeignKeys.push rel.destTable for rel in @relations when (
+            rel.isInverse is true and rel.destTable = tableName
+        )
+
+        invForeignKeys[0] if invForeignKeys.length isnt 0
+
+    ###*
     # Check if a field is a foreign key
-    # @param    {String}    field   Field to test
-    # @return   {Boolean}           True if field is a foreign key, else false
+    # @param    {String}    fieldName   Field to test
+    # @return   {Boolean}               True if field is foreign key, else false
     ###
     isForeignKey: (field) ->
         foreignKeys = @getForeignKeys()
         foreignKeys.indexOf(field) isnt -1
 
     ###*
-    # Check if a field is a foreign key
-    # @param    {String}    field   Field to test
-    # @return   {Boolean}           True if field is a foreign key, else false
+    # Check if a field is an inverse foreign key
+    # @param    {String}    fieldName   Field to test
+    # @return   {Boolean}               True if field is a inverse foreign key
     ###
     isInverseForeignKey: (tableName) ->
         inverseForeignKeys = @getInverseForeignKeys()
