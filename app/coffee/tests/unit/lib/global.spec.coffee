@@ -268,3 +268,16 @@ describe 'Global lib', ->
             val = globalUtils.containsErrorValue {}
             val.should.be.instanceof Array
             val.length.should.be.eql 0
+
+    describe 'isStringArray', ->
+        beforeEach (done) ->
+            val = null
+            done()
+
+        it 'should return false', ->
+            val = ['foo', null]
+            globalUtils.isStringArray(val).should.be.false
+
+        it 'should return true', ->
+            val = ['foo', 'bar']
+            globalUtils.isStringArray(val).should.be.true

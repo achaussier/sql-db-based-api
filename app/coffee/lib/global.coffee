@@ -168,8 +168,11 @@ isStringArray = (arrayToTest) ->
     if not arrayToTest? or not isArray(arrayToTest)
         return false
 
-    for value of arrayToTest
-        if typeof value isnt 'string'
-            onlyString = false
+    for value in arrayToTest
+        do (value) ->
+            if typeof value isnt 'string'
+                onlyString = false
+
+    onlyString
 
 exports.isStringArray = isStringArray
