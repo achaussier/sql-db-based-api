@@ -291,3 +291,13 @@ exports.configChanges =
     configChanges:
         general:
             serverName: 'FOO server !'
+
+###*
+# Fake queries structure
+###
+exports.queriesStructure =
+    simpleFields            : []
+    arrayFields             : []
+    getIdsQuery             : null
+    getMainObjectQuery      : null
+    getArrayValuesQueries   : {}

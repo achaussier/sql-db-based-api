@@ -5,14 +5,14 @@
 # @class GenericGetQueryBuilder
 ###
 
-isArray = require('util').isArray
-
-containsErrorValue  = require('../global.js').containsErrorValue
-DatabaseStructure   = require './DatabaseStructure.js'
-isNotEmptyString    = require('../global.js').isNotEmptyString
-ormUtils            = require '../orm.js'
-Q                   = require 'q'
-rmErrors            = require '../errors.js'
+isArray                 = require('util').isArray
+containsErrorValue      = require('../global.js').containsErrorValue
+DatabaseStructure       = require './DatabaseStructure.js'
+GenericGetStructureMain = require './GenericGetStructureMain.js'
+isNotEmptyString        = require('../global.js').isNotEmptyString
+ormUtils                = require '../orm.js'
+Q                       = require 'q'
+rmErrors                = require '../errors.js'
 
 class GenericGetQueryBuilder
 
@@ -31,12 +31,12 @@ class GenericGetQueryBuilder
         ###*
         # Execute parameters check
         ###
-        errors = checkParams(
+        errors = @checkParams(
             api,
             connection,
             getStructure,
-            dbStructure,
-            doTotalCount
+            doTotalCount,
+            dbStructure
         )
 
         if errors.length isnt 0
@@ -46,7 +46,7 @@ class GenericGetQueryBuilder
             @connection         = connection
             @doTotalCount       = doTotalCount
             @getStructure       = getStructure
-            @databaseStructure  = databaseStructure
+            @dbStructure        = dbStructure
 
     ###*
     # Check constructor params
@@ -129,11 +129,12 @@ class GenericGetQueryBuilder
     # @throw                                    DatabaseError if occurs
     ###
     separateArrayValues: (queriesStructure) ->
-        for path in @getStructure
+        for path in @getStructure.select
             if @dbStructure.containsInverseRelation(path)
                 queriesStructure.arrayFields.push path
             else
                 queriesStructure.simpleFields.push path
+        queriesStructure
 
     ###*
     # Build the query to return main object ids which match the user request
@@ -143,14 +144,29 @@ class GenericGetQueryBuilder
     ###
     buildMainObjectIdsQuery: (queriesStructure) ->
         ormUtils.sortSelectByDepth @getStructure.select
-            .then(
-                (orderedSelect) ->
-                    ormUtils.buildGenericGetFromSection(
-                        @getStructure.returnType,
-                        orderedSelect,
-                        @dbStructure
-                    )
-            )
+            .then (orderedSelect) ->
+                ormUtils.buildGenericGetFromSection(
+                    @getStructure.returnType,
+                    orderedSelect,
+                    @dbStructure
+                )
+            .then (fromParts) ->
 
+                ormUtils.buildGenericGetWhereSection @getStructure.constraints
+                    .then (whereParts) ->
+                        returnType  = @getStructure.returnType
+                        table       = @dbStructure.getTable returnType
+                        pk          = table.getPrimaryKey()
 
-module.exports = GenericGetStructureOrder
+                        query       =  'SELECT ' + pk + '
+                                        FROM ' + returnType + '
+                                            '  + fromParts + '
+                                        WHERE ' + whereParts
+
+                        Q.fcall ->
+                            query
+            .catch (error) ->
+                throw error
+
+module.exports = GenericGetQueryBuilder
+
