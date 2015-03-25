@@ -151,8 +151,8 @@ class GenericGetQueryBuilder
                     @dbStructure
                 )
             .then (fromParts) ->
-
-                ormUtils.buildGenericGetWhereSection @getStructure.constraints
+                constraints = @getStructure.constraints
+                ormUtils.buildGenericGetWhereSection returnType, constraints
                     .then (whereParts) ->
                         returnType  = @getStructure.returnType
                         table       = @dbStructure.getTable returnType

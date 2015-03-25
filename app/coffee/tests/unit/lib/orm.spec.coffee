@@ -334,3 +334,29 @@ describe 'ORM lib', ->
                     ,(error) ->
                         error.should.be.instanceof Array
                 )
+
+    describe 'isListOfValue', ->
+
+        ###*
+        # Check without param
+        ###
+        it 'should return false', ->
+            ormUtils.isListOfValue().should.be.false
+
+        ###*
+        # Check with a 'in' param
+        ###
+        it 'should return true', ->
+            ormUtils.isListOfValue('in').should.be.true
+
+        ###*
+        # Check with a 'not in' param
+        ###
+        it 'should return true', ->
+            ormUtils.isListOfValue('not in').should.be.true
+
+        ###*
+        # Check with a '=' param
+        ###
+        it 'should return false', ->
+            ormUtils.isListOfValue('=').should.be.false
