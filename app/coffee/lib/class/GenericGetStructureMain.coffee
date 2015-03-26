@@ -5,10 +5,12 @@
 # @class GenericGetStructureMain
 ###
 
-containsErrorValue  = require('../global.js').containsErrorValue
+globalUtils         = require '../global.js'
+containsErrorValue  = globalUtils.containsErrorValue
 isArray             = require('util').isArray
-isNotEmptyString    = require('../global.js').isNotEmptyString
-isStringArray       = require('../global.js').isStringArray
+isNotEmptyString    = globalUtils.isNotEmptyString
+isStringArray       = globalUtils.isStringArray
+ormUtils            = require '../orm.js'
 Q                   = require 'q'
 rmErrors            = require '../errors.js'
 
@@ -154,7 +156,8 @@ class GenericGetStructureMain
                     'DatabaseStructure'
                     dbStructure
                 )
-        else if not dbStructure.checkPath(path, @returnType) or not @containsPath(path)
+        else if not dbStructure.checkPath(path, @returnType) or
+                not @containsPath(path)
             Q.fcall ->
                 throw new rmErrors.ParameterError(
                     'path',
@@ -176,7 +179,7 @@ class GenericGetStructureMain
         ###*
         # Check if optionsObj param is valid
         ###
-        if not optionsObj? or not (optionsObj instanceof GenericGetStructureOptions)
+        if not ormUtils.isGenericGetStructureOptions(optionsObj)
             Q.fcall ->
                 throw new rmErrors.ParameterError(
                     'optionsObj',
@@ -220,7 +223,7 @@ class GenericGetStructureMain
         ###*
         # Check if constraint param is valid
         ###
-        if not constraint? or not (constraint instanceof GenericGetStructureConstraint)
+        if not ormUtils.isGenericGetStructureConstraint(constraint)
             Q.fcall ->
                 throw new rmErrors.ParameterError(
                     'constraint',

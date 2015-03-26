@@ -16,6 +16,8 @@ Relation            = require './class/Relation.js'
 rmErrors            = require './errors.js'
 Table               = require './class/Table.js'
 
+GenericGetStructureConstraint = require './class/GenericGetStructureConstraint'
+GenericGetStructureOptions    = require './class/GenericGetStructureOptions.js'
 
 ###*
 # Sort a select array by depth
@@ -244,3 +246,113 @@ buildGenericGetFromSection = (objectType, orderedSelect, dbStructure) ->
                 fromParts.join ' '
 
 exports.buildGenericGetFromSection = buildGenericGetFromSection
+
+###*
+# Check if operator is 'in' or 'not in'
+# @param    {String}    operator            Operator used in constraint
+# @return   {Boolean}                       True if it is a not/not in operator
+###
+isListOfValue = (operator) ->
+    (operator is 'in') or (operator is 'not in')
+
+exports.isListOfValue = isListOfValue
+
+###*
+# Generate where section of a generic query
+# @param    {String}    objectType          Type of main object
+# @param    {Array}     constraints         A select array sorted by depth
+# @param    {Object}    dbStructure         DatabaseStructure instance
+# @return   {String}                        From section of a generic get query
+###
+buildGenericGetWhereSection = (objectType, constraints) ->
+    errors          = []
+    sqlConstraints  = []
+
+    ###*
+    # Check params of method
+    ###
+    if not (typeof objectType is 'string')
+        errors.push new rmErrors.ParameterError(
+            'objectType',
+            'string',
+            objectType
+        )
+    if not (isArray constraints)
+        errors.push new rmErrors.ParameterError(
+            'constraints',
+            'array',
+            constraints
+        )
+
+    if errors.length isnt 0
+        errors
+
+    else
+        for constraint in constraints
+            do (constraint) ->
+                sql = null
+                if not (constraint instanceof GenericGetStructureConstraint)
+                    errors.push errors.push new rmErrors.ParameterError(
+                        'constraint',
+                        'GenericGetStructureConstraint',
+                        constraint
+                    )
+                else
+                    ###*
+                    # Add link if exists
+                    ###
+                    if (constraint.link isnt null)
+                        sql += constraint.link
+
+                    ###*
+                     # Check if field is a field of object type or another field
+                    ###
+                    if (constraint.field.indexOf '.')
+                        ###
+                        # If it's a field
+                        ###
+                        tableName = objectType
+                        columnName = field
+                    else
+                        ###*
+                        # If it's a field of another table
+                        ###
+                        splitData   = /^(.*)\.(.*)$/.exec(constraint.field)
+                        tableName   = splitData[1]
+                        columnName  = splitData[2]
+
+                    sql += ' `' + tableName + '`.`' + columnName + '`'
+
+                    # Add operator and value
+                    sql += ' ' + constraint.operator + ' '
+                    if isListOfValue(constraint.operator)
+                        sql += '('
+                        sql += mysql.escape(data) for data in constraint.value
+                        sql += ') '
+                    else
+                        sql += constraint.operator + ' '
+                        sql += mysql.escape(constraint.value)
+
+                sqlConstraints.push sql
+
+exports.buildGenericGetWhereSection = buildGenericGetWhereSection
+
+###*
+# Check if param is defined and an instance of GenericGetStructureOptions
+# @param    {*}         param       param to test
+# @return   {Boolean}               True if it is a GenericGetStructureOptions
+###
+isGenericGetStructureOptions = (param) ->
+    param? and (param instanceof GenericGetStructureOptions)
+
+exports.isGenericGetStructureOptions = isGenericGetStructureOptions
+
+###*
+# Check if param is defined and an instance of GenericGetStructureConstraint
+# @param    {*}         param       param to test
+# @return   {Boolean}               True if it is GenericGetStructureConstraint
+###
+isGenericGetStructureConstraint = (param) ->
+    param? and (param instanceof GenericGetStructureConstraint)
+
+exports.isGenericGetStructureConstraint = isGenericGetStructureConstraint
