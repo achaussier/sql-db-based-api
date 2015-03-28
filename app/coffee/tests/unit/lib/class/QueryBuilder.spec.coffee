@@ -4,23 +4,34 @@
 # @fileOverview Tests about QueryBuilder class
 ###
 
-# require packages
-DatabaseStructure       = require '../../../../lib/class/DatabaseStructure.js'
-Field                   = require '../../../../lib/class/Field.js'
-GenericGetStructureMain = require '../../../../lib/class/GenericGetStructureMain.js'
-QueryBuilder            = require '../../../../lib/class/QueryBuilder.js'
-Relation                = require '../../../../lib/class/Relation.js'
-Table                   = require '../../../../lib/class/Table.js'
+###*
+# API custom classes
+###
+DatabaseStructure               = require '../../../../lib/class/DatabaseStructure.js'
+Field                           = require '../../../../lib/class/Field.js'
+GenericGetStructureConstraint   = require '../../../../lib/class/GenericGetStructureConstraint.js'
+GenericGetStructureMain         = require '../../../../lib/class/GenericGetStructureMain.js'
+QueryBuilder                    = require '../../../../lib/class/QueryBuilder.js'
+Relation                        = require '../../../../lib/class/Relation.js'
+Table                           = require '../../../../lib/class/Table.js'
 
+###*
+# Require modules
+###
 clone       = require 'clone'
 mocks       = require '../../_mocks.js'
+Q           = require 'q'
 rmErrors    = require '../../../../lib/errors.js'
 sinon       = require 'sinon'
 should      = require 'should'
 
+###*
+# Declare variables used in these tests
+###
 api             = undefined
 builder         = undefined
 connection      = undefined
+constraint      = undefined
 dbStructure     = undefined
 errorObj        = undefined
 getStructure    = undefined
@@ -199,6 +210,9 @@ describe 'QueryBuilder class', ->
             stub.restore() if stub?.restore?
             done()
 
+        ###*
+        # Simulate an inverse relation
+        ###
         it 'should be pushed to arrayFields', ->
             stub = sinon.stub(
                 dbStructure,
@@ -209,6 +223,9 @@ describe 'QueryBuilder class', ->
             queryBuilder.separateArrayValues(queryStructure)
             queryStructure.arrayFields.indexOf('foo').should.be.above -1
 
+        ###*
+        # Simulate a direct relation
+        ###
         it 'should be pushed to simpleFields', ->
             stub = sinon.stub(
                 dbStructure,
@@ -559,4 +576,274 @@ describe 'QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
+                )
+
+    describe 'processContraintField', ->
+
+        beforeEach (done) ->
+            api             = mocksUtils.api
+            connection      = mocksUtils.connection
+            dbStructure     = new DatabaseStructure()
+            table           = new Table({name: 'foo'})
+            dbStructure.addTable table
+            getStructure    = new GenericGetStructureMain('foo', dbStructure)
+            queryBuilder    = new QueryBuilder(
+                api,
+                connection,
+                getStructure,
+                false,
+                dbStructure
+            )
+            val = null
+            done()
+
+        ###*
+        # Check with an objectType field
+        ###
+        it 'should work with field of objectType', ->
+            val = queryBuilder.processContraintField('bar', 'foo')
+            val.tableName.should.be.eql 'foo'
+            val.columnName.should.be.eql 'bar'
+
+        ###*
+        # Check with another table field
+        ###
+        it 'should work with field of another table', ->
+            val = queryBuilder.processContraintField('bar.foo2', 'foo')
+            val.tableName.should.be.eql 'bar'
+            val.columnName.should.be.eql 'foo2'
+
+    describe 'buildGenericGetWhereSection', ->
+
+        beforeEach (done) ->
+            api             = mocksUtils.api
+            connection      = mocksUtils.connection
+            dbStructure     = new DatabaseStructure()
+            field           = new Field mocksUtils.dbStructureField
+            mockUtils       = clone mocks
+            table           = new Table({name: 'foo'})
+            table.addField field
+            dbStructure.addTable table
+            getStructure    = new GenericGetStructureMain('foo', dbStructure)
+            queryBuilder    = new QueryBuilder(
+                api,
+                connection,
+                getStructure,
+                false,
+                dbStructure
+            )
+            val = null
+            done()
+
+        ###*
+        # Check without params
+        ###
+        it 'should return error without param', ->
+            queryBuilder.buildGetWhereSection()
+                .then(
+                    (result) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof Array
+                        error[0].should.be.instanceof rmErrors.ParameterError
+                )
+
+        ###*
+        # Check without constraints array
+        ###
+        it 'should return error without constraints', ->
+            queryBuilder.buildGetWhereSection('foo')
+                .then(
+                    (result) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof Array
+                        error[0].should.be.instanceof rmErrors.ParameterError
+                )
+
+        ###*
+        # Check with bad object type
+        ###
+        it 'should return error with bad objectType', ->
+            queryBuilder.buildGetWhereSection(null)
+                .then(
+                    (result) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof Array
+                        error[0].should.be.instanceof rmErrors.ParameterError
+                )
+
+        ###*
+        # Check with bad constraints param
+        ###
+        it 'should return error with bad constraints', ->
+            queryBuilder.buildGetWhereSection('foo', null)
+                .then(
+                    (result) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof Array
+                        error[0].should.be.instanceof rmErrors.ParameterError
+                )
+
+        ###*
+        # Check with empty constraints array
+        ###
+        it 'should return empty array with empty constraints', ->
+            queryBuilder.buildGetWhereSection('foo', [])
+                .then(
+                    (result) ->
+                        result.should.be.eql ''
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                )
+
+
+        ###*
+        # Check with constraints array content
+        ###
+        it 'should return error with bad constraints content', ->
+            queryBuilder.buildGetWhereSection('foo', [null])
+                .then(
+                    (result) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof Array
+                        error[0].should.be.instanceof rmErrors.ParameterError
+                )
+
+        ###*
+        # Check with a valid constraints array
+        ###
+        it 'should return sql where', ->
+            constraint = new GenericGetStructureConstraint(
+                'foo',
+                mocksUtils.GenericGetStructureConstraint,
+                dbStructure
+            )
+            queryBuilder.buildGetWhereSection('foo', [constraint])
+                .then(
+                    (result) ->
+                        result.should.be.eql ' `foo`.`foo` = = \'bar\''
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                )
+
+        ###*
+        # Check with a valid constraints array
+        ###
+        it 'should return sql where', ->
+            mocksUtils.GenericGetStructureConstraint.link       = 'and'
+            mocksUtils.GenericGetStructureConstraint.operator   = 'in'
+            mocksUtils.GenericGetStructureConstraint.value      = ['foo','bar']
+            constraint = new GenericGetStructureConstraint(
+                'foo',
+                mocksUtils.GenericGetStructureConstraint,
+                dbStructure
+            )
+            queryBuilder.buildGetWhereSection('foo', [constraint])
+                .then(
+                    (result) ->
+                        result.should.be.eql ' and  `foo`.`foo` in (\'foo\',\'bar\')'
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                )
+
+    describe 'buildMainObjectIdsQuery', ->
+
+        beforeEach (done) ->
+            mocksUtils.dbStructureField.columnKey = 'pri'
+            api             = mocksUtils.api
+            connection      = mocksUtils.connection
+            dbStructure     = new DatabaseStructure()
+            field           = new Field mocksUtils.dbStructureField
+            mockUtils       = clone mocks
+            table           = new Table({name: 'foo'})
+            table.addField field
+            dbStructure.addTable table
+            getStructure    = new GenericGetStructureMain('foo', dbStructure)
+            queryBuilder    = new QueryBuilder(
+                api,
+                connection,
+                getStructure,
+                false,
+                dbStructure
+            )
+            stub = null
+            val = null
+            done()
+
+        afterEach (done) ->
+            stub.restore() if stub?.restore?
+            done()
+
+        ###*
+        # Check with a bad param
+        ###
+        it 'should return error', ->
+            queryBuilder.buildMainObjectIdsQuery(null)
+                .then(
+                    (result) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof Array
+                        error[0].should.be.instanceof rmErrors.ParameterError
+                )
+
+        ###*
+        # Check with an error return during processing
+        ###
+        it 'should return error', ->
+            stub = sinon.stub(
+                queryBuilder,
+                'buildGetFromSection'
+                ->
+                    Q.fcall ->
+                        throw new Error 'unit-test'
+            )
+            queryBuilder.buildMainObjectIdsQuery(mocksUtils.queriesStructure)
+                .then(
+                    (result) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof Error
+                )
+
+        ###*
+        # Check with a fake foreign key
+        ###
+        it 'should return query', ->
+            stub = sinon.stub(
+                queryBuilder,
+                'buildGetFromSection'
+                ->
+                    Q.fcall ->
+                        return 'INNER JOIN bar'
+            )
+            queryBuilder.buildMainObjectIdsQuery(mocksUtils.queriesStructure)
+                .then(
+                    (result) ->
+                        result.should.be.eql 'SELECT bar FROM foo INNER JOIN bar;'
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                )
+
+        ###*
+        # Check with a fake constraint
+        ###
+        it 'should return query', ->
+            stub = sinon.stub(
+                queryBuilder,
+                'buildGetWhereSection'
+                ->
+                    Q.fcall ->
+                        return 'foo = \'bar\''
+            )
+            queryBuilder.buildMainObjectIdsQuery(mocksUtils.queriesStructure)
+                .then(
+                    (result) ->
+                        result.should.be.eql 'SELECT bar FROM foo WHERE foo = \'bar\';'
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
                 )

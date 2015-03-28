@@ -5,16 +5,19 @@
 # @class QueryBuilder
 ###
 
-isArray                 = require('util').isArray
-clone                   = require 'clone'
-containsErrorValue      = require('../global.js').containsErrorValue
-DatabaseStructure       = require './DatabaseStructure.js'
-GenericGetStructureMain = require './GenericGetStructureMain.js'
-isNotEmptyString        = require('../global.js').isNotEmptyString
-isStringArray           = require('../global.js').isStringArray
-ormUtils                = require '../orm.js'
-Q                       = require 'q'
-rmErrors                = require '../errors.js'
+DatabaseStructure               = require './DatabaseStructure.js'
+GenericGetStructureConstraint   = require './GenericGetStructureConstraint.js'
+GenericGetStructureMain         = require './GenericGetStructureMain.js'
+
+clone               = require 'clone'
+containsErrorValue  = require('../global.js').containsErrorValue
+isArray             = require('util').isArray
+isNotEmptyString    = require('../global.js').isNotEmptyString
+isStringArray       = require('../global.js').isStringArray
+mysql               = require 'mysql'
+ormUtils            = require '../orm.js'
+Q                   = require 'q'
+rmErrors            = require '../errors.js'
 
 class QueryBuilder
 
@@ -106,19 +109,19 @@ class QueryBuilder
     processContraintField: (constraintField, objectType) ->
         result = {}
 
-        if (constraintField.indexOf '.' is -1)
+        if (constraintField.indexOf( '.') is -1)
             ###
             # If it's a field
             ###
-            result.tableName = objectType
-            resultcolumnName = field
+            result.tableName    = objectType
+            result.columnName   = constraintField
         else
             ###*
             # If it's a field of another table
             ###
-            splitData   = /^(.*)\.(.*)$/.exec(constraintField)
-            resulttableName   = splitData[1]
-            resultcolumnName  = splitData[2]
+            splitData           = /^(.*)\.(.*)$/.exec(constraintField)
+            result.tableName    = splitData[1]
+            result.columnName   = splitData[2]
         result
 
     ###*
@@ -299,11 +302,11 @@ class QueryBuilder
     ###*
     # Generate where section of a generic query
     # @param    {String}    objectType          Type of main object
-    # @param    {Array}     constraints         A select array sorted by depth
+    # @param    {Array}     constraints         A constraints array
     # @param    {Object}    dbStructure         DatabaseStructure instance
     # @return   {String}                        From section of a generic get
     ###
-    buildGenericGetWhereSection: (objectType, constraints) ->
+    buildGetWhereSection: (objectType, constraints) ->
         errors          = []
         sqlConstraints  = []
 
@@ -324,14 +327,15 @@ class QueryBuilder
             )
 
         if errors.length isnt 0
-            return errors
+            return Q.fcall ->
+                throw errors
 
         ###*
         # Process each constraints to build the where section
         ###
         for constraint in constraints
-            do (constraint) ->
-                sql = null
+            do (constraint) =>
+                sql = ''
                 if not (constraint instanceof GenericGetStructureConstraint)
                     errors.push errors.push new rmErrors.ParameterError(
                         'constraint',
@@ -343,7 +347,7 @@ class QueryBuilder
                     # Add link if exists
                     ###
                     if (constraint.link isnt null)
-                        sql += constraint.link
+                        sql += ' ' + constraint.link + ' '
 
                     ###*
                      # Check if field is a field of object type or another field
@@ -354,7 +358,8 @@ class QueryBuilder
 
                     # Add operator and value
                     sql += ' ' + constraint.operator + ' '
-                    if isListOfValue(constraint.operator)
+
+                    if @isListOfValue(constraint.operator)
                         sql += @escapeListValues(constraint.value)
                     else
                         sql += constraint.operator + ' '
@@ -362,15 +367,25 @@ class QueryBuilder
 
                 sqlConstraints.push sql
 
+        if errors.length isnt 0
+            return Q.fcall ->
+                throw  errors
+
+        Q.fcall ->
+            sqlConstraints.join ' '
+
     ###*
     # Escape list values
     # @param    {Array}     values      Values to prepare before insert in query
     # @return   {String}                String to be include in query
     ###
     escapeListValues: (values) ->
+        escapedData = []
+        escapedData.push mysql.escape(data) for data in values
+
         result = '('
-        result += mysql.escape(data) for data in constraint.value
-        result += ') '
+        result += escapedData.join(',')
+        result += ')'
         result
 
     ###*
@@ -388,28 +403,48 @@ class QueryBuilder
     # @throw                                    DatabaseError if occurs
     ###
     buildMainObjectIdsQuery: (queriesStructure) ->
-        ormUtils.sortSelectByDepth @getStructure.select
-            .then (orderedSelect) ->
-                ormUtils.buildGenericGetFromSection(
+        if not queriesStructure?.hasOwnProperty 'getIdsQuery'
+            return Q.fcall ->
+                errors = []
+                errors.push new rmErrors.ParameterError(
+                    'queriesStructure',
+                    'object',
+                    queriesStructure
+                )
+                throw errors
+
+        @sortSelectByDepth @getStructure.select
+            .then (orderedSelect) =>
+                @buildGetFromSection(
                     @getStructure.returnType,
                     orderedSelect,
                     @dbStructure
                 )
-            .then (fromParts) ->
+            .then (fromParts) =>
                 constraints = @getStructure.constraints
-                ormUtils.buildGenericGetWhereSection returnType, constraints
-                    .then (whereParts) ->
+                @buildGetWhereSection @getStructure.returnType, constraints
+                    .then (whereParts) =>
                         returnType  = @getStructure.returnType
                         table       = @dbStructure.getTable returnType
-                        pk          = table.getPrimaryKey()
+                        pk          = table.getPrimaryKeys()
 
-                        query       =  'SELECT ' + pk + '
-                                        FROM ' + returnType + '
-                                            '  + fromParts + '
-                                        WHERE ' + whereParts
+                        query   = 'SELECT ' + pk
+                        query  += ' FROM ' + returnType
+
+                        ###*
+                        # If some join should be done, add id
+                        ###
+                        if fromParts isnt ''
+                            query  += ' ' + fromParts
+
+                        ###*
+                        # Add WHERE constraints only if we have constraints
+                        ###
+                        if whereParts isnt ''
+                            query += ' WHERE ' + whereParts
 
                         Q.fcall ->
-                            query
+                            queriesStructure.getIdsQuery = query + ';'
             .catch (error) ->
                 throw error
 
