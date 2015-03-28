@@ -7,3 +7,7 @@ before_install:
   - sudo apt-get install uuid-dev libldap2-dev
 install:
   - npm install
+script:
+  - gulp unitcoverage
+after_script:
+  - gulp unitcoveralls
