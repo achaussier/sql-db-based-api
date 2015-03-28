@@ -1,3 +1,6 @@
+2015-03-28 Alexandre Chaussier <a.chaussier@infopen.pro>
+- Add coveralls management
+
 2015-03-21 Alexandre Chaussier <a.chaussier@infopen.pro>
 - Add GenericGetStructureMain
 - Add a function to check if element is a string array
