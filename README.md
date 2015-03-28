@@ -5,8 +5,8 @@
 ## Status
 ---------
 
-- ![Build status](https://travis-ci.org/achaussier/sql-db-based-api.svg?branch=master)
-- ![Coverage status](https://coveralls.io/repos/achaussier/sql-db-based-api/badge.svg?branch=master)](https://coveralls.io/r/achaussier/sql-db-based-api?branch=master)
+- [![Build status](https://travis-ci.org/achaussier/sql-db-based-api.svg?branch=master)](https://travis-ci.org/achaussier/sql-db-based-api?branch=master)
+- [![Coverage status](https://coveralls.io/repos/achaussier/sql-db-based-api/badge.svg?branch=master)](https://coveralls.io/r/achaussier/sql-db-based-api?branch=master)
 
 
 ## Installation
