@@ -15,6 +15,7 @@ changed     = require 'gulp-changed'
 coffee      = require 'gulp-coffee'
 coffeelint  = require 'gulp-coffeelint'
 concat      = require 'gulp-concat'
+coveralls   = require 'gulp-coveralls'
 del         = require 'del'
 exec        = require('child_process').exec
 fs          = require 'fs'
@@ -226,6 +227,24 @@ gulp.task 'e2etest', [], ->
             gutil.log err
             gutil.beep()
             @.emit 'end'
+
+
+###*
+# Unit test coveralls update
+###
+gulp.task 'unitcoveralls', [], ->
+    gulp
+        .src 'dist/public/coverage/unit/lcov.info'
+        .pipe coveralls()
+
+
+###*
+# End to end test coveralls update
+###
+gulp.task 'e2ecoveralls', [], ->
+    gulp
+        .src 'dist/public/coverage/e2e/lcov.info'
+        .pipe coveralls()
 
 
 ###*

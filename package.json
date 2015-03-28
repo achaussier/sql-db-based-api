@@ -33,6 +33,7 @@
     "gulp-coffee": "",
     "gulp-coffeelint": "",
     "gulp-changed": "",
+    "gulp-coveralls": "",
     "gulp-nodemon": "",
     "gulp-rename": "",
     "gulp-tar": "",
