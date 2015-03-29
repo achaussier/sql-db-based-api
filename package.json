@@ -1,24 +1,14 @@
 {
-  "description": "Rackmonkey API",
+  "description": "SQL database based API",
   "private": true,
   "version": "0.0.1",
   "dependencies": {
-    "LDAP": "",
     "actionhero": "",
-    "async": "",
-    "basic-auth": "",
     "clone": "",
-    "colors": "",
-    "csv-stringify": "",
-    "flat": "",
-    "jsonwebtoken": "",
-    "lynx": "",
     "minimist": "",
     "mysql": "",
     "q": "",
-    "request": "",
-    "winston": "",
-    "xlsx": ""
+    "winston": ""
   },
   "devDependencies": {
     "sinon": "",
@@ -47,7 +37,6 @@
     "run-sequence": "",
     "yargs": "",
     "del": "",
-    "path": "",
     "gulp-mocha": "",
     "gulp-istanbul": "",
     "gulp-copy": "",
@@ -61,7 +50,7 @@
     "test": "gulp unittests"
   },
   "apidoc": {
-    "title": "Rackmonkey API - User documentation",
-    "url": "https://api.rack.criteo.prod/doc/user"
+    "title": "SQL database based API - User documentation",
+    "url": "https://localhost:9000/doc/user"
   }
 }
