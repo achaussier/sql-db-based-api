@@ -4,68 +4,83 @@
 # @fileOverview Intializer used to connect to MariaDB server with mysql driver
 ###
 
-mysql = require 'mysql'
-rmErrors = require '../../lib/errors.js'
+###*
+# Required modules
+###
+DatabaseWrapper = require '../../lib/class/DatabaseWrapper.js'
+Maria10Database = require '../../lib/class/Maria10Database.js'
+mysql           = require 'mysql'
+rmErrors        = require '../../lib/errors.js'
 
 module.exports =
-    loadPriority:  1000
-    startPriority: 100
-    stopPriority:  1000
+    loadPriority    : 1000
+    startPriority   : 100
+    stopPriority    : 1000
 
     initialize: (api, next) ->
 
         ###*
-        # Create namespace to manage mysql pools
+        # Create namespace to manage databases
         ###
-        if api.database?
-            api.database.mysql = {}
-        else
-            api.database =
-                mysql: {}
+        if not api.database?
+            api.database = null
 
         next()
 
     start: (api, next) ->
 
-        errorObj = null
+        dialect = api?.config?.database?.dialect
 
-        try
-            ###*
-            # Create pool cluster with all servers
-            ###
-            poolCluster = mysql.createPoolCluster()
-            poolCluster.add('MASTER_1', api.config.database)
+        ###*
+        # Only process this initializer for maria or mysql databases
+        ###
+        if not dialect?
+            return next()
+        else if not /^mysql.*$/.test(dialect) and not /^maria.*$/.test(dialect)
+            return next()
 
-            ###*
-            # Create a write pool and a read pool to split read/write in future
-            ###
-            readPool = poolCluster.of('MASTER*', 'ORDER')
-            writePool = poolCluster.of('MASTER*', 'ORDER')
+        ###*
+        # Check if this database dialect is managed by this initializer
+        ###
+        dbObj = switch dialect
+            when 'maria10' then new Maria10Database()
+            else null
 
-            ###*
-            # Attach server pools to api namespace
-            ###
-            api.database.mysql.poolCluster = poolCluster
-            api.database.mysql.readPool    = readPool
-            api.database.mysql.writePool   = writePool
-
-        catch error
+        if not dbObj?
             errorObj = new rmErrors.ServerError(
-                error,
-                'database-connection-error'
+                dialect,
+                'database-dialect-not-implemented'
             )
-            errorObj
+            return next errorObj
 
-        finally
-
-            ###*
-            # If an error occurs, stop api launching
-            ###
-            next(errorObj)
+        ###*
+        # Create pools and wrap methods
+        ###
+        dbObj
+            .generatePools(api.config.database)
+            .then(
+                (result) ->
+                    wrapper                     = new DatabaseWrapper()
+                    wrapper.getReadConnection   = dbObj.getReadConnection
+                    wrapper.getWriteConnection  = dbObj.getWriteConnection
+                    wrapper.executeSelect       = dbObj.executeSelect
+                    wrapper.end                 = dbObj.poolCluster.end
+                    api.database                = wrapper
+                    next()
+                ,(error) ->
+                    throw error
+            )
+            .catch (error) ->
+                errorObj = new rmErrors.ServerError(
+                    error,
+                    'database-connection-error'
+                )
+                next(errorObj)
 
     stop: (api, next) ->
         ###*
-        # If api is stopping, disconnect from servers
+        # If api is stopping, disconnect from servers if connection exists
         ###
-        api.database.mysql.poolCluster.end()
+        if api.database?.end?
+            api.database.end()
         next()

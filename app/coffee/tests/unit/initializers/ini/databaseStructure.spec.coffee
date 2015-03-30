@@ -39,7 +39,26 @@ describe 'Initializer : databaseStructure', ->
         stub2.restore() if stub2?
         done()
 
-    it 'should create dbStructure namespace', ->
+    ###*
+    # Check with namespace
+    ###
+    it 'should continue', ->
+        val = { dbStructure: {} }
+        initializer.initialize(
+            val,
+            cb
+        )
+        cb.calledOnce.should.be.true
+        val.should.have.keys 'dbStructure'
+        val.dbStructure.should.have.keys [
+            'data'
+            'versionOneRender'
+        ]
+
+    ###*
+    # Check without namespace
+    ###
+    it 'should continue', ->
         val = {}
         initializer.initialize(
             val,
@@ -52,15 +71,17 @@ describe 'Initializer : databaseStructure', ->
             'versionOneRender'
         ]
 
-    it 'should return an error if no database config', ->
-        mocksUtils.api.config.database = null
-
+    ###*
+    # Check without database managed
+    ###
+    it 'should skip if no database managed', ->
+        delete mocksUtils.api.database
         initializer.start(
             mocksUtils.api,
             cb
         )
-
-        cb.args[0][0].should.be.instanceof rmErrors.ServerError
+        cb.calledOnce.should.be.true
+        should.not.exists cb.args[0][0]
 
     it 'should execute start method', ->
         mocksUtils.api.dbStructure =
