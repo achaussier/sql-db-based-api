@@ -83,6 +83,14 @@ exports.connectionWithErrorArray =
     ]
 
 ###*
+# A connection with error mock
+###
+exports.connectionWithError =
+    rawConnection: {}
+    error:
+        code: 666
+
+###*
 # A winston module mock
 ###
 exports.winston =
