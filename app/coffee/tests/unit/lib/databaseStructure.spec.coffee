@@ -26,16 +26,15 @@ Table               = require '../../../lib/class/Table.js'
 # Declare variables
 ###
 mocksUtils  = clone mocks
-cb          = null
-dbStructure = null
-parts       = null
-spy         = null
-stub        = null
-stub2       = null
-table1      = null
-table2      = null
-val         = null
-val2        = null
+cb          = undefined
+dbStructure = undefined
+part        = undefined
+parts       = undefined
+spy         = undefined
+stub        = undefined
+stub2       = undefined
+table1      = undefined
+table2      = undefined
 
 describe 'Database structure classes and functions', ->
 
@@ -54,11 +53,9 @@ describe 'Database structure classes and functions', ->
     describe 'getStructureFromDB', ->
 
         beforeEach (done) ->
-            cb          = sinon.spy()
             mocksUtils  = clone mocks
-            val         = null
-            val2        = null
-            spy         = null
+            stub        = null
+            stub2       = null
             done()
 
         afterEach (done) ->
@@ -147,8 +144,6 @@ describe 'Database structure classes and functions', ->
         beforeEach (done) ->
             badObj      = null
             mocksUtils  = clone mocks
-            val         = undefined
-            val2        = null
             done()
 
         ###*
@@ -231,8 +226,6 @@ describe 'Database structure classes and functions', ->
         beforeEach (done) ->
             badObj      = null
             mocksUtils  = clone mocks
-            val         = undefined
-            val2        = null
             done()
 
         ###*
@@ -295,10 +288,11 @@ describe 'Database structure classes and functions', ->
     describe 'setTable', ->
 
         beforeEach (done) ->
+            dbStructure = new DatabaseStructure()
             mocksUtils  = clone mocks
-            val         = null
-            val2        = null
+            part        = null
             stub        = null
+            table1      = new Table mocksUtils.dbStructureTable
             done()
 
         afterEach (done) ->
@@ -306,13 +300,28 @@ describe 'Database structure classes and functions', ->
             done()
 
         ###*
+        # Check with an existing table
+        ###
+        it 'should not create a table if exists', ->
+            part = mocksUtils.dbStructureField
+            dbStructure.addTable table1
+
+            dbStructUtils.setTable(dbStructure, part)
+                .then(
+                    (result) ->
+                        result.should.have.property 'name'
+                        result.name.should.be.eql 'foo'
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                    )
+
+        ###*
         # Check with a not existing table
         ###
         it 'should be create a table if not exists', ->
-            val = new DatabaseStructure()
-            obj = mocksUtils.dbStructureField
+            part = mocksUtils.dbStructureField
 
-            dbStructUtils.setTable(val, obj)
+            dbStructUtils.setTable(dbStructure, part)
                 .then(
                     (result) ->
                         result.should.have.property 'name'
@@ -325,16 +334,15 @@ describe 'Database structure classes and functions', ->
         # Simulate a no table create
         ###
         it 'should be reject if table not exists after Get', ->
-            val  = new DatabaseStructure()
-            obj  = mocksUtils.dbStructureField
-            stub = sinon.stub(
-                val,
+            part    = mocksUtils.dbStructureField
+            stub    = sinon.stub(
+                dbStructure,
                 'getTable',
                 ->
                     null
             )
 
-            dbStructUtils.setTable(val, obj)
+            dbStructUtils.setTable(dbStructure, part)
                 .then(
                     (result) ->
                         throw new Error 'Should not be go here in this test'
@@ -346,9 +354,7 @@ describe 'Database structure classes and functions', ->
         # Check add a new field
         ###
         it 'should add a new field to a table', ->
-            val = new Table mocksUtils.dbStructureTable
-
-            dbStructUtils.setField val, mocksUtils.dbStructureField
+            dbStructUtils.setField table1, mocksUtils.dbStructureField
                 .then(
                     (result) ->
                         result.fields.length.should.be.eql 1
@@ -360,24 +366,21 @@ describe 'Database structure classes and functions', ->
 
         beforeEach (done) ->
             mocksUtils  = clone mocks
-            val         = undefined
             spy         = null
-            stub        = null
+            table1      = new Table mocksUtils.dbStructureTable
             done()
 
         afterEach (done) ->
-            stub.restore() if stub? and stub.restore?
-            spy.restore() if spy? and spy.restore?
+            spy.restore() if spy?.restore?
             done()
 
         ###*
         # Check without index data
         ###
         it 'should not call addUniqueIndexPart if no index data', ->
-            val = new Table mocksUtils.dbStructureTable
-            spy = sinon.spy val, 'addUniqueIndexPart'
+            spy = sinon.spy table1, 'addUniqueIndexPart'
 
-            dbStructUtils.setUniqueIndex val, {}
+            dbStructUtils.setUniqueIndex table1, {}
                 .then(
                     (result) ->
                         spy.called.should.be.false
@@ -389,14 +392,13 @@ describe 'Database structure classes and functions', ->
         # Check with index data
         ###
         it 'should add part if index data', ->
-            val = new Table mocksUtils.dbStructureTable
             obj =
                 uniqueIndexName: 'foo'
                 tableName      : 'foo'
                 columnName     : 'bar'
-            spy = sinon.spy val, 'addUniqueIndexPart'
+            spy = sinon.spy table1, 'addUniqueIndexPart'
 
-            dbStructUtils.setUniqueIndex val, obj
+            dbStructUtils.setUniqueIndex table1, obj
                 .then(
                     (result) ->
                         spy.called.should.be.true
