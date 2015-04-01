@@ -1,3 +1,6 @@
+2015-03-31 Alexandre Chaussier <a.chaussier@infopen.pro>
+- Add abstraction for database management
+
 2015-03-28 Alexandre Chaussier <a.chaussier@infopen.pro>
 - Add coveralls management
 
