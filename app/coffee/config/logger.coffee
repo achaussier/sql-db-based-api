@@ -37,10 +37,11 @@ exports.default =
  * Local configuration
  * @type {Object}
 ###
+###
 exports.local =
   logger: (api) ->
       transports: []
-
+###
 ###*
  * Production configuration
  * @type {Object}

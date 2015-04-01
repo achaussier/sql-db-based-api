@@ -14,77 +14,65 @@ Table               = require '../../../../lib/class/Table.js'
 sinon               = require 'sinon'
 should              = require 'should'
 
-dbStructure = null
-errorObj    = null
-field       = null
-fieldName   = null
-mocksUtils  = null
-stub        = null
-stub2       = null
-table       = null
-table2      = null
-table2Mock  = null
-tableName   = null
-v1render    = null
+dbStructure = undefined
+errorObj    = undefined
+field       = undefined
+fieldName   = undefined
+mocksUtils  = undefined
+stub        = undefined
+stub2       = undefined
+table       = undefined
+table2      = undefined
+table2Mock  = undefined
+tableName   = undefined
+v1render    = undefined
 
 describe 'Database structure : DatabaseStructure class', ->
 
     beforeEach (done) ->
         errorObj    = null
         mocksUtils  = clone mocks
-        dbStructure = null
-        table       = null
+        dbStructure = new DatabaseStructure()
+        table       = new Table(mocksUtils.dbStructureTable)
         v1render    = null
         done()
 
     it 'should create new DatabaseStructure', ->
-        dbStructure = new DatabaseStructure()
         dbStructure.should.be.instanceof DatabaseStructure
         dbStructure.should.have.keys [
             'tables'
         ]
 
     it 'should add a new table if not exists', ->
-        dbStructure     = new DatabaseStructure()
-        table           = new Table(mocksUtils.dbStructureTable)
-        dbStructure.should.be.instanceof DatabaseStructure
         table.should.be.instanceof Table
         dbStructure.addTable(table).should.be.true
 
     it 'should not add a new table if already exists', ->
-        dbStructure     = new DatabaseStructure()
-        table           = new Table(mocksUtils.dbStructureTable)
-        dbStructure.should.be.instanceof DatabaseStructure
-        table.should.be.instanceof Table
         dbStructure.addTable(table).should.be.true
         dbStructure.addTable(table).should.be.false
 
     it 'should get table if exists', ->
-        dbStructure     = new DatabaseStructure()
-        table           = new Table(mocksUtils.dbStructureTable)
-        dbStructure.should.be.instanceof DatabaseStructure
-        table.should.be.instanceof Table
         dbStructure.addTable(table).should.be.true
         dbStructure.getTable('foo').name.should.be.eql 'foo'
 
     it 'should not get table if not exists', ->
-        dbStructure     = new DatabaseStructure()
-        table           = new Table(mocksUtils.dbStructureTable)
-        dbStructure.should.be.instanceof DatabaseStructure
-        table.should.be.instanceof Table
         dbStructure.addTable(table).should.be.true
         should.not.exists(dbStructure.getTable('foo2'))
 
     it 'should render same as v1', ->
-        dbStructure     = new DatabaseStructure()
-        table           = new Table(mocksUtils.dbStructureTable)
-        dbStructure.should.be.instanceof DatabaseStructure
-        table.should.be.instanceof Table
         dbStructure.addTable(table).should.be.true
         v1render = dbStructure.versionOneRender()
         v1render.should.have.keys 'struct'
         v1render.struct.should.have.keys 'objects'
         v1render.struct.objects.should.have.keys 'foo'
+
+    it 'should render same as v1', ->
+        table.isView = true
+        dbStructure.addTable(table).should.be.true
+        v1render = dbStructure.versionOneRender()
+        v1render.should.have.keys 'struct'
+        v1render.struct.should.have.keys 'objects'
+        v1render.struct.objects.should.not.have.keys 'foo'
 
     describe 'checkPath', ->
 
@@ -198,22 +186,28 @@ describe 'Database structure : DatabaseStructure class', ->
             dbStructure.checkPath(fieldName + '.foo3', tableName).should.be.false
 
         ###*
-        # Check with a valid inverse foreign key
+        # Check inverse relation table become parent
         ###
         it 'should return true', ->
             table2Mock      = clone mocksUtils.dbStructureTable
-            table2Mock.name = 'foo2'
+            table2Mock.name = 'foo2.bar'
 
             dbStructure     = new DatabaseStructure()
             table           = new Table(mocksUtils.dbStructureTable)
             tableName       = mocksUtils.dbStructureTable.name
             table2          = new Table(table2Mock)
             stub            = sinon.stub(
-                table,
-                'isInverseForeignKey'
+                dbStructure,
+                'getTable'
                 ->
-                    true
+                    getField: ->
+                        null
+                    isRelationExists: ->
+                        true
             )
+            dbStructure.checkPath('foo.bar', 'foo').should.be.true
+
+
 
     describe 'containsInverseRelation', ->
 
@@ -348,3 +342,27 @@ describe 'Database structure : DatabaseStructure class', ->
             dbStructure.addTable(table).should.be.true
             dbStructure.addTable(table2).should.be.true
             dbStructure.containsInverseRelation(fieldName + '.foo2', tableName).should.be.true
+
+        ###*
+        # Check inverse relation table become parent
+        ###
+        it 'should return false', ->
+            table2Mock      = clone mocksUtils.dbStructureTable
+            table2Mock.name = 'foo2.bar'
+
+            dbStructure     = new DatabaseStructure()
+            table           = new Table(mocksUtils.dbStructureTable)
+            tableName       = mocksUtils.dbStructureTable.name
+            table2          = new Table(table2Mock)
+            stub            = sinon.stub(
+                dbStructure,
+                'getTable'
+                ->
+                    getField: ->
+                        null
+                    isRelationExists: ->
+                        true
+                    isInverseForeignKey: ->
+                        false
+            )
+            dbStructure.containsInverseRelation('foo.bar', 'foo').should.be.false

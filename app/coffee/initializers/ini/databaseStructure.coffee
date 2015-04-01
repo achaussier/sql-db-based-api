@@ -30,35 +30,31 @@ module.exports =
         ###*
         # If not database config to use, exit with an error
         ###
-        if not api.config.database?
-            errorObj = new rmErrors.ServerError(
-                'bad-database-config',
-                'bad-config'
-            )
-            next errorObj
+        if not api.database?
+            api.log 'No database managed by api, nothing to build !', 'warning'
+            return next()
 
-        else
-            ###*
-            # A database config exists, so build the database structure
-            ###
-            dbStructUtils.getStructureFromDB api
-                .then dbStructUtils.processDatabaseStructureParts
-                .then (dbStructure) ->
+        ###*
+        # A database config exists, so build the database structure
+        ###
+        dbStructUtils.getStructureFromDB api
+            .then dbStructUtils.processDatabaseStructureParts
+            .then (dbStructure) ->
 
-                    ###*
-                    # Store DatabaseStructure instance
-                    ###
-                    api.dbStructure.data = dbStructure
+                ###*
+                # Store DatabaseStructure instance
+                ###
+                api.dbStructure.data = dbStructure
 
-                    ###*
-                    # Generate render for v1 backward compatibility an store it
-                    ###
-                    renderV1 = dbStructure.versionOneRender()
-                    api.dbStructure.versionOneRender = renderV1
-                    next()
+                ###*
+                # Generate render for v1 backward compatibility an store it
+                ###
+                renderV1 = dbStructure.versionOneRender()
+                api.dbStructure.versionOneRender = renderV1
+                next()
 
-                .catch (error) ->
-                    next error
+            .catch (error) ->
+                next error
 
     stop: (api, next) ->
         next()

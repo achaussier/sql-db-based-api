@@ -4,61 +4,156 @@
 # @fileOverview Tests about mysql initializer
 ###
 
-# require packages
-initializer = require '../../../../initializers/ini/mysql.js'
-rmErrors = require '../../../../lib/errors.js'
-mocks = require '../../_mocks.js'
-should = require 'should'
-sinon = require 'sinon'
-clone = require 'clone'
-mysql = require 'mysql'
+###*
+# Required modules
+###
+clone           = require 'clone'
+initializer     = require '../../../../initializers/ini/mysql.js'
+mocks           = require '../../_mocks.js'
+mysql           = require 'mysql'
+rmErrors        = require '../../../../lib/errors.js'
+sinon           = require 'sinon'
+should          = require 'should'
 
-cb = null
-mocksUtils = undefined
-spy = null
-stub = null
-val = null
+###*
+# Declare variables
+###
+cb          = undefined
+mocksUtils  = undefined
+spy         = undefined
+stub        = undefined
+val         = undefined
 
 
 describe 'Initializer : mysql', ->
 
     beforeEach (done) ->
-        cb = sinon.spy()
-        mocksUtils = clone mocks
-        val = null
-        spy = null
-        stub = null
+        cb          = sinon.spy()
+        mocksUtils  = clone mocks
+        spy         = null
+        stub        = null
+        val         = null
         done()
 
-    it 'should create database namespace', ->
+    afterEach (done) ->
+        stub.restore() if stub?.restore?
+        done()
+
+    ###*
+    # Check initialize section
+    ###
+    it 'should create database namespace if not exists', ->
         initializer.initialize(
             {},
             cb
         )
         cb.calledOnce.should.be.true
-        val = mocksUtils.api.database?.mysql?
+        val = mocksUtils.api.database?
         val.should.be.true
 
-    it 'should create mysql namespace', ->
+    ###*
+    # Check initialize section
+    ###
+    it 'should continue if namespace exists', ->
         initializer.initialize(
-            {
-                database: {}
-            },
+            mocksUtils.api,
             cb
         )
         cb.calledOnce.should.be.true
-        val = mocksUtils.api.database?.mysql?
+        val = mocksUtils.api.database?
         val.should.be.true
 
-    it 'should return error if connection is not possible', ->
-        delete mocksUtils.api.config.database
+    ###*
+    # Check without database config (initailizer should be skip)
+    ###
+    it 'should be skipped if no database config', ->
+        initializer.start(
+            null,
+            cb
+        )
+        cb.calledOnce.should.be.true
+        should.not.exists cb.args[0][0]
+
+    ###*
+    # Check without database config (initailizer should be skip)
+    ###
+    it 'should be skipped if no database config', ->
+        mocksUtils.api.config = null
+        delete mocksUtils.api.database
         initializer.start(
             mocksUtils.api,
             cb
         )
         cb.calledOnce.should.be.true
-        cb.args[0][0].should.be.instanceof rmErrors.ServerError
+        should.not.exists cb.args[0][0]
+        should.not.exists mocksUtils.api.database
 
+    ###*
+    # Check without database config (initailizer should be skip)
+    ###
+    it 'should be skipped if no database config', ->
+        mocksUtils.api.config.database = null
+        delete mocksUtils.api.database
+        initializer.start(
+            mocksUtils.api,
+            cb
+        )
+        cb.calledOnce.should.be.true
+        should.not.exists cb.args[0][0]
+        should.not.exists mocksUtils.api.database
+
+    ###*
+    # Check without database config (initailizer should be skip)
+    ###
+    it 'should be skipped if no database config', ->
+        mocksUtils.api.config.database.dialect = null
+        delete mocksUtils.api.database
+        initializer.start(
+            mocksUtils.api,
+            cb
+        )
+        cb.calledOnce.should.be.true
+        should.not.exists cb.args[0][0]
+        should.not.exists mocksUtils.api.database
+
+    ###*
+    # Check without manage database config (initailizer should be skip)
+    ###
+    it 'should be skipped if no managed database', ->
+        mocksUtils.api.config.database.dialect  = 'foo'
+        mocksUtils.api.database                 = null
+        initializer.start(
+            mocksUtils.api,
+            cb
+        )
+        cb.calledOnce.should.be.true
+        should.not.exists cb.args[0][0]
+        should.not.exists mocksUtils.api.database
+
+    ###*
+    # Check with a bad mysql version
+    ###
+    it 'should reject if not managed mysql db version', ->
+        mocksUtils.api.config.database.dialect = 'maria1'
+        stub = sinon.stub(
+            mysql,
+            'createPoolCluster',
+            () ->
+                {
+                    add: ->
+                    of: ->
+                }
+        )
+        initializer.start(
+            mocksUtils.api,
+            cb
+        )
+        cb.calledOnce.should.be.true
+        should.exists(cb.args[0][0])
+
+    ###*
+    # Check with a good configuration
+    ###
     it 'should build pools if connection to server is ok', ->
         stub = sinon.stub(
             mysql,
@@ -75,14 +170,84 @@ describe 'Initializer : mysql', ->
         )
         cb.calledOnce.should.be.true
         should.not.exists(cb.args[0][0])
-        mysql.createPoolCluster.restore()
 
+    ###*
+    # Check with maria10 dialect
+    ###
+    it 'should build pools if maria10 dialect', ->
+        mocksUtils.api.config.database.dialect = 'maria10'
+        stub = sinon.stub(
+            mysql,
+            'createPoolCluster',
+            ->
+                {
+                    add: ->
+                    of: ->
+                }
+        )
+        initializer
+            .start(
+                mocksUtils.api,
+                cb
+            )
+            .then(
+                (result) ->
+                    cb.calledOnce.should.be.true
+                    should.not.exists(cb.args[0][0])
+                ,(error) ->
+                    throw new Error 'Should not be go here in this test'
+            )
+
+
+    ###*
+    # Check with a bad config
+    ###
+    it 'should call callback with an error if error occurs during processing', ->
+        mocksUtils.api.config.database.dialect = 'maria10'
+        mocksUtils.api.config.database.masters = null
+        initializer
+            .start(
+                mocksUtils.api,
+                cb
+            )
+            .then(
+                (result) ->
+                    cb.calledOnce.should.be.true
+                    should.exists(cb.args[0][0])
+                ,(error) ->
+                    throw new Error 'Should not be go here in this test'
+            )
+    ###*
+    # End check with database managed
+    ###
     it 'should disconnect from servers when api stopping', ->
         spy = sinon.spy()
-        mocksUtils.api.database.mysql.poolCluster.end = spy
+        mocksUtils.api.database.end = spy
         initializer.stop(
             mocksUtils.api,
             cb
         )
         spy.calledOnce.should.true
+        cb.calledOnce.should.true
+
+    ###*
+    # End check without database
+    ###
+    it 'should do nothing if no db', ->
+        mocksUtils.api.database = null
+        initializer.stop(
+            mocksUtils.api,
+            cb
+        )
+        cb.calledOnce.should.true
+
+    ###*
+    # End check without database
+    ###
+    it 'should do nothing if no db', ->
+        mocksUtils.api.database.end = null
+        initializer.stop(
+            mocksUtils.api,
+            cb
+        )
         cb.calledOnce.should.true

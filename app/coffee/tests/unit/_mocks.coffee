@@ -24,20 +24,29 @@ exports.api =
     id: 'bar'
     config:
         database:
-            database: 'foo'
+            dbName   : 'foobar'
+            dialect  : 'foo'
+            selector : 'foo'
+            masters  : []
+            slaves   : []
         redis: {}
         general:
             serverName: 'foo'
     database:
-        mysql:
-            poolCluster:
-                end: ->
-            readPool:
-                getConnection: (cb) ->
-                    cb null, {}
-            writePool:
-                getConnection: (cb) ->
-                    cb null, {}
+        end: ->
+        executeSelect: (connection, query) ->
+            console.log 'TEST EXECUTE'
+            Q.fcall ->
+                results: []
+        getDatabaseStructureQuery: () ->
+            Q.fcall ->
+                'foo query'
+        getReadConnection: () ->
+            Q.fcall ->
+                release: ->
+        getWriteConnection: () ->
+            Q.fcall ->
+                release: ->
     log: ->
     stats:
         getAll: (cb) ->
@@ -74,6 +83,14 @@ exports.connectionWithErrorArray =
     ]
 
 ###*
+# A connection with error mock
+###
+exports.connectionWithError =
+    rawConnection: {}
+    error:
+        code: 666
+
+###*
 # A winston module mock
 ###
 exports.winston =
@@ -104,6 +121,7 @@ exports.badSqlApis = [
 # Bad sql connections
 ###
 exports.badSqlConnections = [
+    null,
     {},
     {
         query: null
@@ -136,6 +154,7 @@ exports.sqlConnectionWithQueryError =
 # Bad query data
 ###
 exports.badQueryDatas = [
+    null,
     {},
     {
         sql: null
@@ -301,3 +320,23 @@ exports.queriesStructure =
     getIdsQuery             : null
     getMainObjectQuery      : null
     getArrayValuesQueries   : {}
+
+###*
+# Fake mysql server config
+###
+exports.mysqlServerConfig =
+    host                : 'foo'
+    user                : 'foo'
+    password            : 'bar'
+    multipleStatements  : true
+    port                : 3333
+
+###*
+# Fake database config
+###
+exports.databaseConfig =
+    dbName   : 'foobar'
+    dialect  : 'mysql'
+    selector : 'foo'
+    masters  : []
+    slaves   : []

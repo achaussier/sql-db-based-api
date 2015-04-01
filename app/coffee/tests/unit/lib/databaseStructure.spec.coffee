@@ -4,30 +4,37 @@
 # @fileOverview Tests about databaseStructure exports
 ###
 
-# require packages
-clone               = require 'clone'
-dbStructUtils       = require '../../../lib/databaseStructure.js'
-DatabaseStructure   = require '../../../lib/class/DatabaseStructure.js'
-Field       = require '../../../lib/class/Field.js'
-mocks       = require '../_mocks.js'
-Q           = require 'q'
-rmErrors    = require '../../../lib/errors.js'
-sinon       = require 'sinon'
-should      = require 'should'
-sqlUtils    = require '../../../lib/sql.js'
-Table       = require '../../../lib/class/Table.js'
+###*
+# Required modules
+###
+clone           = require 'clone'
+dbStructUtils   = require '../../../lib/databaseStructure.js'
+mocks           = require '../_mocks.js'
+Q               = require 'q'
+rmErrors        = require '../../../lib/errors.js'
+sinon           = require 'sinon'
+should          = require 'should'
 
+###*
+# Required custom classes
+###
+DatabaseStructure   = require '../../../lib/class/DatabaseStructure.js'
+Field               = require '../../../lib/class/Field.js'
+Table               = require '../../../lib/class/Table.js'
+
+###*
+# Declare variables
+###
 mocksUtils  = clone mocks
-cb          = null
-dbStructure = null
-parts       = null
-spy         = null
-stub        = null
-stub2       = null
-table1      = null
-table2      = null
-val         = null
-val2        = null
+cb          = undefined
+dbStructure = undefined
+part        = undefined
+parts       = undefined
+spy         = undefined
+stub        = undefined
+stub2       = undefined
+table1      = undefined
+table2      = undefined
 
 describe 'Database structure classes and functions', ->
 
@@ -46,11 +53,9 @@ describe 'Database structure classes and functions', ->
     describe 'getStructureFromDB', ->
 
         beforeEach (done) ->
-            cb          = sinon.spy()
             mocksUtils  = clone mocks
-            val         = null
-            val2        = null
-            spy         = null
+            stub        = null
+            stub2       = null
             done()
 
         afterEach (done) ->
@@ -58,8 +63,11 @@ describe 'Database structure classes and functions', ->
             stub2.restore() if stub2?
             done()
 
-        it 'should reject an error if connection is not mocked properly', ->
-            dbStructUtils.getStructureFromDB mocksUtils.api
+        ###*
+        # With null api object
+        ###
+        it 'should reject an error if no database configured', ->
+            dbStructUtils.getStructureFromDB null
                 .then(
                     (results) ->
                         throw new Error 'Should not be go here in this test'
@@ -67,8 +75,39 @@ describe 'Database structure classes and functions', ->
                         error.should.be.instanceof rmErrors.ParameterError
                 )
 
+        ###*
+        # With null api.database object
+        ###
+        it 'should reject an error if no database configured', ->
+            dbStructUtils.getStructureFromDB { database: null }
+                .then(
+                    (results) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof rmErrors.ParameterError
+                )
+
+        ###*
+        # With good database object
+        ###
+        it 'should resolve', ->
+            dbStructUtils.getStructureFromDB mocksUtils.api
+                .then(
+                    (results) ->
+                        results.should.be.instanceof Array
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                )
+
+        ###*
+        # Simulate an error on get connection
+        ###
         it 'should reject an error if unabled to get a connection', ->
-            stub = sinon.stub sqlUtils, 'getReadOnlyConnection', mocksUtils.rejectDatabaseError
+            stub = sinon.stub(
+                mocksUtils.api.database,
+                'getReadConnection',
+                mocksUtils.rejectDatabaseError
+            )
             dbStructUtils.getStructureFromDB mocksUtils.api
                 .then(
                     (results) ->
@@ -77,9 +116,21 @@ describe 'Database structure classes and functions', ->
                         error.should.be.instanceof rmErrors.DatabaseError
                 )
 
+        ###*
+        # Check with all ok with fake connection object
+        ###
         it 'should resolve if all is ok', ->
-            stub    = sinon.stub sqlUtils, 'executeSelect', mocksUtils.fakeDbStructureResultsFromDB
-            stub2   = sinon.stub sqlUtils, 'getReadOnlyConnection', mocksUtils.fakeSqlConnection
+            stub    = sinon.stub(
+                mocksUtils.api.database,
+                'executeSelect',
+                mocksUtils.fakeDbStructureResultsFromDB
+            )
+            stub2   = sinon.stub(
+                mocksUtils.api.database,
+                'getReadConnection',
+                mocksUtils.fakeSqlConnection
+            )
+
             dbStructUtils.getStructureFromDB mocksUtils.api
                 .then(
                     (results) ->
@@ -93,10 +144,11 @@ describe 'Database structure classes and functions', ->
         beforeEach (done) ->
             badObj      = null
             mocksUtils  = clone mocks
-            val         = undefined
-            val2        = null
             done()
 
+        ###*
+        # Check without param
+        ###
         it 'should reject if no param', ->
             dbStructUtils.checkPartMandatoryValues()
                 .then(
@@ -106,6 +158,9 @@ describe 'Database structure classes and functions', ->
                         error.should.be.instanceof rmErrors.ParameterError
                 )
 
+        ###*
+        # Check with bad params
+        ###
         for badObj in mocksUtils.badObjectParam
             do (badObj) ->
                 it 'should reject if bad obj param', ->
@@ -117,6 +172,9 @@ describe 'Database structure classes and functions', ->
                                 error.should.be.instanceof rmErrors.ParameterError
                         )
 
+        ###*
+        # Check with incomplete object
+        ###
         it 'should reject if some keys not exists', ->
             obj = mocksUtils.dbStructureField
             delete obj.tableName
@@ -131,6 +189,9 @@ describe 'Database structure classes and functions', ->
                         error.message.should.be.eql 'missing-mandatory-values-for-object'
                 )
 
+        ###*
+        # Check with null object values
+        ###
         it 'should reject if some keys have null value', ->
             obj             = mocksUtils.dbStructureField
             obj.tableName   = null
@@ -144,6 +205,9 @@ describe 'Database structure classes and functions', ->
                         error.message.should.be.eql 'missing-mandatory-values-for-object'
                 )
 
+        ###*
+        # Check with a good object
+        ###
         it 'should resolve if all keys have not null value', ->
             obj             = mocksUtils.dbStructureField
             obj.columnType  = 'foo'
@@ -162,10 +226,11 @@ describe 'Database structure classes and functions', ->
         beforeEach (done) ->
             badObj      = null
             mocksUtils  = clone mocks
-            val         = undefined
-            val2        = null
             done()
 
+        ###*
+        # Check without param
+        ###
         it 'should reject if no param', ->
             dbStructUtils.checkPartKeys()
                 .then(
@@ -175,6 +240,9 @@ describe 'Database structure classes and functions', ->
                         error.should.be.instanceof rmErrors.ParameterError
                 )
 
+        ###*
+        # Check with bad param
+        ###
         for badObj in mocksUtils.badObjectParam
             do (badObj) ->
                 it 'should reject if bad obj param', ->
@@ -186,6 +254,9 @@ describe 'Database structure classes and functions', ->
                                 error.should.be.instanceof rmErrors.ParameterError
                         )
 
+        ###*
+        # Check with incomplete objet
+        ###
         it 'should reject if some keys not exists', ->
             obj = mocksUtils.dbStructureField
             delete obj.tableName
@@ -200,6 +271,9 @@ describe 'Database structure classes and functions', ->
                         error.message.should.be.eql 'bad-keys-for-object'
                 )
 
+        ###*
+        # Check with null values
+        ###
         it 'should resolve if all keys have not null value', ->
             obj = mocksUtils.dbStructureField
 
@@ -214,21 +288,25 @@ describe 'Database structure classes and functions', ->
     describe 'setTable', ->
 
         beforeEach (done) ->
+            dbStructure = new DatabaseStructure()
             mocksUtils  = clone mocks
-            val         = null
-            val2        = null
+            part        = null
             stub        = null
+            table1      = new Table mocksUtils.dbStructureTable
             done()
 
         afterEach (done) ->
             stub.restore() if stub? and stub.restore?
             done()
 
-        it 'should be create a table if not exists', ->
-            val = new DatabaseStructure()
-            obj = mocksUtils.dbStructureField
+        ###*
+        # Check with an existing table
+        ###
+        it 'should not create a table if exists', ->
+            part = mocksUtils.dbStructureField
+            dbStructure.addTable table1
 
-            dbStructUtils.setTable(val, obj)
+            dbStructUtils.setTable(dbStructure, part)
                 .then(
                     (result) ->
                         result.should.have.property 'name'
@@ -237,17 +315,34 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
                     )
 
+        ###*
+        # Check with a not existing table
+        ###
+        it 'should be create a table if not exists', ->
+            part = mocksUtils.dbStructureField
+
+            dbStructUtils.setTable(dbStructure, part)
+                .then(
+                    (result) ->
+                        result.should.have.property 'name'
+                        result.name.should.be.eql 'foo'
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                    )
+
+        ###*
+        # Simulate a no table create
+        ###
         it 'should be reject if table not exists after Get', ->
-            val  = new DatabaseStructure()
-            obj  = mocksUtils.dbStructureField
-            stub = sinon.stub(
-                val,
+            part    = mocksUtils.dbStructureField
+            stub    = sinon.stub(
+                dbStructure,
                 'getTable',
                 ->
                     null
             )
 
-            dbStructUtils.setTable(val, obj)
+            dbStructUtils.setTable(dbStructure, part)
                 .then(
                     (result) ->
                         throw new Error 'Should not be go here in this test'
@@ -255,10 +350,11 @@ describe 'Database structure classes and functions', ->
                         error.should.be.instanceof rmErrors.ServerError
                     )
 
+        ###*
+        # Check add a new field
+        ###
         it 'should add a new field to a table', ->
-            val = new Table mocksUtils.dbStructureTable
-
-            dbStructUtils.setField val, mocksUtils.dbStructureField
+            dbStructUtils.setField table1, mocksUtils.dbStructureField
                 .then(
                     (result) ->
                         result.fields.length.should.be.eql 1
@@ -270,21 +366,21 @@ describe 'Database structure classes and functions', ->
 
         beforeEach (done) ->
             mocksUtils  = clone mocks
-            val         = undefined
             spy         = null
-            stub        = null
+            table1      = new Table mocksUtils.dbStructureTable
             done()
 
         afterEach (done) ->
-            stub.restore() if stub? and stub.restore?
-            spy.restore() if spy? and spy.restore?
+            spy.restore() if spy?.restore?
             done()
 
+        ###*
+        # Check without index data
+        ###
         it 'should not call addUniqueIndexPart if no index data', ->
-            val = new Table mocksUtils.dbStructureTable
-            spy = sinon.spy val, 'addUniqueIndexPart'
+            spy = sinon.spy table1, 'addUniqueIndexPart'
 
-            dbStructUtils.setUniqueIndex val, {}
+            dbStructUtils.setUniqueIndex table1, {}
                 .then(
                     (result) ->
                         spy.called.should.be.false
@@ -292,15 +388,17 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
                     )
 
+        ###*
+        # Check with index data
+        ###
         it 'should add part if index data', ->
-            val = new Table mocksUtils.dbStructureTable
             obj =
                 uniqueIndexName: 'foo'
                 tableName      : 'foo'
                 columnName     : 'bar'
-            spy = sinon.spy val, 'addUniqueIndexPart'
+            spy = sinon.spy table1, 'addUniqueIndexPart'
 
-            dbStructUtils.setUniqueIndex val, obj
+            dbStructUtils.setUniqueIndex table1, obj
                 .then(
                     (result) ->
                         spy.called.should.be.true
@@ -324,6 +422,9 @@ describe 'Database structure classes and functions', ->
             spy2.restore() if spy2? and spy2.restore?
             done()
 
+        ###*
+        # Check with a no relation data
+        ###
         it 'should not call addRelation', ->
             dbStructure = new DatabaseStructure()
             table1      = new Table mocksUtils.dbStructureTable
@@ -337,6 +438,9 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
                     )
 
+        ###*
+        # Check with relations between tables
+        ###
         it 'should add relation', ->
             dbStructure = new DatabaseStructure()
             table1      = new Table { name: 'foo'  }
@@ -364,6 +468,9 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
                     )
 
+        ###*
+        # Check with a relation with a not existing table
+        ###
         it 'should add relation and create ref table if not exists', ->
             dbStructure = new DatabaseStructure()
             table1      = new Table { name: 'foo'  }
@@ -401,6 +508,9 @@ describe 'Database structure classes and functions', ->
             spy2.restore() if spy2? and spy2.restore?
             done()
 
+        ###*
+        # Check with empty database result
+        ###
         it 'should executed without data returned', ->
             dbStructUtils.processDatabaseStructureParts []
                 .then(
@@ -410,6 +520,9 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
                     )
 
+        ###*
+        # Check with a no empty database result
+        ###
         it 'should executed with one part', ->
             parts = [
                 mocksUtils.dbStructureField
@@ -422,6 +535,9 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
                     )
 
+        ###*
+        # Check with a bad field
+        ###
         it 'should reject if error occurs', ->
             mocksUtils.dbStructureField.isNullable = null
             parts = [

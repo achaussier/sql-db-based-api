@@ -16,8 +16,18 @@ isArray = require('util').isArray
 ###
 changeReturnCode = (connection, actionTemplate, toRender, next) ->
 
+    ###*
+    # If errors array
+    ###
     if isArray(connection.error) and not isNaN(connection.error[0]?.code)
         returnCode = connection.error[0].code
+        connection.rawConnection.responseHttpCode = returnCode
+
+    else if connection.error? and not isNaN(connection.error.code)
+        ###*
+        # If error object
+        ###
+        returnCode = connection.error.code
         connection.rawConnection.responseHttpCode = returnCode
 
     next connection, true
