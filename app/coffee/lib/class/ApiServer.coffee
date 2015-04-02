@@ -7,7 +7,7 @@
 
 ActionHero  = require('actionhero').actionheroPrototype
 fs          = require 'fs'
-rmErrors    = require '../errors.js'
+apiErrors   = require '../errors.js'
 
 
 class ApiServer extends ActionHero
@@ -54,7 +54,7 @@ class ApiServer extends ActionHero
 
             @stop (error) ->
                 if error
-                    errorObj = new rmErrors.ServerError(
+                    errorObj = new apiErrors.ServerError(
                         error,
                         'server-error-during-stop'
                     )

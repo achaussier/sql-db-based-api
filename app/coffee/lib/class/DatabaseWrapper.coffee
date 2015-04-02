@@ -7,8 +7,8 @@
 ###*
 # Required modules
 ###
-Q               = require 'q'
-rmErrors        = require '../errors.js'
+Q           = require 'q'
+apiErrors   = require '../errors.js'
 
 class DatabaseWrapper
 
@@ -25,7 +25,7 @@ class DatabaseWrapper
     ###
     getReadConnection: () ->
         Q.fcall ->
-            throw new rmErrors.ServerError(
+            throw new apiErrors.ServerError(
                 'buildInnerJoin should be extended by a sub class'
             )
     ###*
@@ -35,7 +35,7 @@ class DatabaseWrapper
     ###
     getWriteConnection: () ->
         Q.fcall ->
-            throw new rmErrors.ServerError(
+            throw new apiErrors.ServerError(
                 'buildInnerJoin should be extended by a sub class'
             )
     ###*
@@ -48,7 +48,7 @@ class DatabaseWrapper
     ###
     executeSelect: (connection, queryData) ->
         Q.fcall ->
-            throw new rmErrors.ServerError(
+            throw new apiErrors.ServerError(
                 'buildInnerJoin should be extended by a sub class'
             )
 

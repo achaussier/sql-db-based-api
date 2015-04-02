@@ -4,10 +4,15 @@
 # @fileOverview Tests about DatabaseError class
 ###
 
-# require packages
-DatabaseError = require '../../../../lib/class/DatabaseError.js'
-should = require 'should'
+###*
+# Required modules
+###
+DatabaseError   = require '../../../../lib/class/DatabaseError.js'
+should          = require 'should'
 
+###*
+# Declare variables
+###
 errorObj = null
 
 describe 'DatabaseError', ->
@@ -16,6 +21,9 @@ describe 'DatabaseError', ->
         errorObj = null
         done()
 
+    ###*
+    # Check with only data
+    ###
     it 'should generate new error object with only data param send', ->
         errorObj = new DatabaseError(
             'foobar'
@@ -26,6 +34,9 @@ describe 'DatabaseError', ->
         errorObj.code.should.be.eql 400
         errorObj.category.should.be.eql 'database-error'
 
+    ###*
+    # Check with a custum message
+    ###
     it 'should set custom message', ->
         errorObj = new DatabaseError(
             'foobar',
@@ -37,6 +48,9 @@ describe 'DatabaseError', ->
         errorObj.code.should.be.eql 400
         errorObj.category.should.be.eql 'database-error'
 
+    ###*
+    # Check with a custom code
+    ###
     it 'should set custom code', ->
         errorObj = new DatabaseError(
             'foobar',
@@ -49,6 +63,9 @@ describe 'DatabaseError', ->
         errorObj.code.should.be.eql 550
         errorObj.category.should.be.eql 'database-error'
 
+    ###
+    # Check with custom category
+    ###
     it 'should set custom category', ->
         errorObj = new DatabaseError(
             'foobar',

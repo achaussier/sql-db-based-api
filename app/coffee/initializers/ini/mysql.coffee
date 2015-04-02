@@ -5,12 +5,17 @@
 ###
 
 ###*
-# Required modules
+# Required custom classess
 ###
 DatabaseWrapper = require '../../lib/class/DatabaseWrapper.js'
 Maria10Database = require '../../lib/class/Maria10Database.js'
+
+###*
+# Required modules
+###
+apiErrors       = require '../../lib/errors.js'
 mysql           = require 'mysql'
-rmErrors        = require '../../lib/errors.js'
+
 
 module.exports =
     loadPriority    : 1000
@@ -47,7 +52,7 @@ module.exports =
             else null
 
         if not dbObj?
-            errorObj = new rmErrors.ServerError(
+            errorObj = new apiErrors.ServerError(
                 dialect,
                 'database-dialect-not-implemented'
             )
@@ -71,7 +76,7 @@ module.exports =
                     throw error
             )
             .catch (error) ->
-                errorObj = new rmErrors.ServerError(
+                errorObj = new apiErrors.ServerError(
                     error,
                     'database-connection-error'
                 )

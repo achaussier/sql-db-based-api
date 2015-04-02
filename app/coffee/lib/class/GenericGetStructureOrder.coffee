@@ -5,12 +5,22 @@
 # @class GenericGetStructureOrder
 ###
 
-isArray = require('util').isArray
+###*
+# Require custom classes
+###
+apiErrors = require '../errors.js'
 
+###*
+# Require custom classes
+###
 containsErrorValue  = require('../global.js').containsErrorValue
-DatabaseStructure   = require './DatabaseStructure.js'
+isArray             = require('util').isArray
 isNotEmptyString    = require('../global.js').isNotEmptyString
-rmErrors            = require '../errors.js'
+
+###*
+# Require custom classes
+###
+DatabaseStructure   = require './DatabaseStructure.js'
 
 class GenericGetStructureOrder
 
@@ -51,25 +61,25 @@ class GenericGetStructureOrder
         # Check if params are valid
         ###
         if not isNotEmptyString(objectType)
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'objectType',
                 'string'
                 objectType
             )
         else if not (dbStructure instanceof DatabaseStructure)
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'dbStructure',
                 'DatabaseStructure'
                 dbStructure
             )
         else if not dbStructure.checkPath(field, objectType)
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'field',
                 'string'
                 field
             )
         else if not (asc is 'asc') and not (asc is 'desc')
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'asc',
                 'string'
                 asc

@@ -4,10 +4,19 @@
 # @fileOverview Tests about ServerError class
 ###
 
-# require packages
+###*
+# Require custom classes
+###
 serverError = require '../../../../lib/class/ServerError.js'
+
+###*
+# Require modules
+###
 should = require 'should'
 
+###*
+# Declare variables
+###
 errorObj = null
 
 describe 'ServerError', ->
@@ -16,6 +25,9 @@ describe 'ServerError', ->
         errorObj = null
         done()
 
+    ###*
+    # Check with only data
+    ###
     it 'should generate new error object with only data param send', ->
         errorObj = new serverError(
             'foobar'
@@ -26,6 +38,9 @@ describe 'ServerError', ->
         errorObj.code.should.be.eql 500
         errorObj.category.should.be.eql 'server-error'
 
+    ###*
+    # Check with massge
+    ###
     it 'should set custom message', ->
         errorObj = new serverError(
             'foobar',
@@ -37,6 +52,9 @@ describe 'ServerError', ->
         errorObj.code.should.be.eql 500
         errorObj.category.should.be.eql 'server-error'
 
+    ###*
+    # Check with custom code
+    ###
     it 'should set custom code', ->
         errorObj = new serverError(
             'foobar',
@@ -49,6 +67,9 @@ describe 'ServerError', ->
         errorObj.code.should.be.eql 550
         errorObj.category.should.be.eql 'server-error'
 
+    ###*
+    # Check with category
+    ###
     it 'should set custom category', ->
         errorObj = new serverError(
             'foobar',

@@ -11,7 +11,7 @@ isArray = require('util').isArray
 containsErrorValue  = require('../global.js').containsErrorValue
 DatabaseStructure   = require './DatabaseStructure.js'
 isNotEmptyString    = require('../global.js').isNotEmptyString
-rmErrors            = require('../errors.js')
+apiErrors           = require('../errors.js')
 
 class GenericGetStructureConstraint
 
@@ -58,7 +58,7 @@ class GenericGetStructureConstraint
         checkErrors = containsErrorValue checks
 
         if not (dbStructure instanceof DatabaseStructure)
-            return new rmErrors.ParameterError(
+            return new apiErrors.ParameterError(
                 'dbStructure',
                 'DatabaseStructure',
                 dbStructure
@@ -86,7 +86,7 @@ class GenericGetStructureConstraint
         linkToTest  = link?.toLowerCase()
         if not link? or (linkToTest is 'and') or (linkToTest is 'or')
             return true
-        return new rmErrors.ParameterError(
+        return new apiErrors.ParameterError(
             'link',
             'string',
             link
@@ -104,7 +104,7 @@ class GenericGetStructureConstraint
         ###*
         # Build an error object to used if error
         ###
-        errorObj = new rmErrors.ParameterError(
+        errorObj = new apiErrors.ParameterError(
             'check-constraint',
             'valid-params',
             {
@@ -138,7 +138,7 @@ class GenericGetStructureConstraint
         ###*
         # Build an error object to used if error
         ###
-        errorObj = new rmErrors.ParameterError(
+        errorObj = new apiErrors.ParameterError(
             'check-constraint',
             'valid-params',
             {
@@ -172,7 +172,7 @@ class GenericGetStructureConstraint
         ###*
         # Build an error object to used if error
         ###
-        errorObj = new rmErrors.ParameterError(
+        errorObj = new apiErrors.ParameterError(
             'check-constraint',
             'valid-params',
             {
@@ -286,7 +286,7 @@ class GenericGetStructureConstraint
             ###*
             # Invalid value type
             ###
-            return new rmErrors.ParameterError(
+            return new apiErrors.ParameterError(
                 'check-constraint',
                 'valid-params',
                 {

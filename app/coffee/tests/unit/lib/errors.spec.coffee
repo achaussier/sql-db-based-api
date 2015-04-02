@@ -4,11 +4,16 @@
 # @fileOverview Tests about errors exports
 ###
 
-# require packages
-errorUtils = require '../../../lib/errors.js'
-should = require 'should'
+###*
+# Required packages
+###
+errorUtils  = require '../../../lib/errors.js'
+should      = require 'should'
 
-obj = null
+###*
+# Declare variables
+###
+obj = undefined
 
 describe 'Custom error classes export', ->
 

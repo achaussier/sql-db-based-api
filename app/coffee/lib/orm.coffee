@@ -4,6 +4,9 @@
 # @fileOverview This file contains functions used for query building
 ###
 
+###*
+# Required custom classes
+###
 GenericGetStructureConstraint = require './class/GenericGetStructureConstraint'
 GenericGetStructureOptions    = require './class/GenericGetStructureOptions.js'
 

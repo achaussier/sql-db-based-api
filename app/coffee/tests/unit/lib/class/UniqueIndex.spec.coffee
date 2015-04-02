@@ -4,41 +4,52 @@
 # @fileOverview Tests about database structure UniqueIndex class
 ###
 
-# require packages
-clone = require 'clone'
+###*
+# Required custom classes
+###
 UniqueIndex = require '../../../../lib/class/UniqueIndex.js'
-mocks = require '../../_mocks.js'
-should = require 'should'
 
-errorObj = null
-mocksUtils = null
-val = null
+###*
+# Required modules
+###
+clone   = require 'clone'
+mocks   = require '../../_mocks.js'
+should  = require 'should'
+
+###*
+# Declare variable
+###
+mocksUtils  = undefined
+index       = undefined
 
 describe 'Database structure : UniqueIndex class', ->
 
     beforeEach (done) ->
-        errorObj = null
-        mocksUtils = clone mocks
-        val = null
+        mocksUtils  = clone mocks
+        index       = new UniqueIndex(mocksUtils.dbStructureUniqueIndex)
         done()
 
+    ###*
+    # Check instance create
+    ###
     it 'should create new UniqueIndex', ->
-        val = new UniqueIndex(mocksUtils.dbStructureUniqueIndex)
-        val.should.be.instanceof UniqueIndex
-        val.should.have.keys [
+        index.should.be.instanceof UniqueIndex
+        index.should.have.keys [
             'columns'
             'name'
             'tableName'
         ]
 
+    ###*
+    # Check adding a column twice
+    ###
     it 'should not be possible to add same column', ->
-        val = new UniqueIndex(mocksUtils.dbStructureUniqueIndex)
-        val.should.be.instanceof UniqueIndex
-        val.addColumn('foobar').should.be.false
-        val.columns.length.should.be.eql 1
+        index.addColumn('foobar').should.be.false
+        index.columns.length.should.be.eql 1
 
-     it 'should be possible to add another column', ->
-        val = new UniqueIndex(mocksUtils.dbStructureUniqueIndex)
-        val.should.be.instanceof UniqueIndex
-        val.addColumn('foobar2').should.be.true
-        val.columns.length.should.be.eql 2
+    ###*
+    # Check adding a new column
+    ###
+    it 'should be possible to add another column', ->
+        index.addColumn('foobar2').should.be.true
+        index.columns.length.should.be.eql 2

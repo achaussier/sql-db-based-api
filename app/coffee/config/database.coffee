@@ -11,7 +11,7 @@
 exports.default =
     database: (api) ->
         database: process.env['API_CONF_DB_NAME'] or null
-        dialect : 'foo'
+        dialect : 'maria10'
         selector: 'ORDER'
         masters : [
             {

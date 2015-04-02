@@ -4,7 +4,7 @@
  * @fileoverview Errors config
 ###
 
-rmErrors = require '../lib/errors.js'
+apiErrors = require '../lib/errors.js'
 ###*
  * Default configuration
  * @type {Object}
@@ -23,7 +23,7 @@ exports.default =
         ###
         serverErrorMessage: ->
             errors = []
-            errorObj = new rmErrors.ServerError null
+            errorObj = new apiErrors.ServerError null
             errors.push errorObj
             errors
 
@@ -38,7 +38,7 @@ exports.default =
         invalidParams: (params) ->
             errors = []
             for invalidParam in params
-                errorObj = new rmErrors.ParameterError(
+                errorObj = new apiErrors.ParameterError(
                     invalidParam,
                     undefined,
                     null,
@@ -53,7 +53,7 @@ exports.default =
         missingParams: (params) ->
             errors = []
             for missingParam in params
-                errorObj = new rmErrors.ParameterError(
+                errorObj = new apiErrors.ParameterError(
                     missingParam,
                     undefined,
                     null,
@@ -68,7 +68,7 @@ exports.default =
         ###
         unknownAction: (action) ->
             errors = []
-            errorObj = new rmErrors.ServerError(
+            errorObj = new apiErrors.ServerError(
                 action,
                 'unknown-action-or-invalid-api-version',
                 501
@@ -82,7 +82,7 @@ exports.default =
         ###
         unsupportedServerType: (type) ->
             errors = []
-            errorObj = new rmErrors.ServerError(
+            errorObj = new apiErrors.ServerError(
                 type,
                 'unsupported-server-type',
                 501
@@ -96,7 +96,7 @@ exports.default =
         ###
         serverShuttingDown: ->
             errors = []
-            errorObj = new rmErrors.ServerError(
+            errorObj = new apiErrors.ServerError(
                 null,
                 'server-shutting-down',
                 503
@@ -111,7 +111,7 @@ exports.default =
         ###
         tooManyPendingActions: ->
             errors = []
-            errorObj = new rmErrors.ServerError(
+            errorObj = new apiErrors.ServerError(
                 null,
                 'too-many-pending-requests',
                 509
@@ -125,7 +125,7 @@ exports.default =
         ###
         doubleCallbackError: ->
             errors = []
-            errorObj = new rmErrors.ServerError(
+            errorObj = new apiErrors.ServerError(
                 null,
                 'double-callback-prevented'
             )
@@ -144,7 +144,7 @@ exports.default =
         ###
         fileNotFound: ->
             errors = []
-            errorObj = new rmErrors.ServerError(
+            errorObj = new apiErrors.ServerError(
                 null,
                 'file-not-found',
                 404
@@ -158,7 +158,7 @@ exports.default =
         ###
         fileNotProvided: ->
             errors = []
-            errorObj = new rmErrors.ServerError(
+            errorObj = new apiErrors.ServerError(
                 null,
                 'no-file-parameter',
                 400
@@ -172,7 +172,7 @@ exports.default =
         ###
         fileInvalidPath: ->
             errors = []
-            errorObj = new rmErrors.ServerError(
+            errorObj = new apiErrors.ServerError(
                 null,
                 'incorrect-file-path',
                 422
@@ -186,7 +186,7 @@ exports.default =
         ###
         fileReadError: (err) ->
             errors = []
-            errorObj = new rmErrors.ServerError(
+            errorObj = new apiErrors.ServerError(
                 err,
                 'error-reading-file',
                 424

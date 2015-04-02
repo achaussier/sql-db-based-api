@@ -5,14 +5,24 @@
 # @class GenericGetStructureOptions
 ###
 
-isArray = require('util').isArray
+###*
+# Required modules
+###
+apiErrors   = require '../errors.js'
+Q           = require 'q'
 
-containsErrorValue          = require('../global.js').containsErrorValue
+###*
+# Required methods
+###
+containsErrorValue  = require('../global.js').containsErrorValue
+isArray             = require('util').isArray
+isNotEmptyString    = require('../global.js').isNotEmptyString
+
+###*
+# Required custom classes
+###
 DatabaseStructure           = require './DatabaseStructure.js'
 GenericGetStructureOrder    = require './GenericGetStructureOrder.js'
-isNotEmptyString            = require('../global.js').isNotEmptyString
-rmErrors    = require '../errors.js'
-Q           = require 'q'
 
 class GenericGetStructureOptions
 
@@ -39,21 +49,21 @@ class GenericGetStructureOptions
         ###
         if not isNotEmptyString(returnType)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'returnType',
                     'string'
                     returnType
                 )
         else if not isArray(newOrder)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'newOrder',
                     'array'
                     newOrder
                 )
         else if not (dbStructure instanceof DatabaseStructure)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'dbStructure',
                     'DatabaseStructure'
                     dbStructure
@@ -66,13 +76,13 @@ class GenericGetStructureOptions
             for order in newOrder
                 errorObj = null
                 if not (order instanceof GenericGetStructureOrder)
-                    errorObj = new rmErrors.ParameterError(
+                    errorObj = new apiErrors.ParameterError(
                         'order-object',
                         'GenericGetStructureOrder'
                         order
                     )
                 else if not dbStructure.checkPath(order.field, returnType)
-                    errorObj = new rmErrors.ParameterError(
+                    errorObj = new apiErrors.ParameterError(
                         'path',
                         'string'
                         order,
@@ -102,28 +112,28 @@ class GenericGetStructureOptions
         ###
         if not isNotEmptyString(returnType)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'returnType',
                     'string'
                     returnType
                 )
         else if not (order instanceof GenericGetStructureOrder)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'order',
                     'GenericGetStructureOrder'
                     order
                 )
         else if not (dbStructure instanceof DatabaseStructure)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'dbStructure',
                     'DatabaseStructure'
                     dbStructure
                 )
         else if not dbStructure.checkPath(order.field, returnType)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'order.field',
                     'string'
                     order.field
@@ -161,14 +171,14 @@ class GenericGetStructureOptions
         ###
         if isNaN(Number(startIndex))
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'startIndex',
                     'number'
                     startIndex
                 )
         else if isNaN(Number(maximumRows))
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'maximumRows',
                     'number'
                     maximumRows

@@ -4,9 +4,12 @@
 # @fileDescription Initializer which generate the database structure
 ###
 
+###*
+# Required modules
+###
+apiErrors       = require '../../lib/errors.js'
 dbStructUtils   = require '../../lib/databaseStructure.js'
 inspect         = require('util').inspect
-rmErrors        = require '../../lib/errors.js'
 Q               = require 'q'
 
 module.exports =

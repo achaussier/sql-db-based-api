@@ -4,7 +4,9 @@
 # @fileOverview Tests about Maria10QueryBuilder class
 ###
 
-# require packages
+###*
+# Required custom classes
+###
 DatabaseStructure       = require '../../../../lib/class/DatabaseStructure.js'
 Field                   = require '../../../../lib/class/Field.js'
 GenericGetStructureMain = require '../../../../lib/class/GenericGetStructureMain.js'
@@ -12,12 +14,18 @@ Maria10QueryBuilder     = require '../../../../lib/class/Maria10QueryBuilder.js'
 Relation                = require '../../../../lib/class/Relation.js'
 Table                   = require '../../../../lib/class/Table.js'
 
+###*
+# Required modules
+###
 clone       = require 'clone'
 mocks       = require '../../_mocks.js'
-rmErrors    = require '../../../../lib/errors.js'
+apiErrors   = require '../../../../lib/errors.js'
 sinon       = require 'sinon'
 should      = require 'should'
 
+###*
+# Declare variables
+###
 api                 = undefined
 builder             = undefined
 connection          = undefined
@@ -68,21 +76,21 @@ describe 'Maria10QueryBuilder class', ->
         ###
         it 'should reject if no param', ->
             val = maria10QueryBuilder.buildInnerJoin()
-            val.should.be.instanceof rmErrors.ParameterError
+            val.should.be.instanceof apiErrors.ParameterError
 
         ###*
         # Check with a bad table param
         ###
         it 'should reject if bad param', ->
             val = maria10QueryBuilder.buildInnerJoin(null, field)
-            val.should.be.instanceof rmErrors.ParameterError
+            val.should.be.instanceof apiErrors.ParameterError
 
         ###*
         # Check with a bad field param
         ###
         it 'should reject if bad param', ->
             val = maria10QueryBuilder.buildInnerJoin(table, null)
-            val.should.be.instanceof rmErrors.ParameterError
+            val.should.be.instanceof apiErrors.ParameterError
 
         ###*
         # Check with good params
@@ -124,14 +132,14 @@ describe 'Maria10QueryBuilder class', ->
         ###
         it 'should reject if no param', ->
             val = maria10QueryBuilder.buildLeftOuterJoin()
-            val.should.be.instanceof rmErrors.ParameterError
+            val.should.be.instanceof apiErrors.ParameterError
 
         ###*
         # Check with a bad table param
         ###
         it 'should reject if bad param', ->
             val = maria10QueryBuilder.buildLeftOuterJoin(null, field, relation)
-            val.should.be.instanceof rmErrors.ParameterError
+            val.should.be.instanceof apiErrors.ParameterError
 
         ###*
         # Check with only a bad field param
@@ -154,7 +162,7 @@ describe 'Maria10QueryBuilder class', ->
             val = maria10QueryBuilder.buildLeftOuterJoin(table, '', null)
             val.should.be.instanceof Array
             val.length.should.be.eql 2
-            val[0].should.be.instanceof rmErrors.ParameterError
+            val[0].should.be.instanceof apiErrors.ParameterError
 
     describe 'buildGetFromSection', ->
 
@@ -198,7 +206,7 @@ describe 'Maria10QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
 
@@ -224,7 +232,7 @@ describe 'Maria10QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -249,7 +257,7 @@ describe 'Maria10QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -274,7 +282,7 @@ describe 'Maria10QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*

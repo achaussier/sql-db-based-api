@@ -4,28 +4,40 @@
 # @fileOverview Tests about database structure Relation class
 ###
 
-# require packages
-clone = require 'clone'
-mocks = require '../../_mocks.js'
+###*
+# Require custom classes
+###
 Relation = require '../../../../lib/class/Relation.js'
-should = require 'should'
 
-errorObj = null
-mocksUtils = null
-val = null
+###*
+# Require modules
+###
+clone   = require 'clone'
+mocks   = require '../../_mocks.js'
+should  = require 'should'
+
+###*
+# Declare variables
+###
+errorObj    = null
+mocksUtils  = null
+relation    = null
 
 describe 'Database structure : Relation class', ->
 
     beforeEach (done) ->
-        errorObj = null
-        mocksUtils = clone mocks
-        val = null
+        errorObj    = null
+        mocksUtils  = clone mocks
+        relation    = null
         done()
 
+    ###
+    # Create new instance of this object
+    ###
     it 'should create new relation', ->
-        val = new Relation(mocksUtils.dbStructureRelation)
-        val.should.be.instanceof Relation
-        val.should.have.keys [
+        relation = new Relation(mocksUtils.dbStructureRelation)
+        relation.should.be.instanceof Relation
+        relation.should.have.keys [
             'originColumn'
             'destTable'
             'destColumn'

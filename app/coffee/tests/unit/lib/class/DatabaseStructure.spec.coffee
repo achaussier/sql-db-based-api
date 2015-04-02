@@ -4,7 +4,9 @@
 # @fileOverview Tests about DatabaseStructure class
 ###
 
-# require packages
+###*
+# Required modules
+###
 clone               = require 'clone'
 mocks               = require '../../_mocks.js'
 DatabaseStructure   = require '../../../../lib/class/DatabaseStructure.js'
@@ -14,6 +16,9 @@ Table               = require '../../../../lib/class/Table.js'
 sinon               = require 'sinon'
 should              = require 'should'
 
+###*
+# Declare variables
+###
 dbStructure = undefined
 errorObj    = undefined
 field       = undefined
@@ -37,28 +42,46 @@ describe 'Database structure : DatabaseStructure class', ->
         v1render    = null
         done()
 
+    ###*
+    # Check new instance create
+    ###
     it 'should create new DatabaseStructure', ->
         dbStructure.should.be.instanceof DatabaseStructure
         dbStructure.should.have.keys [
             'tables'
         ]
 
+    ###*
+    # Check add table to structure
+    ###
     it 'should add a new table if not exists', ->
         table.should.be.instanceof Table
         dbStructure.addTable(table).should.be.true
 
+    ###*
+    # Check with existing table
+    ###
     it 'should not add a new table if already exists', ->
         dbStructure.addTable(table).should.be.true
         dbStructure.addTable(table).should.be.false
 
+    ###*
+    # Check table getter for existing table
+    ###
     it 'should get table if exists', ->
         dbStructure.addTable(table).should.be.true
         dbStructure.getTable('foo').name.should.be.eql 'foo'
 
+    ###*
+    # Check table getter for unknown table
+    ###
     it 'should not get table if not exists', ->
         dbStructure.addTable(table).should.be.true
         should.not.exists(dbStructure.getTable('foo2'))
 
+    ###*
+    # Check v1 render with a table
+    ###
     it 'should render same as v1', ->
         dbStructure.addTable(table).should.be.true
         v1render = dbStructure.versionOneRender()
@@ -66,6 +89,9 @@ describe 'Database structure : DatabaseStructure class', ->
         v1render.struct.should.have.keys 'objects'
         v1render.struct.objects.should.have.keys 'foo'
 
+    ###*
+    # Check v1 render with a view
+    ###
     it 'should render same as v1', ->
         table.isView = true
         dbStructure.addTable(table).should.be.true

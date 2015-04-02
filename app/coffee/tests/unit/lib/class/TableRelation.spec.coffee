@@ -4,35 +4,50 @@
 # @fileOverview Tests about database structure TableRelation class
 ###
 
-# require packages
+###*
+# Required custom classes
+###
 TableRelation = require '../../../../lib/class/TableRelation.js'
+
+###*
+# Required modules
+###
 should = require 'should'
 
-errorObj = null
-val = null
-testObj = null
+###*
+# Declare variables
+###
+tableRelation = undefined
 
 describe 'Database structure : TableRelation class', ->
 
     beforeEach (done) ->
-        errorObj = null
+        tableRelation = new TableRelation('foo')
         done()
 
+    ###*
+    # Check if instance is create
+    ###
     it 'should create new TableRelation', ->
-        val = new TableRelation('foo')
-        val.should.be.instanceof TableRelation
-        val.should.have.keys [
+        tableRelation.should.be.instanceof TableRelation
+        tableRelation.should.have.keys [
             'name'
             'relations'
             'inverseRelations'
         ]
 
+    ###*
+    # Check add a relation
+    ###
     it 'should possible to push relation', ->
-        val.relations.length.should.be.eql 0
-        val.addRelation { foo: 'bar' }
-        val.relations.length.should.be.eql 1
+        tableRelation.relations.length.should.be.eql 0
+        tableRelation.addRelation { foo: 'bar' }
+        tableRelation.relations.length.should.be.eql 1
 
+    ###*
+    # Check add an inverse relation
+    ###
     it 'should possible to push inverse relation', ->
-        val.inverseRelations.length.should.be.eql 0
-        val.addInverseRelation { foo: 'bar' }
-        val.inverseRelations.length.should.be.eql 1
+        tableRelation.inverseRelations.length.should.be.eql 0
+        tableRelation.addInverseRelation { foo: 'bar' }
+        tableRelation.inverseRelations.length.should.be.eql 1

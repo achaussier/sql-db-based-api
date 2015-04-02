@@ -21,7 +21,7 @@ Table                           = require '../../../../lib/class/Table.js'
 clone       = require 'clone'
 mocks       = require '../../_mocks.js'
 Q           = require 'q'
-rmErrors    = require '../../../../lib/errors.js'
+apiErrors   = require '../../../../lib/errors.js'
 sinon       = require 'sinon'
 should      = require 'should'
 
@@ -65,7 +65,7 @@ describe 'QueryBuilder class', ->
     it 'should return error if bad param', ->
         val = new QueryBuilder()
         val.should.be.instanceof Array
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check bad api param
@@ -79,7 +79,7 @@ describe 'QueryBuilder class', ->
             dbStructure
         )
         val.should.be.instanceof Array
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check bad connection param
@@ -93,7 +93,7 @@ describe 'QueryBuilder class', ->
             dbStructure
         )
         val.should.be.instanceof Array
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check bad getStructure param
@@ -107,7 +107,7 @@ describe 'QueryBuilder class', ->
             dbStructure
         )
         val.should.be.instanceof Array
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check bad doTotalCount param
@@ -121,7 +121,7 @@ describe 'QueryBuilder class', ->
             dbStructure
         )
         val.should.be.instanceof Array
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check bad dbStructure param
@@ -135,7 +135,7 @@ describe 'QueryBuilder class', ->
             null
         )
         val.should.be.instanceof Array
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check good dbStructure param
@@ -266,7 +266,7 @@ describe 'QueryBuilder class', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -278,7 +278,7 @@ describe 'QueryBuilder class', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -380,7 +380,7 @@ describe 'QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
 
@@ -406,7 +406,7 @@ describe 'QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -431,7 +431,7 @@ describe 'QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -456,7 +456,7 @@ describe 'QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -645,7 +645,7 @@ describe 'QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -658,7 +658,7 @@ describe 'QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -671,7 +671,7 @@ describe 'QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -684,7 +684,7 @@ describe 'QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -710,7 +710,7 @@ describe 'QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -788,7 +788,7 @@ describe 'QueryBuilder class', ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
                         error.should.be.instanceof Array
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*

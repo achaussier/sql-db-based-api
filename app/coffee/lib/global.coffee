@@ -6,7 +6,7 @@
 
 Q           = require 'q'
 isArray     = require('util').isArray
-rmErrors    = require './errors.js'
+apiErrors   = require './errors.js'
 
 ###*
 # Validate if all keys exists and have not null value in this object
@@ -25,14 +25,14 @@ checkKeysHaveNotNullValues = (obj, keys) ->
     ###
     if not obj? or typeof obj is not 'object'
         Q.fcall ->
-            throw new rmErrors.ParameterError(
+            throw new apiErrors.ParameterError(
                 'obj',
                 'Object',
                 obj
             )
     else if not keys? or not isArray(keys)
         Q.fcall ->
-            throw new rmErrors.ParameterError(
+            throw new apiErrors.ParameterError(
                 'keys',
                 'Array',
                 keys
@@ -52,7 +52,7 @@ checkKeysHaveNotNullValues = (obj, keys) ->
                 obj
         else
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'keys',
                     keys,
                     obj,
@@ -78,14 +78,14 @@ checkKeys = (obj, keys) ->
     ###
     if not obj? or typeof obj is not 'object'
         Q.fcall ->
-            throw new rmErrors.ParameterError(
+            throw new apiErrors.ParameterError(
                 'obj',
                 'Object',
                 obj
             )
     else if not keys? or not isArray(keys)
         Q.fcall ->
-            throw new rmErrors.ParameterError(
+            throw new apiErrors.ParameterError(
                 'keys',
                 'Array',
                 keys
@@ -105,7 +105,7 @@ checkKeys = (obj, keys) ->
                 obj
         else
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'keys',
                     keys,
                     obj,
@@ -151,7 +151,7 @@ containsErrorValue = (obj) ->
     errors = []
 
     for key, value of obj
-        if rmErrors.isJsError(value) or rmErrors.isCustomError(value)
+        if apiErrors.isJsError(value) or apiErrors.isCustomError(value)
             errors.push value
     errors
 

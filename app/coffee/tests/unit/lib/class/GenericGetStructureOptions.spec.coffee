@@ -4,24 +4,33 @@
 # @fileOverview Test file for GenericGetStructureOptions class
 ###
 
-# require packages
+###*
+# Required custom classes
+###
 DatabaseStructure           = require '../../../../lib/class/DatabaseStructure.js'
 GenericGetStructureOptions  = require '../../../../lib/class/GenericGetStructureOptions.js'
 GenericGetStructureOrder    = require '../../../../lib/class/GenericGetStructureOrder.js'
+
+###*
+# Required modules
+###
 clone       = require 'clone'
 mocks       = require '../../_mocks.js'
-rmErrors    = require '../../../../lib/errors.js'
+apiErrors   = require '../../../../lib/errors.js'
 sinon       = require 'sinon'
 should      = require 'should'
 
-dbStructure         = null
-errorObj            = null
-getStructureOptions = null
-getStructureOrder   = null
-mocksUtils          = null
-stub                = null
-stub2               = null
-val                 = null
+###*
+# Declare variables
+###
+dbStructure         = undefined
+errorObj            = undefined
+getStructureOptions = undefined
+getStructureOrder   = undefined
+mocksUtils          = undefined
+stub                = undefined
+stub2               = undefined
+val                 = undefined
 
 describe 'Generic GET : GenericGetStructureOptions', ->
 
@@ -57,7 +66,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -69,7 +78,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -81,7 +90,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###
@@ -93,7 +102,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###
@@ -120,7 +129,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
         ###
@@ -165,7 +174,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -177,7 +186,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -196,7 +205,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###
@@ -222,7 +231,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###
@@ -329,7 +338,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -341,7 +350,7 @@ describe 'Generic GET : GenericGetStructureOptions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*

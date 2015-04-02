@@ -5,6 +5,9 @@
 # @class GenericGetStructureMain
 ###
 
+###*
+# Required modules
+###
 globalUtils         = require '../global.js'
 containsErrorValue  = globalUtils.containsErrorValue
 isArray             = require('util').isArray
@@ -12,8 +15,11 @@ isNotEmptyString    = globalUtils.isNotEmptyString
 isStringArray       = globalUtils.isStringArray
 ormUtils            = require '../orm.js'
 Q                   = require 'q'
-rmErrors            = require '../errors.js'
+apiErrors           = require '../errors.js'
 
+###*
+# Curstom classes
+###
 GenericGetStructureConstraint   = require './GenericGetStructureConstraint.js'
 DatabaseStructure               = require './DatabaseStructure.js'
 GenericGetStructureOptions      = require './GenericGetStructureOptions.js'
@@ -61,13 +67,13 @@ class GenericGetStructureMain
         # Check if objectType and dbStructure params are valid
         ###
         if not isNotEmptyString objectType
-            new rmErrors.ParameterError(
+            new apiErrors.ParameterError(
                 'objectType',
                 'string'
                 objectType
             )
         else if not (dbStructure instanceof DatabaseStructure)
-            new rmErrors.ParameterError(
+            new apiErrors.ParameterError(
                 'dbStructure',
                 'DatabaseStructure'
                 dbStructure
@@ -76,7 +82,7 @@ class GenericGetStructureMain
             ###*
             # Check if objectType and dbStructure params are valid
             ###
-            new rmErrors.ParameterError(
+            new apiErrors.ParameterError(
                 'objectType',
                 'existing-table'
                 objectType
@@ -96,14 +102,14 @@ class GenericGetStructureMain
         ###
         if not isArray(newSelect) or not isStringArray(newSelect)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'newSelect',
                     'string-array'
                     newSelect
                 )
         else if not (dbStructure instanceof DatabaseStructure)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'dbStructure',
                     'DatabaseStructure'
                     dbStructure
@@ -115,7 +121,7 @@ class GenericGetStructureMain
             errors = []
             for path in newSelect
                 if not dbStructure.checkPath(path, @returnType)
-                    errorObj = new rmErrors.ParameterError(
+                    errorObj = new apiErrors.ParameterError(
                         'path',
                         'string'
                         path,
@@ -144,14 +150,14 @@ class GenericGetStructureMain
         ###
         if not isNotEmptyString path
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'path',
                     'string'
                     path
                 )
         else if not (dbStructure instanceof DatabaseStructure)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'dbStructure',
                     'DatabaseStructure'
                     dbStructure
@@ -159,7 +165,7 @@ class GenericGetStructureMain
         else if not dbStructure.checkPath(path, @returnType) or
                 not @containsPath(path)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'path',
                     'string'
                     path
@@ -181,7 +187,7 @@ class GenericGetStructureMain
         ###
         if not ormUtils.isGenericGetStructureOptions(optionsObj)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'optionsObj',
                     'GenericGetStructureOptions'
                     optionsObj
@@ -203,7 +209,7 @@ class GenericGetStructureMain
         ###
         if not @isConstraintArray newConstraints
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'newConstraints',
                     'GenericGetStructureConstraint-array'
                     newConstraints
@@ -225,7 +231,7 @@ class GenericGetStructureMain
         ###
         if not ormUtils.isGenericGetStructureConstraint(constraint)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'constraint',
                     'GenericGetStructureConstraint'
                     constraint

@@ -11,7 +11,7 @@ clone           = require 'clone'
 mocks           = require '../../_mocks.js'
 mysql           = require 'mysql'
 MysqlDatabase   = require '../../../../lib/class/MysqlDatabase.js'
-rmErrors        = require '../../../../lib/errors.js'
+apiErrors       = require '../../../../lib/errors.js'
 sinon           = require 'sinon'
 should          = require 'should'
 
@@ -199,7 +199,7 @@ describe 'MysqlDatabase', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.instanceof rmErrors.ServerError
+                        error.should.instanceof apiErrors.ServerError
                 )
 
         ###*
@@ -217,7 +217,7 @@ describe 'MysqlDatabase', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ServerError
+                        error.should.be.instanceof apiErrors.ServerError
                 )
         ###*
         # Check without server
@@ -290,7 +290,7 @@ describe 'MysqlDatabase', ->
                     (roConnection) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ServerError
+                        error.should.be.instanceof apiErrors.ServerError
                 )
 
         it 'should reject if error occurs', ->
@@ -305,7 +305,7 @@ describe 'MysqlDatabase', ->
                     (roConnection) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.DatabaseError
+                        error.should.be.instanceof apiErrors.DatabaseError
                 )
 
         it 'should return a connection if no error occurs', ->
@@ -343,7 +343,7 @@ describe 'MysqlDatabase', ->
                     (roConnection) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ServerError
+                        error.should.be.instanceof apiErrors.ServerError
                 )
 
         it 'should reject if error occurs', ->
@@ -358,7 +358,7 @@ describe 'MysqlDatabase', ->
                     (roConnection) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.DatabaseError
+                        error.should.be.instanceof apiErrors.DatabaseError
                 )
 
         it 'should return a connection if no error occurs', ->
@@ -391,7 +391,7 @@ describe 'MysqlDatabase', ->
                             (dbResults, fields) ->
                                 throw new Error 'Should not be go here in this test'
                             ,(error) ->
-                                error.should.be.instanceof rmErrors.ParameterError
+                                error.should.be.instanceof apiErrors.ParameterError
                         )
 
         for badQueryData in mocksUtils.badQueryDatas
@@ -402,7 +402,7 @@ describe 'MysqlDatabase', ->
                             (dbResults, fields) ->
                                 throw new Error 'Should not be go here in this test'
                             ,(error) ->
-                                error.should.be.instanceof rmErrors.ParameterError
+                                error.should.be.instanceof apiErrors.ParameterError
                         )
 
         it 'should return DatabaseError if query return an error', ->
@@ -411,7 +411,7 @@ describe 'MysqlDatabase', ->
                     (dbResults) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.DatabaseError
+                        error.should.be.instanceof apiErrors.DatabaseError
                 )
 
         it 'should execute query if params are valid', ->

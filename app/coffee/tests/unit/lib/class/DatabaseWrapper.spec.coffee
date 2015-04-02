@@ -8,7 +8,7 @@
 # Required modules
 ###
 DatabaseWrapper = require '../../../../lib/class/DatabaseWrapper.js'
-rmErrors        = require '../../../../lib/errors.js'
+apiErrors       = require '../../../../lib/errors.js'
 should          = require 'should'
 
 ###*
@@ -23,33 +23,44 @@ describe 'Database management : DatabaseWrapper class', ->
         dbWrapper = new DatabaseWrapper()
         done()
 
+    ###*
+    # Check new instance create
+    ###
     it 'should create new wrapper', ->
         dbWrapper.should.be.instanceof DatabaseWrapper
 
+    ###*
+    # Check native method call
+    ###
     it 'should return an error with origin method', ->
         dbWrapper.getReadConnection()
             .then(
                 (result) ->
                     throw new Error 'Should not be go here in this test'
                 ,(error) ->
-                    error.should.be.instanceof rmErrors.ServerError
+                    error.should.be.instanceof apiErrors.ServerError
             )
 
+    ###*
+    # Check native method call
+    ###
     it 'should return an error with origin method', ->
         dbWrapper.getWriteConnection()
             .then(
                 (result) ->
                     throw new Error 'Should not be go here in this test'
                 ,(error) ->
-                    error.should.be.instanceof rmErrors.ServerError
+                    error.should.be.instanceof apiErrors.ServerError
             )
 
-
+    ###*
+    # Check native method call
+    ###
     it 'should return an error with origin method', ->
         dbWrapper.executeSelect()
             .then(
                 (result) ->
                     throw new Error 'Should not be go here in this test'
                 ,(error) ->
-                    error.should.be.instanceof rmErrors.ServerError
+                    error.should.be.instanceof apiErrors.ServerError
             )

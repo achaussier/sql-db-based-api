@@ -11,7 +11,7 @@ clone           = require 'clone'
 dbStructUtils   = require '../../../lib/databaseStructure.js'
 mocks           = require '../_mocks.js'
 Q               = require 'q'
-rmErrors        = require '../../../lib/errors.js'
+apiErrors       = require '../../../lib/errors.js'
 sinon           = require 'sinon'
 should          = require 'should'
 
@@ -72,7 +72,7 @@ describe 'Database structure classes and functions', ->
                     (results) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -84,7 +84,7 @@ describe 'Database structure classes and functions', ->
                     (results) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -113,7 +113,7 @@ describe 'Database structure classes and functions', ->
                     (results) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.DatabaseError
+                        error.should.be.instanceof apiErrors.DatabaseError
                 )
 
         ###*
@@ -155,7 +155,7 @@ describe 'Database structure classes and functions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -169,7 +169,7 @@ describe 'Database structure classes and functions', ->
                             (result) ->
                                 throw new Error 'Should not be go here in this test'
                             ,(error) ->
-                                error.should.be.instanceof rmErrors.ParameterError
+                                error.should.be.instanceof apiErrors.ParameterError
                         )
 
         ###*
@@ -185,7 +185,7 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
 
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                         error.message.should.be.eql 'missing-mandatory-values-for-object'
                 )
 
@@ -201,7 +201,7 @@ describe 'Database structure classes and functions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                         error.message.should.be.eql 'missing-mandatory-values-for-object'
                 )
 
@@ -237,7 +237,7 @@ describe 'Database structure classes and functions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
         ###*
@@ -251,7 +251,7 @@ describe 'Database structure classes and functions', ->
                             (result) ->
                                 throw new Error 'Should not be go here in this test'
                             ,(error) ->
-                                error.should.be.instanceof rmErrors.ParameterError
+                                error.should.be.instanceof apiErrors.ParameterError
                         )
 
         ###*
@@ -267,7 +267,7 @@ describe 'Database structure classes and functions', ->
                         throw new Error 'Should not be go here in this test'
 
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                         error.message.should.be.eql 'bad-keys-for-object'
                 )
 
@@ -347,7 +347,7 @@ describe 'Database structure classes and functions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ServerError
+                        error.should.be.instanceof apiErrors.ServerError
                     )
 
         ###*
@@ -548,6 +548,6 @@ describe 'Database structure classes and functions', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                         error.message.should.be.eql 'missing-mandatory-values-for-object'
                     )

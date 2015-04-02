@@ -4,8 +4,11 @@
 # @fileOverview Mocks used for unit tests
 ###
 
-Q = require 'q'
-rmErrors = require '../../lib/errors.js'
+###*
+# Required modules
+###
+Q           = require 'q'
+apiErrors   = require '../../lib/errors.js'
 
 noop = ()->
 
@@ -183,14 +186,14 @@ exports.sqlQueryData =
 ###
 exports.rejectDatabaseError = ->
     Q.fcall ->
-        throw new rmErrors.DatabaseError(null, null)
+        throw new apiErrors.DatabaseError(null, null)
 
 ###*
 # A promise which reject ParameterError
 ###
 exports.rejectParameterError = ->
     Q.fcall ->
-        throw new rmErrors.ParameterError(null, null)
+        throw new apiErrors.ParameterError(null, null)
 
 ###*
 # A fake mysql result for db structure requests

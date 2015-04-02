@@ -7,9 +7,9 @@
 ###*
 # Required modules
 ###
+apiErrors       = require '../errors.js'
 MysqlDatabase   = require './MysqlDatabase.js'
 Q               = require 'q'
-rmErrors        = require '../errors.js'
 
 ###*
 # Required methods
@@ -32,7 +32,7 @@ class Maria10Database extends MysqlDatabase
     getDatabaseStructureQuery: () ->
         if not isNotEmptyString(@database)
             return Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'database',
                     'string',
                     @database

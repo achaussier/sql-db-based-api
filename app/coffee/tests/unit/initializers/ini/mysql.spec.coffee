@@ -7,11 +7,11 @@
 ###*
 # Required modules
 ###
+apiErrors       = require '../../../../lib/errors.js'
 clone           = require 'clone'
 initializer     = require '../../../../initializers/ini/mysql.js'
 mocks           = require '../../_mocks.js'
 mysql           = require 'mysql'
-rmErrors        = require '../../../../lib/errors.js'
 sinon           = require 'sinon'
 should          = require 'should'
 

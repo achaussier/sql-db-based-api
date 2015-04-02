@@ -4,28 +4,34 @@
 # @fileOverview Tests about database structure Field class
 ###
 
-# require packages
-clone = require 'clone'
-Field = require '../../../../lib/class/Field.js'
-mocks = require '../../_mocks.js'
-should = require 'should'
+###*
+# required modules
+###
+clone   = require 'clone'
+Field   = require '../../../../lib/class/Field.js'
+mocks   = require '../../_mocks.js'
+should  = require 'should'
 
-errorObj = null
-mocksUtils = null
-val = null
+###*
+# Declare variables
+###
+mocksUtils  = undefined
+field       = undefined
 
 describe 'Database structure : Field class', ->
 
     beforeEach (done) ->
-        errorObj = null
-        mocksUtils = clone mocks
-        val = null
+        mocksUtils  = clone mocks
+        field       = null
         done()
 
+    ###*
+    # Check with a valid field
+    ###
     it 'should create new field', ->
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        val.should.have.keys [
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        field.should.have.keys [
             'tableSchema'
             'tableName'
             'columnName'
@@ -49,69 +55,105 @@ describe 'Database structure : Field class', ->
             'uniqueIndexName'
         ]
 
+    ###*
+    # Check with no primary key field
+    ###
     it 'should return false if it is not a primary key', ->
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        val.isPrimaryKey().should.be.false
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        field.isPrimaryKey().should.be.false
 
+    ###*
+    # Check with a not required field
+    ###
     it 'should return false if it is not required', ->
         mocksUtils.dbStructureField.isNullable = 'yes'
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        val.isRequired().should.be.false
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        field.isRequired().should.be.false
 
+    ###*
+    # Check with a not nullable field
+    ###
     it 'should return false if it is not nullable', ->
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        val.isNullable().should.be.false
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        field.isNullable().should.be.false
 
+    ###*
+    # Check with a non uto increment field
+    ###
     it 'should return false if it is not an auto increment', ->
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        val.isAutoIncrement().should.be.false
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        field.isAutoIncrement().should.be.false
 
+    ###*
+    # Check with a primary key field
+    ###
     it 'should return true if it is a primary key', ->
         mocksUtils.dbStructureField.columnKey = 'pri'
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        val.isPrimaryKey().should.be.true
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        field.isPrimaryKey().should.be.true
 
+    ###*
+    # Check with a required field
+    ###
     it 'should return true if it is required', ->
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        val.isRequired().should.be.true
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        field.isRequired().should.be.true
 
+    ###*
+    # Check with an autoincrement field
+    ###
     it 'should return true if it is auto increment', ->
         mocksUtils.dbStructureField.extra = 'auto_increment'
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        val.isAutoIncrement().should.be.true
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        field.isAutoIncrement().should.be.true
 
+    ###*
+    # Check with a nullable field
+    ###
     it 'should return true if it is a nullable', ->
         mocksUtils.dbStructureField.isNullable = 'yes'
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        val.isNullable().should.be.true
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        field.isNullable().should.be.true
 
-    it 'should return numPrecision value for getMaxLength if integer', ->
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        val.getMaxLength().should.be.eql 11
+    ###*
+    # Check with integer field
+    ###
+    it 'should return numPrecision field for getMaxLength if integer', ->
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        field.getMaxLength().should.be.eql 11
 
-    it 'should return charMaxLength value for getMaxLength if varchar', ->
+    ###*
+    # Check with varchar field
+    ###
+    it 'should return charMaxLength field for getMaxLength if varchar', ->
         mocksUtils.dbStructureField.dataType = 'varchar'
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        val.getMaxLength().should.be.eql 255
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        field.getMaxLength().should.be.eql 255
 
-    it 'should return charMaxLength value for getMaxLength if text', ->
+    ###*
+    # Check with text field
+    ###
+    it 'should return charMaxLength field for getMaxLength if text', ->
         mocksUtils.dbStructureField.dataType = 'text'
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        val.getMaxLength().should.be.eql 255
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        field.getMaxLength().should.be.eql 255
 
+    ###*
+    # Check with other filed type
+    ###
     it 'should return null for getMaxLength if not int, varchar or text', ->
         mocksUtils.dbStructureField.dataType = 'foo'
-        val = new Field(mocksUtils.dbStructureField)
-        val.should.be.instanceof Field
-        should.not.exists(val.getMaxLength())
+        field = new Field(mocksUtils.dbStructureField)
+        field.should.be.instanceof Field
+        should.not.exists(field.getMaxLength())

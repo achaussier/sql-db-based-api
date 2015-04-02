@@ -4,18 +4,27 @@
 # @fileOverview Test file for GenericGetStructureOrder class
 ###
 
-# require packages
+###*
+# Required custom classes
+###
 DatabaseStructure           = require '../../../../lib/class/DatabaseStructure.js'
 GenericGetStructureOrder    = require '../../../../lib/class/GenericGetStructureOrder.js'
+
+###*
+# Required modules
+###
 clone       = require 'clone'
 mocks       = require '../../_mocks.js'
-rmErrors    = require '../../../../lib/errors.js'
+apiErrors   = require '../../../../lib/errors.js'
 sinon       = require 'sinon'
 should      = require 'should'
 
-dbStructure         = null
-getStructureOrder   = null
-stub                = null
+###*
+# Declare variables
+###
+dbStructure         = undefined
+getStructureOrder   = undefined
+stub                = undefined
 
 describe 'Generic GET : GenericGetStructureOrder', ->
     beforeEach (done) ->
@@ -33,14 +42,14 @@ describe 'Generic GET : GenericGetStructureOrder', ->
     ###
     it 'should return ParameterError', ->
         getStructureOrder = new GenericGetStructureOrder()
-        getStructureOrder[0].should.be.instanceof rmErrors.ParameterError
+        getStructureOrder[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check with only returnType param
     ###
     it 'should return ParameterError', ->
         getStructureOrder = new GenericGetStructureOrder('foo')
-        getStructureOrder[0].should.be.instanceof rmErrors.ParameterError
+        getStructureOrder[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check with missing asc param
@@ -53,7 +62,7 @@ describe 'Generic GET : GenericGetStructureOrder', ->
                 true
         )
         getStructureOrder = new GenericGetStructureOrder('foo', 'bar')
-        getStructureOrder[0].should.be.instanceof rmErrors.ParameterError
+        getStructureOrder[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check with missing dbStructure param
@@ -66,7 +75,7 @@ describe 'Generic GET : GenericGetStructureOrder', ->
                 true
         )
         getStructureOrder = new GenericGetStructureOrder('foo', 'bar', 'asc')
-        getStructureOrder[0].should.be.instanceof rmErrors.ParameterError
+        getStructureOrder[0].should.be.instanceof apiErrors.ParameterError
 
     ###
     # Check with bad order.field content
@@ -79,7 +88,7 @@ describe 'Generic GET : GenericGetStructureOrder', ->
                 false
         )
         getStructureOrder = new GenericGetStructureOrder('foo', 'bar', 'asc', dbStructure)
-        getStructureOrder[0].should.be.instanceof rmErrors.ParameterError
+        getStructureOrder[0].should.be.instanceof apiErrors.ParameterError
 
     ###
     # Check with bad asc content
@@ -92,7 +101,7 @@ describe 'Generic GET : GenericGetStructureOrder', ->
                 true
         )
         getStructureOrder = new GenericGetStructureOrder('foo', 'bar', 'assc', dbStructure)
-        getStructureOrder[0].should.be.instanceof rmErrors.ParameterError
+        getStructureOrder[0].should.be.instanceof apiErrors.ParameterError
 
     ###
     # Check with good order.field content asc

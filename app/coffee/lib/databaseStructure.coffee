@@ -7,7 +7,7 @@
 globalUtils = require './global.js'
 mysql       = require 'mysql'
 Q           = require 'q'
-rmErrors    = require './errors.js'
+apiErrors   = require './errors.js'
 
 
 ###*
@@ -33,7 +33,7 @@ getStructureFromDB = (api) ->
     ###
     if not api?.database?
         return Q.fcall ->
-            throw new rmErrors.ParameterError(
+            throw new apiErrors.ParameterError(
                 'api',
                 'object',
                 api,
@@ -165,7 +165,7 @@ setTable = (dbStructure, part) ->
             table
     else
         Q.fcall ->
-            throw new rmErrors.ServerError(
+            throw new apiErrors.ServerError(
                 part.tableName,
                 'table-not-found-in-database-structure'
             )

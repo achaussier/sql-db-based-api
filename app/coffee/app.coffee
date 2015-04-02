@@ -4,7 +4,15 @@
 # @fileOverview Script to start and stop api server
 ###
 
+###*
+# Required custom classes
+###
 ApiServer   = require './lib/class/ApiServer.js'
+
+###*
+# Required modules
+###
+apiErrors   = require './lib/errors.js'
 helpFile    = './help.txt'
 minimist    = require 'minimist'
 
@@ -37,7 +45,7 @@ else
         ###
         app._start (error, api) ->
             if error
-                errorObj = new rmErrors.ServerError(
+                errorObj = new apiErrors.ServerError(
                     error,
                     'server-error-during-start'
                 )

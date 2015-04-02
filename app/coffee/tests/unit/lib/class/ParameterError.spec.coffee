@@ -4,11 +4,20 @@
 # @fileOverview Tests about ParameterError class
 ###
 
-# require packages
+###*
+# Required custom classes
+###
 paramError = require '../../../../lib/class/ParameterError.js'
+
+###*
+# Required modules
+###
 should = require 'should'
 
-errorObj = null
+###*
+# Declare variables
+###
+errorObj = undefined
 
 describe 'ParameterError', ->
 
@@ -16,7 +25,10 @@ describe 'ParameterError', ->
         errorObj = null
         done()
 
-    it 'should generate new error object with only message param send', ->
+    ###*
+    # Check without message
+    ###
+    it 'should generate new error object without message param send', ->
         errorObj = new paramError(
             'username',
             'string',
@@ -30,6 +42,9 @@ describe 'ParameterError', ->
         errorObj.code.should.be.eql 400
         errorObj.category.should.be.eql 'parameter-error'
 
+    ###*
+    # Check with message
+    ###
     it 'should set custom message', ->
         errorObj = new paramError(
             'username',
@@ -45,6 +60,9 @@ describe 'ParameterError', ->
         errorObj.code.should.be.eql 400
         errorObj.category.should.be.eql 'parameter-error'
 
+    ###*
+    # Check with a code
+    ###
     it 'should set custom code', ->
         errorObj = new paramError(
             'username',
@@ -61,6 +79,9 @@ describe 'ParameterError', ->
         errorObj.code.should.be.eql 500
         errorObj.category.should.be.eql 'parameter-error'
 
+    ###*
+    # Check with a category
+    ###
     it 'should set custom category', ->
         errorObj = new paramError(
             'username',

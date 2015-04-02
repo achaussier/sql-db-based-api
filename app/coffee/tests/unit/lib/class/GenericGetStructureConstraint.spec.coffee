@@ -4,24 +4,33 @@
 # @fileOverview Test file for GenericGetStructureConstraint class
 ###
 
-# require packages
+###*
+# Required custom classes
+###
 DatabaseStructure               = require '../../../../lib/class/DatabaseStructure.js'
 GenericGetStructureConstraint   = require '../../../../lib/class/GenericGetStructureConstraint.js'
 GenericGetStructureMain         = require '../../../../lib/class/GenericGetStructureMain.js'
+
+###*
+# Required modules
+###
 clone       = require 'clone'
 mocks       = require '../../_mocks.js'
-rmErrors    = require '../../../../lib/errors.js'
+apiErrors   = require '../../../../lib/errors.js'
 sinon       = require 'sinon'
 should      = require 'should'
 
-dbStructure             = null
-errorObj                = null
-getStructureMain        = null
-getStructureConstraint  = null
-mocksUtils              = null
-stub                    = null
-table                   = null
-val                     = null
+###
+# Declare variables
+###
+dbStructure             = undefined
+errorObj                = undefined
+getStructureMain        = undefined
+getStructureConstraint  = undefined
+mocksUtils              = undefined
+stub                    = undefined
+table                   = undefined
+val                     = undefined
 
 describe 'Generic GET : GenericGetStructureConstraint', ->
 
@@ -126,7 +135,7 @@ describe 'Generic GET : GenericGetStructureConstraint', ->
             dbStructure
         )
 
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Test with a bad type for number value
@@ -148,7 +157,7 @@ describe 'Generic GET : GenericGetStructureConstraint', ->
             dbStructure
         )
 
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Test with an array value
@@ -192,7 +201,7 @@ describe 'Generic GET : GenericGetStructureConstraint', ->
             dbStructure
         )
 
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Test with a bad array value with between operator
@@ -214,7 +223,7 @@ describe 'Generic GET : GenericGetStructureConstraint', ->
             dbStructure
         )
 
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Test with a bad operator for array value
@@ -236,7 +245,7 @@ describe 'Generic GET : GenericGetStructureConstraint', ->
             dbStructure
         )
 
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Test with a bad type for array value
@@ -259,7 +268,7 @@ describe 'Generic GET : GenericGetStructureConstraint', ->
             dbStructure
         )
 
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Test with a bad type for string value
@@ -280,7 +289,7 @@ describe 'Generic GET : GenericGetStructureConstraint', ->
             dbStructure
         )
 
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Test with a bad operator for string value
@@ -301,7 +310,7 @@ describe 'Generic GET : GenericGetStructureConstraint', ->
             dbStructure
         )
 
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check with a bad constraintData
@@ -320,7 +329,7 @@ describe 'Generic GET : GenericGetStructureConstraint', ->
             dbStructure
         )
 
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check with a null constraintData
@@ -339,7 +348,7 @@ describe 'Generic GET : GenericGetStructureConstraint', ->
             dbStructure
         )
 
-        val[0].should.be.instanceof rmErrors.ParameterError
+        val[0].should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check with a bad link
@@ -359,7 +368,7 @@ describe 'Generic GET : GenericGetStructureConstraint', ->
             null
         )
 
-        val.should.be.instanceof rmErrors.ParameterError
+        val.should.be.instanceof apiErrors.ParameterError
 
     ###*
     # Check with a bad link
@@ -379,6 +388,6 @@ describe 'Generic GET : GenericGetStructureConstraint', ->
             null
         )
 
-        val.should.be.instanceof rmErrors.ParameterError
+        val.should.be.instanceof apiErrors.ParameterError
 
 

@@ -5,15 +5,20 @@
 # @class Maria10QueryBuilder
 ###
 
+###*
+# Required modules
+###
+apiErrors  = require '../errors.js'
+ormUtils   = require '../orm.js'
+Q          = require 'q'
+
+###*
+# Required custom classes
+###
 Field           = require './Field.js'
 QueryBuilder    = require './QueryBuilder.js'
 Relation        = require './Relation.js'
 Table           = require './Table.js'
-
-ormUtils        = require '../orm.js'
-Q               = require 'q'
-rmErrors        = require '../errors.js'
-
 
 class Maria10QueryBuilder extends QueryBuilder
 
@@ -42,13 +47,13 @@ class Maria10QueryBuilder extends QueryBuilder
         # Check params and process inner join build if ok
         ###
         if not (table instanceof Table)
-            return new rmErrors.ParameterError(
+            return new apiErrors.ParameterError(
                 'table',
                 'Table',
                 table
             )
         else if not (field instanceof Field)
-            return new rmErrors.ParameterError(
+            return new apiErrors.ParameterError(
                 'field',
                 'Field',
                 field
@@ -72,7 +77,7 @@ class Maria10QueryBuilder extends QueryBuilder
         ###
         errors = []
         if not (table instanceof Table)
-            return new rmErrors.ParameterError(
+            return new apiErrors.ParameterError(
                 'table',
                 'Table',
                 table
@@ -82,13 +87,13 @@ class Maria10QueryBuilder extends QueryBuilder
         # Twice should be error to breack, so not else if here
         ###
         if not (field instanceof Field)
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'field',
                 'Field',
                 field
             )
         if not (relation instanceof Relation)
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'relation',
                 'Relation',
                 relation

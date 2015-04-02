@@ -4,23 +4,28 @@
 # @fileOverview Tests about database structure initializer
 ###
 
-# require packages
+###*
+# Requires modules
+###
+apiErrors       = require '../../../../lib/errors.js'
+clone           = require 'clone'
 dbStructUtils   = require '../../../../lib/databaseStructure.js'
 initializer     = require '../../../../initializers/ini/databaseStructure.js'
-rmErrors        = require '../../../../lib/errors.js'
 mocks           = require '../../_mocks.js'
+mysql           = require 'mysql'
+Q               = require 'q'
 should          = require 'should'
 sinon           = require 'sinon'
-clone           = require 'clone'
-mysql           = require 'mysql'
 
-cb          = null
+###*
+# Declare variables
+###
+cb          = undefined
 mocksUtils  = undefined
-Q           = require 'q'
-spy         = null
-stub        = null
-stub2       = null
-val         = null
+spy         = undefined
+stub        = undefined
+stub2       = undefined
+val         = undefined
 
 
 describe 'Initializer : databaseStructure', ->
@@ -83,6 +88,9 @@ describe 'Initializer : databaseStructure', ->
         cb.calledOnce.should.be.true
         should.not.exists cb.args[0][0]
 
+    ###*
+    # Check start method of initializer
+    ###
     it 'should execute start method', ->
         mocksUtils.api.dbStructure =
                 data: {}
@@ -111,6 +119,9 @@ describe 'Initializer : databaseStructure', ->
                 cb.called.should.be.true
                 should.not.exists cb.args[0][0]
 
+    ###*
+    # Check with an error on getStructureFromDB method
+    ###
     it 'should reject if getStructureFromDB has an error', ->
         mocksUtils.api.dbStructure =
             data: {}
@@ -131,6 +142,9 @@ describe 'Initializer : databaseStructure', ->
                 cb.args[0][0].should.be.instanceof Error
                 cb.args[0][0].message.should.be.eql 'test-getStructureFromDB-error'
 
+    ###*
+    # Check with an error on processDatabaseStructureParts method
+    ###
     it 'should reject if processDatabaseStructureParts has an error', ->
         mocksUtils.api.dbStructure =
             data: {}
@@ -158,6 +172,9 @@ describe 'Initializer : databaseStructure', ->
                 cb.args[0][0].should.be.instanceof Error
                 cb.args[0][0].message.should.be.eql 'test-processDatabaseStructureParts-error'
 
+    ###*
+    # Check stop method of initializer
+    ###
     it 'should do nothing when api stopping', ->
         initializer.stop(
             mocksUtils.api,

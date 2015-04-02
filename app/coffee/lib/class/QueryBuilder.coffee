@@ -5,19 +5,28 @@
 # @class QueryBuilder
 ###
 
-DatabaseStructure               = require './DatabaseStructure.js'
-GenericGetStructureConstraint   = require './GenericGetStructureConstraint.js'
-GenericGetStructureMain         = require './GenericGetStructureMain.js'
-
+###*
+# Required modules
+###
+apiErrors           = require '../errors.js'
 clone               = require 'clone'
-containsErrorValue  = require('../global.js').containsErrorValue
-isArray             = require('util').isArray
-isNotEmptyString    = require('../global.js').isNotEmptyString
-isStringArray       = require('../global.js').isStringArray
 mysql               = require 'mysql'
 ormUtils            = require '../orm.js'
 Q                   = require 'q'
-rmErrors            = require '../errors.js'
+
+###*
+# Required methods
+###
+containsErrorValue  = require('../global.js').containsErrorValue
+isArray             = require('util').isArray
+isStringArray       = require('../global.js').isStringArray
+
+###*
+# Required custom classes
+###
+DatabaseStructure               = require './DatabaseStructure.js'
+GenericGetStructureConstraint   = require './GenericGetStructureConstraint.js'
+GenericGetStructureMain         = require './GenericGetStructureMain.js'
 
 class QueryBuilder
 
@@ -69,31 +78,31 @@ class QueryBuilder
         # Check if params are valid
         ###
         if not api? or not (Object.keys(api).length isnt 0)
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'api',
                 'object'
                 api
             )
         else if not connection? or not (Object.keys(connection).length isnt 0)
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'connection',
                 'object'
                 connection
             )
         else if not (getStructure instanceof GenericGetStructureMain)
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'getStructure',
                 'GenericGetStructureMain'
                 getStructure
             )
         else if not (dbStructure instanceof DatabaseStructure)
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'dbStructure',
                 'DatabaseStructure'
                 dbStructure
             )
         else if not ((doTotalCount is true) or (doTotalCount is false))
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'doTotalCount',
                 'boolean'
                 doTotalCount
@@ -182,7 +191,7 @@ class QueryBuilder
         ###
         if not isStringArray(selectArray)
             Q.fcall ->
-                throw new rmErrors.ParameterError(
+                throw new apiErrors.ParameterError(
                     'selectArray',
                     'string-array',
                     selectArray
@@ -205,19 +214,19 @@ class QueryBuilder
         errors = []
 
         if not (typeof objectType is 'string')
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'objectType',
                 'string',
                 objectType
             )
         if not (isStringArray orderedSelect)
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'orderedSelect',
                 'string-array',
                 orderedSelect
             )
         if not (dbStructure instanceof DatabaseStructure)
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'dbStructure',
                 'DatabaseStructure',
                 dbStructure
@@ -314,13 +323,13 @@ class QueryBuilder
         # Check params of method
         ###
         if not (typeof objectType is 'string')
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'objectType',
                 'string',
                 objectType
             )
         if not (isArray constraints)
-            errors.push new rmErrors.ParameterError(
+            errors.push new apiErrors.ParameterError(
                 'constraints',
                 'array',
                 constraints
@@ -337,7 +346,7 @@ class QueryBuilder
             do (constraint) =>
                 sql = ''
                 if not (constraint instanceof GenericGetStructureConstraint)
-                    errors.push errors.push new rmErrors.ParameterError(
+                    errors.push errors.push new apiErrors.ParameterError(
                         'constraint',
                         'GenericGetStructureConstraint',
                         constraint
@@ -406,7 +415,7 @@ class QueryBuilder
         if not queriesStructure?.hasOwnProperty 'getIdsQuery'
             return Q.fcall ->
                 errors = []
-                errors.push new rmErrors.ParameterError(
+                errors.push new apiErrors.ParameterError(
                     'queriesStructure',
                     'object',
                     queriesStructure
@@ -455,7 +464,7 @@ class QueryBuilder
     # @return   {String}                An inner join part
     ###
     buildInnerJoin: (table, field) ->
-        new rmErrors.ServerError(
+        new apiErrors.ServerError(
             'buildInnerJoin should be extended by a sub class'
         )
 
@@ -467,7 +476,7 @@ class QueryBuilder
     # @return   {String}                    An outer join part
     ###
     buildLeftOuterJoin: (table, field, relation) ->
-        new rmErrors.ServerError(
+        new apiErrors.ServerError(
             'buildLeftOuterJoin should be extended by a sub class'
         )
 

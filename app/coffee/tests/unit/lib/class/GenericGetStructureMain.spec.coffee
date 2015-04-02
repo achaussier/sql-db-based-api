@@ -4,53 +4,52 @@
 # @fileOverview Test file for GenericGetStructureMain class
 ###
 
-# require packages
+###*
+# Required custom classes
+###
 DatabaseStructure               = require '../../../../lib/class/DatabaseStructure.js'
+Field                           = require '../../../../lib/class/Field.js'
 GenericGetStructureConstraint   = require '../../../../lib/class/GenericGetStructureConstraint.js'
 GenericGetStructureMain         = require '../../../../lib/class/GenericGetStructureMain.js'
 GenericGetStructureOptions      = require '../../../../lib/class/GenericGetStructureOptions.js'
+Table                           = require '../../../../lib/class/Table.js'
+
+###*
+# Required modules
+###
 clone       = require 'clone'
-Field       = require '../../../../lib/class/Field.js'
 mocks       = require '../../_mocks.js'
-rmErrors    = require '../../../../lib/errors.js'
+apiErrors   = require '../../../../lib/errors.js'
 sinon       = require 'sinon'
 should      = require 'should'
-Table       = require '../../../../lib/class/Table.js'
 
-dbStructure         = null
-errorObj            = null
-field               = null
-getStructureMain    = null
-mockField1          = null
-mockField2          = null
-mocksUtils          = null
-relation            = null
-stub                = null
-table               = null
-val2                = null
+###*
+# Declare variables
+###
+dbStructure         = undefined
+errorObj            = undefined
+field               = undefined
+getStructureMain    = undefined
+mockField1          = undefined
+mockField2          = undefined
+mocksUtils          = undefined
+relation            = undefined
+stub                = undefined
+table               = undefined
 
 describe 'Generic GET : GenericGetStructureMain', ->
 
     beforeEach (done) ->
-        dbStructure         = null
-        errorObj            = null
-        field               = null
+        dbStructure         = new DatabaseStructure()
         getStructureMain    = null
-        mockField1          = null
-        mockField2          = null
         mocksUtils          = clone mocks
-        relation            = null
-        stub                = null
-        table               = null
-        val2                = null
+        dbStructure.addTable mocksUtils.dbStructureTable
         done()
 
+    ###*
+    # Check with existing table
+    ###
     it 'should create main structure', ->
-        ###*
-        # Create prerequisite for constructor
-        ###
-        dbStructure = new DatabaseStructure()
-        dbStructure.addTable mocksUtils.dbStructureTable
 
         getStructureMain = new GenericGetStructureMain 'foo', dbStructure
         getStructureMain.should.be.instanceof GenericGetStructureMain
@@ -61,36 +60,24 @@ describe 'Generic GET : GenericGetStructureMain', ->
             'select'
         ]
 
+    ###*
+    # Check with bad objectType param
+    ###
     it 'should not create main structure', ->
-        ###*
-        # Create prerequisite for constructor
-        ###
-        dbStructure = new DatabaseStructure()
-        dbStructure.addTable mocksUtils.dbStructureTable
-
-        ###*
-        # Bad objectType param
-        ###
         getStructureMain = new GenericGetStructureMain null, dbStructure
         getStructureMain.should.be.instanceof Array
 
+    ###*
+    # Check with bad databaseStructure param
+    ###
     it 'should not create main structure', ->
-        ###*
-        # Bad databaseStructure param
-        ###
         getStructureMain = new GenericGetStructureMain 'foo', null
         getStructureMain.should.be.instanceof Array
 
+    ###*
+    # Check with bad a not managed table
+    ###
     it 'should not create main structure', ->
-        ###*
-        # Create prerequisite for constructor
-        ###
-        dbStructure = new DatabaseStructure()
-        dbStructure.addTable mocksUtils.dbStructureTable
-
-        ###*
-        # Table not exists
-        ###
         getStructureMain = new GenericGetStructureMain 'bar', dbStructure
         getStructureMain.should.be.instanceof Array
 
@@ -118,6 +105,9 @@ describe 'Generic GET : GenericGetStructureMain', ->
             stub.restore() if stub?.restore?
             done()
 
+        ###*
+        # With good select values
+        ###
         it 'should set a new select array', ->
             stub = sinon.stub(
                 dbStructure,
@@ -133,6 +123,9 @@ describe 'Generic GET : GenericGetStructureMain', ->
                         throw new Error 'Should not be go here in this test'
                 )
 
+        ###*
+        # With bad path in select
+        ###
         it 'should not set a new select array', ->
             stub = sinon.stub(
                 dbStructure,
@@ -145,9 +138,12 @@ describe 'Generic GET : GenericGetStructureMain', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error[0].should.be.instanceof rmErrors.ParameterError
+                        error[0].should.be.instanceof apiErrors.ParameterError
                 )
 
+        ###*
+        # With null select param
+        ###
         it 'should not set a new select array', ->
             stub = sinon.stub(
                 dbStructure,
@@ -160,9 +156,12 @@ describe 'Generic GET : GenericGetStructureMain', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
+        ###*
+        # With null database structure param
+        ###
         it 'should not set a new select array', ->
             stub = sinon.stub(
                 dbStructure,
@@ -175,7 +174,7 @@ describe 'Generic GET : GenericGetStructureMain', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
     describe 'addSelect', ->
@@ -202,6 +201,9 @@ describe 'Generic GET : GenericGetStructureMain', ->
             stub.restore() if stub?.restore?
             done()
 
+        ###*
+        # With good value
+        ###
         it 'should add a new path', ->
             stub = sinon.stub(
                 dbStructure,
@@ -218,6 +220,9 @@ describe 'Generic GET : GenericGetStructureMain', ->
                         throw new Error 'Should not be go here in this test'
                 )
 
+        ###*
+        # With bah path
+        ###
         it 'should not add a new path', ->
             stub = sinon.stub(
                 dbStructure,
@@ -230,9 +235,12 @@ describe 'Generic GET : GenericGetStructureMain', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
+        ###*
+        # With null value
+        ###
         it 'should not add a new path', ->
             stub = sinon.stub(
                 dbStructure,
@@ -245,9 +253,12 @@ describe 'Generic GET : GenericGetStructureMain', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
+        ###*
+        # With null database structure
+        ###
         it 'should not add a new path', ->
             stub = sinon.stub(
                 dbStructure,
@@ -260,7 +271,7 @@ describe 'Generic GET : GenericGetStructureMain', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
     describe 'setOptions', ->
@@ -284,7 +295,9 @@ describe 'Generic GET : GenericGetStructureMain', ->
             stub                = null
             done()
 
-
+        ###*
+        # With good GenericGetStructureOptions object
+        ###
         it 'should set structure options', ->
             getStructureOptions = new GenericGetStructureOptions('foo')
             getStructureMain.setOptions(getStructureOptions)
@@ -295,13 +308,16 @@ describe 'Generic GET : GenericGetStructureMain', ->
                         throw new Error 'Should not be go here in this test'
                 )
 
+        ###*
+        # With bad GenericGetStructureOptions object
+        ###
         it 'should not set bad structure options', ->
             getStructureMain.setOptions(null)
                 .then(
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
     describe 'setConstraints', ->
@@ -328,7 +344,9 @@ describe 'Generic GET : GenericGetStructureMain', ->
             stub.restore() if stub?.restore?
             done()
 
-
+        ###*
+        # With valid constraints value
+        ###
         it 'should set structure constraints', ->
             stub = sinon.stub(
                 getStructureMain,
@@ -344,6 +362,9 @@ describe 'Generic GET : GenericGetStructureMain', ->
                         throw new Error 'Should not be go here in this test'
                 )
 
+        ###*
+        # With invalid constraints value : null
+        ###
         it 'should not set bad structure constraints', ->
             stub = sinon.stub(
                 getStructureMain,
@@ -356,7 +377,7 @@ describe 'Generic GET : GenericGetStructureMain', ->
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
     describe 'addConstraint', ->
@@ -384,7 +405,10 @@ describe 'Generic GET : GenericGetStructureMain', ->
             stub.restore() if stub?.restore?
             done()
 
-        it 'should set structure options', ->
+        ###*
+        # With valid constraints value
+        ###
+        it 'should add structure constraint', ->
             stub = sinon.stub(
                 dbStructure,
                 'checkPath',
@@ -404,13 +428,16 @@ describe 'Generic GET : GenericGetStructureMain', ->
                         throw new Error 'Should not be go here in this test'
                 )
 
+        ###*
+        # With invalid constraint value
+        ###
         it 'should not set bad structure options', ->
             getStructureMain.addConstraint(null)
                 .then(
                     (result) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof rmErrors.ParameterError
+                        error.should.be.instanceof apiErrors.ParameterError
                 )
 
     describe 'isConstraintArray', ->
@@ -438,6 +465,9 @@ describe 'Generic GET : GenericGetStructureMain', ->
             stub.restore() if stub?.restore?
             done()
 
+        ###*
+        # With valid constraints array
+        ###
         it 'should return true', ->
             stub = sinon.stub(
                 dbStructure,
@@ -452,12 +482,21 @@ describe 'Generic GET : GenericGetStructureMain', ->
             )
             getStructureMain.isConstraintArray([getStructureConstraint]).should.be.true
 
+        ###*
+        # With null param
+        ###
         it 'should be false', ->
             getStructureMain.isConstraintArray(null).should.be.false
 
+        ###*
+        # With a string param
+        ###
         it 'should be false', ->
             getStructureOptions = new GenericGetStructureOptions('foo')
             getStructureMain.isConstraintArray(getStructureOptions).should.be.false
 
+        ###*
+        # With values in array
+        ###
         it 'should be false', ->
             getStructureMain.isConstraintArray([null]).should.be.false

@@ -8,9 +8,9 @@
 ###*
 # Required modules
 ###
+apiErrors   = require '../errors.js'
 mysql       = require 'mysql'
 Q           = require 'q'
-rmErrors    = require '../errors.js'
 
 ###*
 # Required methods
@@ -91,7 +91,7 @@ class MysqlDatabase
         ###
         if not @checkGeneratePoolsParams databaseConfig
             return Q.fcall ->
-                throw new rmErrors.ServerError(
+                throw new apiErrors.ServerError(
                     databaseConfig,
                     'database-configuration-error'
                 )
@@ -134,7 +134,7 @@ class MysqlDatabase
 
         catch error
             Q.fcall ->
-                throw new rmErrors.ServerError(
+                throw new apiErrors.ServerError(
                     error,
                     'database-configuration-error'
                 )
@@ -150,7 +150,7 @@ class MysqlDatabase
         # Check if a read pool exists
         ###
         if not @readPool?
-            errorObj = new rmErrors.ServerError(
+            errorObj = new apiErrors.ServerError(
                 @,
                 'no-mysql-read-pool'
             )
@@ -163,7 +163,7 @@ class MysqlDatabase
         ###
         @readPool.getConnection (error, roConnection) ->
             if error
-                errorObj = new rmErrors.DatabaseError(
+                errorObj = new apiErrors.DatabaseError(
                     error,
                     'connection-error'
                 )
@@ -184,7 +184,7 @@ class MysqlDatabase
         # Check if a write pool exists
         ###
         if not @writePool?
-            errorObj = new rmErrors.ServerError(
+            errorObj = new apiErrors.ServerError(
                 @,
                 'no-mysql-write-pool'
             )
@@ -196,7 +196,7 @@ class MysqlDatabase
         ###
         @writePool.getConnection (error, writeConnection) ->
             if error
-                errorObj = new rmErrors.DatabaseError(
+                errorObj = new apiErrors.DatabaseError(
                     error,
                     'connection-error'
                 )
@@ -216,7 +216,7 @@ class MysqlDatabase
     checkExecuteSelect: (connection, queryData) ->
 
         if not connection?.query?
-            errorObj = new rmErrors.ParameterError(
+            errorObj = new apiErrors.ParameterError(
                 'connection',
                 'Object',
                 connection
@@ -228,7 +228,7 @@ class MysqlDatabase
             ###*
             # Check keys of queryData param and check the sql query isn't empty
             ###
-            errorObj = new rmErrors.ParameterError(
+            errorObj = new apiErrors.ParameterError(
                 'queryData',
                 'Object',
                 queryData
@@ -260,7 +260,7 @@ class MysqlDatabase
                         # If error occurs during query, reject it
                         ###
                         if error
-                            errorObj = new rmErrors.DatabaseError(
+                            errorObj = new apiErrors.DatabaseError(
                                 {
                                     query   : queryData,
                                     error   : error
