@@ -298,6 +298,27 @@ describe 'Generic GET : GenericGetStructureOptions', ->
             getStructureOptions.containsOrder().should.be.false
 
         ###
+        # Check with null param
+        ###
+        it 'should return true', ->
+            stub = sinon.stub(
+                dbStructure,
+                'checkPath',
+                ->
+                    true
+            )
+            getStructureOrder = new GenericGetStructureOrder('foo', 'bar', 'asc', dbStructure)
+            getStructureOptions.addOrder('foo', getStructureOrder, dbStructure)
+                .then(
+                    (result) ->
+                        getStructureOptions
+                            .containsOrder(null)
+                            .should.be.false
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                )
+
+        ###
         # Check with good order.field content
         ###
         it 'should return true', ->
