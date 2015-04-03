@@ -26,7 +26,7 @@ class MysqlDatabase
     ###
     constructor: () ->
         @clusterPool    = null
-        @dbName       = null
+        @dbName         = null
         @readPool       = null
         @writePool      = null
 

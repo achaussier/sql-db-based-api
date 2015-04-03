@@ -30,16 +30,15 @@ class Maria10Database extends MysqlDatabase
     # @return   {String}    Query to execute
     ###
     getDatabaseStructureQuery: () ->
-        if not isNotEmptyString(@database)
+        if not @dbName? or (not isNotEmptyString @dbName)
             return Q.fcall ->
                 throw new apiErrors.ParameterError(
                     'database',
                     'string',
-                    @database
+                    @
                 )
 
-        dbName          = api.config.database.database
-        dbNameLength    = dbName.length + 2
+        dbNameLength    = @dbName.length + 2
 
         sql = 'SELECT DISTINCT
                 LOWER(ISC.TABLE_SCHEMA)             AS tableSchema,
@@ -93,14 +92,14 @@ class Maria10Database extends MysqlDatabase
                         ON ISI.NAME = KEY_COLUMN_USAGE.CONSTRAINT_NAME
                     WHERE
                         ISI.TYPE = 2
-                        AND INNODB_SYS_TABLES.NAME LIKE \'' + dbName + '%\'
+                        AND INNODB_SYS_TABLES.NAME LIKE \'' + @dbName + '%\'
                 ) AS ISISI
                     ON (
                                 ISC.TABLE_NAME  = ISISI.tableName
                             AND ISC.COLUMN_NAME = ISISI.columnName
                         )
             WHERE
-                ISC.TABLE_SCHEMA = \'' + dbName + '\'
+                ISC.TABLE_SCHEMA = \'' + @dbName + '\'
                 AND ISC.TABLE_NAME NOT LIKE \'api_%\'
                 AND ISC.TABLE_NAME NOT LIKE \'my_asp%\'
                 AND ISC.TABLE_NAME NOT LIKE \'frontend%\';'
