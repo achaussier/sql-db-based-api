@@ -15,7 +15,6 @@ Maria10Database = require '../../../../lib/class/Maria10Database.js'
 clone       = require 'clone'
 mocks       = require '../../_mocks.js'
 apiErrors   = require '../../../../lib/errors.js'
-sinon       = require 'sinon'
 should      = require 'should'
 
 ###*

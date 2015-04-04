@@ -19,13 +19,6 @@ isNotEmptyString = require('../global.js').isNotEmptyString
 class Maria10Database extends MysqlDatabase
 
     ###*
-    # Constructor used to create new Maria10Database object
-    # @return   {Object}    A new instance of Maria10Database
-    ###
-    constructor: () ->
-        super
-
-    ###*
     # Return the query used to generate the database structure on MariaDB 10.x
     # @return   {String}    Query to execute
     ###
