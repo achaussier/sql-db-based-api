@@ -37,16 +37,26 @@ else
     # If --help or -h param is set, display help and exit, else launch server
     ###
     if args.h or args.help
-        app.displayHelp(helpFile)
+        return app.displayHelp(helpFile)
 
-    else
-        ###*
-        # Start the server
-        ###
-        app._start (error, api) ->
-            if error
-                errorObj = new apiErrors.ServerError(
-                    error,
-                    'server-error-during-start'
-                )
+    ###*
+    # Check environment variables
+    ###
+    if not process.env.ACTIONHERO_CONFIG?
+        process.env.ACTIONHERO_CONFIG = __dirname + '/config'
 
+    if not process.env.NODE_ENV?
+        process.env.NODE_ENV = 'unknown'
+
+    if not process.env.PROJECT_ROOT?
+        process.env.PROJECT_ROOT = __dirname
+
+    ###*
+    # Start the server
+    ###
+    app._start (error, api) ->
+        if error
+            errorObj = new apiErrors.ServerError(
+                error,
+                'server-error-during-start'
+            )

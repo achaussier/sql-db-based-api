@@ -66,7 +66,7 @@ coveragePaths = [
     'dist/initializers/**/*.js'
     'dist/lib/**/*.js'
     'dist/config/**/*.js'
-    'dist/app.js'
+    #'dist/app.js'
 
 ]
 
