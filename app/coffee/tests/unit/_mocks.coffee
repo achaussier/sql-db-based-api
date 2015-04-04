@@ -23,6 +23,7 @@ exports.noop = noop
 exports.api =
     actions:
         addPostProcessor: (postProcessor) ->
+        addPreProcessor : (preProcessor) ->
     actionheroVersion: 'foo'
     id: 'bar'
     config:
