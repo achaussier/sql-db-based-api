@@ -65,12 +65,13 @@ module.exports =
             .generatePools(api.config.database)
             .then(
                 (result) ->
-                    wrapper                     = new DatabaseWrapper()
-                    wrapper.getReadConnection   = dbObj.getReadConnection
-                    wrapper.getWriteConnection  = dbObj.getWriteConnection
-                    wrapper.executeSelect       = dbObj.executeSelect
-                    wrapper.end                 = dbObj.poolCluster.end
-                    api.database                = wrapper
+                    wrapper                    = new DatabaseWrapper()
+                    wrapper.getStructureQuery  = dbObj.getDatabaseStructureQuery
+                    wrapper.getReadConnection  = dbObj.getReadConnection
+                    wrapper.getWriteConnection = dbObj.getWriteConnection
+                    wrapper.executeSelect      = dbObj.executeSelect
+                    wrapper.end                = dbObj.poolCluster.end
+                    api.database               = wrapper
                     next()
                 ,(error) ->
                     throw error

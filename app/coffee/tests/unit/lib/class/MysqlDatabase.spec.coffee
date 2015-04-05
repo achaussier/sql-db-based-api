@@ -283,6 +283,9 @@ describe 'MysqlDatabase', ->
             stub.restore() if stub?.restore?
             done()
 
+        ###*
+        # Check without readPool attribute
+        ###
         it 'should reject if no readPool', ->
             myDb.readPool = null
             myDb.getReadConnection()
@@ -293,6 +296,9 @@ describe 'MysqlDatabase', ->
                         error.should.be.instanceof apiErrors.ServerError
                 )
 
+        ###*
+        # Simulate an error return by getConnection method
+        ###
         it 'should reject if error occurs', ->
             stub = sinon.stub(
                 myDb.readPool,
@@ -305,9 +311,12 @@ describe 'MysqlDatabase', ->
                     (roConnection) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof apiErrors.DatabaseError
+                        error.should.be.eql 'unit-tests'
                 )
 
+        ###*
+        # Check with all OK
+        ###
         it 'should return a connection if no error occurs', ->
             stub = sinon.stub(
                 myDb.readPool,
@@ -336,6 +345,9 @@ describe 'MysqlDatabase', ->
             stub.restore() if stub?.restore?
             done()
 
+        ###*
+        # Check without writePool attribute
+        ###
         it 'should reject if no writePool', ->
             myDb.writePool = null
             myDb.getWriteConnection()
@@ -346,6 +358,9 @@ describe 'MysqlDatabase', ->
                         error.should.be.instanceof apiErrors.ServerError
                 )
 
+        ###*
+        # Simulate an error return by getConnection method
+        ###
         it 'should reject if error occurs', ->
             stub = sinon.stub(
                 myDb.writePool,
@@ -358,9 +373,12 @@ describe 'MysqlDatabase', ->
                     (roConnection) ->
                         throw new Error 'Should not be go here in this test'
                     ,(error) ->
-                        error.should.be.instanceof apiErrors.DatabaseError
+                        error.should.be.eql 'unit-tests'
                 )
 
+        ###*
+        # Check with all OK
+        ###
         it 'should return a connection if no error occurs', ->
             stub = sinon.stub(
                 myDb.writePool,
@@ -383,6 +401,9 @@ describe 'MysqlDatabase', ->
             myDb.generatePools(databaseConfig)
             done()
 
+        ###*
+        # Check with bad sql connection param
+        ###
         for badConnection in mocksUtils.badSqlConnections
             do (badConnection) ->
                 it 'should return ParameterError if connection param is invalid', ->
@@ -394,6 +415,9 @@ describe 'MysqlDatabase', ->
                                 error.should.be.instanceof apiErrors.ParameterError
                         )
 
+        ###*
+        # Check with bad sql queryData param
+        ###
         for badQueryData in mocksUtils.badQueryDatas
             do (badQueryData) ->
                 it 'should return ParameterError if queryData param is invalid', ->
@@ -405,6 +429,9 @@ describe 'MysqlDatabase', ->
                                 error.should.be.instanceof apiErrors.ParameterError
                         )
 
+        ###*
+        # Simulate an error return by getConnection method
+        ###
         it 'should return DatabaseError if query return an error', ->
             myDb.executeSelect mocksUtils.sqlConnectionWithQueryError, mocksUtils.sqlQueryData
                 .then(
@@ -414,6 +441,9 @@ describe 'MysqlDatabase', ->
                         error.should.be.instanceof apiErrors.DatabaseError
                 )
 
+        ###*
+        # Check with all OK
+        ###
         it 'should execute query if params are valid', ->
             myDb.executeSelect mocksUtils.sqlConnection, mocksUtils.sqlQueryData
                 .then(
