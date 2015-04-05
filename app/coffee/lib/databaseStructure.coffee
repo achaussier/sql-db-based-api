@@ -27,7 +27,7 @@ TableRelation       = require './class/TableRelation.js'
 # @throw {Object} ParameterError or DatabaseError
 ###
 getStructureFromDB = (api) ->
-
+    defer = Q.defer()
     ###*
     # Check the Wrapper exists
     ###
@@ -46,27 +46,25 @@ getStructureFromDB = (api) ->
     ###*
     # Get the query to execute, the connection and execute query
     ###
-    api.database.getDatabaseStructureQuery()
+    api.database.getStructureQuery()
         .then (queryData) ->
             query = queryData
             return
-
-        .then () ->
+        .then(
             api.database.getReadConnection()
-        .then (roConnection) ->
-            connection = roConnection
-            return
-
-        .then () ->
-            api.database.executeSelect connection, query
-        .then (dbResults) ->
-            connection.release()
-            Q.fcall ->
-                dbResults.results
-
+                .then (connection) ->
+                    api.database.executeSelect connection, query
+                    .then (dbResults) ->
+                        connection.release()
+                        defer.resolve dbResults.results
+                .catch (error) ->
+                    defer.reject error
+        )
         .catch (error) ->
-            Q.fcall ->
-                throw error
+            defer.reject error
+
+    defer.promise
+
 
 exports.getStructureFromDB = getStructureFromDB
 

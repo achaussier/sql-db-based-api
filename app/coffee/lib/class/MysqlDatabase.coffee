@@ -113,7 +113,7 @@ class MysqlDatabase
             for dbServer, index in databaseConfig.masters
                 do (dbServer, index) =>
                     dbServer.database = databaseConfig.dbName
-                    @poolCluster.add('MASTER_#{index}', dbServer)
+                    @poolCluster.add("MASTER#{index}", dbServer)
 
             ###*
             # Add slave servers
@@ -121,14 +121,31 @@ class MysqlDatabase
             for dbServer, index in databaseConfig.slaves
                 do (dbServer, index) =>
                     dbServer.database = databaseConfig.dbName
-                    @poolCluster.add('SLAVE_#{index}', dbServer)
+                    @poolCluster.add("SLAVE#{index}", dbServer)
 
             ###*
             # Create a write pool and a read pool to split read/write
             ###
-            selector    = databaseConfig.selector
-            @readPool   = @poolCluster.of('MASTER*', selector)
-            @writePool  = @poolCluster.of('SLAVE*',  selector)
+            @readPool   = @poolCluster.of('SLAVE*',  databaseConfig.selector)
+            @writePool  = @poolCluster.of('MASTER*', databaseConfig.selector)
+
+            @getReadConnection = () =>
+                if not @readPool?
+                    return Q.fcall ->
+                        throw new apiErrors.ServerError(
+                            @,
+                            'no-mysql-read-pool'
+                        )
+                Q.nbind(@readPool.getConnection, @readPool)()
+
+            @getWriteConnection = () =>
+                if not @writePool?
+                    return Q.fcall ->
+                        throw new apiErrors.ServerError(
+                            @,
+                            'no-mysql-write-pool'
+                        )
+                Q.nbind(@writePool.getConnection, @writePool)()
 
             Q.fcall ->
 
@@ -140,73 +157,6 @@ class MysqlDatabase
                 )
 
     ###*
-    # Return a promise connection from a read only pool
-    # @return   {Function}  A connection from a read only pool
-    # @throw    {Object}    A ParameterError Object if no read only pool
-    ###
-    getReadConnection: () ->
-
-        ###*
-        # Check if a read pool exists
-        ###
-        if not @readPool?
-            errorObj = new apiErrors.ServerError(
-                @,
-                'no-mysql-read-pool'
-            )
-            return Q.fcall ->
-                throw errorObj
-
-
-        ###*
-        # Return a promised version of pool.getConnection method
-        ###
-        @readPool.getConnection (error, roConnection) ->
-            if error
-                errorObj = new apiErrors.DatabaseError(
-                    error,
-                    'connection-error'
-                )
-                return Q.fcall ->
-                    throw errorObj
-
-            Q.fcall ->
-                roConnection
-
-    ###*
-    # Return a promise connection from a write pool
-    # @return   {Function}  A connection from a write pool
-    # @throw    {Object}    A ParameterError Object if no write pool
-    ###
-    getWriteConnection: () ->
-
-        ###*
-        # Check if a write pool exists
-        ###
-        if not @writePool?
-            errorObj = new apiErrors.ServerError(
-                @,
-                'no-mysql-write-pool'
-            )
-            return Q.fcall ->
-                throw errorObj
-
-        ###*
-        # Return a promised version of pool.getConnection method
-        ###
-        @writePool.getConnection (error, writeConnection) ->
-            if error
-                errorObj = new apiErrors.DatabaseError(
-                    error,
-                    'connection-error'
-                )
-                return Q.fcall ->
-                    throw errorObj
-
-            Q.fcall ->
-                writeConnection
-
-    ###*
     # Check params of executeSelect function
     # @param    {Object}    connection  Database connection
     # @param    {Object}    queryData   Query data (sql, option, values)
@@ -215,7 +165,7 @@ class MysqlDatabase
     ###
     checkExecuteSelect: (connection, queryData) ->
 
-        if not connection?.query?
+        if not connection?
             errorObj = new apiErrors.ParameterError(
                 'connection',
                 'Object',
@@ -246,8 +196,11 @@ class MysqlDatabase
     # @throw    {Object}                DatabaseError if error during query
     # @throw    {Object}                ParameterError if invalid params
     ###
-    executeSelect: (connection, queryData) ->
-
+    executeSelect: (connection, queryData) =>
+        defer = Q.defer()
+        ###*
+        # Verify if params are valid
+        ###
         ###*
         # Verify if params are valid
         ###
@@ -267,15 +220,16 @@ class MysqlDatabase
                                 },
                                 'error-during-query-execution'
                             )
-                            return Q.fcall ->
-                                throw errorObj
+                            return defer.reject errorObj
 
-                        Q.fcall ->
+                        defer.resolve
                             results : results
                             fields  : fields
 
                 ,(error) ->
-                    throw error
+                    defer.reject error
             )
+
+        defer.promise
 
 module.exports = MysqlDatabase

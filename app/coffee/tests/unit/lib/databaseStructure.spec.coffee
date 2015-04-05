@@ -117,6 +117,23 @@ describe 'Database structure classes and functions', ->
                 )
 
         ###*
+        # Simulate an error on get structure query
+        ###
+        it 'should reject an error if unabled to get query', ->
+            stub = sinon.stub(
+                mocksUtils.api.database,
+                'getStructureQuery',
+                mocksUtils.rejectDatabaseError
+            )
+            dbStructUtils.getStructureFromDB mocksUtils.api
+                .then(
+                    (results) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof apiErrors.DatabaseError
+                )
+
+        ###*
         # Check with all ok with fake connection object
         ###
         it 'should resolve if all is ok', ->

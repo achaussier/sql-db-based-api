@@ -39,10 +39,9 @@ exports.api =
     database:
         end: ->
         executeSelect: (connection, query) ->
-            console.log 'TEST EXECUTE'
             Q.fcall ->
                 results: []
-        getDatabaseStructureQuery: () ->
+        getStructureQuery: () ->
             Q.fcall ->
                 'foo query'
         getReadConnection: () ->

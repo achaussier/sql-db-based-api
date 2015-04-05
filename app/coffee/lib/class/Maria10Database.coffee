@@ -22,7 +22,7 @@ class Maria10Database extends MysqlDatabase
     # Return the query used to generate the database structure on MariaDB 10.x
     # @return   {String}    Query to execute
     ###
-    getDatabaseStructureQuery: () ->
+    getDatabaseStructureQuery: () =>
         if not @dbName? or (not isNotEmptyString @dbName)
             return Q.fcall ->
                 throw new apiErrors.ParameterError(
