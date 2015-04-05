@@ -371,38 +371,27 @@ describe 'Global lib', ->
 
     describe 'capitalizeFirstLetter', ->
 
+        beforeEach (done) ->
+            val = null
+            done()
+
         ###*
         # Check with a non empty string
         ###
         it 'should return first capitalized string', ->
-            globalUtils.capitalizeFirstLetter 'foo'
-                .then(
-                    (result) ->
-                        result.should.be.eql 'Foo'
-                    ,(error) ->
-                        throw new Error 'Should not be go here in this test'
-                )
+            val = globalUtils.capitalizeFirstLetter 'foo'
+            val.should.be.eql 'Foo'
 
         ###*
         # Check with a non empty string with first capitalized
         ###
         it 'should return first capitalized string', ->
-            globalUtils.capitalizeFirstLetter 'Foo'
-                .then(
-                    (result) ->
-                        result.should.be.eql 'Foo'
-                    ,(error) ->
-                        throw new Error 'Should not be go here in this test'
-                )
+            val = globalUtils.capitalizeFirstLetter 'Foo'
+            val.should.be.eql 'Foo'
 
         ###*
         # Check with a non empty string with first capitalized
         ###
         it 'should return first capitalized string', ->
-            globalUtils.capitalizeFirstLetter null
-                .then(
-                    (result) ->
-                        throw new Error 'Should not be go here in this test'
-                    ,(error) ->
-                        error.should.be.instanceof apiErrors.ParameterError
-                )
+            val = globalUtils.capitalizeFirstLetter null
+            val.should.be.instanceof apiErrors.ParameterError

@@ -185,13 +185,11 @@ exports.isStringArray = isStringArray
 ###
 capitalizeFirstLetter = (str) ->
     if not isNotEmptyString str
-        return Q.fcall ->
-            throw new apiErrors.ParameterError(
-                'str',
-                'not-empty-string',
-                str
-            )
-    Q.fcall ->
-        str.charAt(0).toUpperCase() + str.slice(1)
+        return new apiErrors.ParameterError(
+            'str',
+            'not-empty-string',
+            str
+        )
+    str.charAt(0).toUpperCase() + str.slice(1)
 
 exports.capitalizeFirstLetter = capitalizeFirstLetter
