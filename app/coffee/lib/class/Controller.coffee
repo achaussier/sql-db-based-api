@@ -19,6 +19,14 @@ isNotEmptyString        = require('../global.js').isNotEmptyString
 
 class Controller
 
+    ###*
+    # Constructor for Controller objects
+    # @controller
+    # @param        {String}    objType     Type of object
+    # @param        {Boolean}   isGeneric   True if it is for database objects
+    # @return       {Object}                New controller instance
+    # @throw        {Object}                ParameterError or ServerError
+    ###
     constructor: (objType, isGeneric) ->
 
         ###*
@@ -42,6 +50,13 @@ class Controller
         else
             @name = @objType
 
+    ###*
+    # Check constructor parameters
+    # @param        {String}    objType     Type of object
+    # @param        {Boolean}   isGeneric   True if it is for database objects
+    # @return       {Array}                 Empty array if no errors
+    # @throw        {Object}                ParameterError objects
+    ###
     checkConstructorParams: (objType, isGeneric) ->
         errors = []
 
@@ -59,6 +74,12 @@ class Controller
             )
         errors
 
+    ###*
+    # Method used when GET request, but should be extend before use
+    # @param    {Object}    api         Main app object
+    # @param    {Object}    connection  Request object
+    # @throw    {Object}                ServerError, this class should be extend
+    ###
     get: (api, connection) ->
         errorObj = new apiErrors.ServerError(
             @name,
@@ -68,6 +89,12 @@ class Controller
         Q.fcall ->
             throw errorObj
 
+    ###*
+    # Method used when POST request, but should be extend before use
+    # @param    {Object}    api         Main app object
+    # @param    {Object}    connection  Request object
+    # @throw    {Object}                ServerError, this class should be extend
+    ###
     post: (api, connection)->
         errorObj = new apiErrors.ServerError(
             @name,
@@ -77,6 +104,12 @@ class Controller
         Q.fcall ->
             throw errorObj
 
+    ###*
+    # Method used when PUT request, but should be extend before use
+    # @param    {Object}    api         Main app object
+    # @param    {Object}    connection  Request object
+    # @throw    {Object}                ServerError, this class should be extend
+    ###
     put: (api, connection)->
         errorObj = new apiErrors.ServerError(
             @name,
@@ -86,6 +119,12 @@ class Controller
         Q.fcall ->
             throw errorObj
 
+    ###*
+    # Method used when PATCH request, but should be extend before use
+    # @param    {Object}    api         Main app object
+    # @param    {Object}    connection  Request object
+    # @throw    {Object}                ServerError, this class should be extend
+    ###
     patch: (api, connection)->
         errorObj = new apiErrors.ServerError(
             @name,
@@ -95,6 +134,12 @@ class Controller
         Q.fcall ->
             throw errorObj
 
+    ###*
+    # Method used when DELETE request, but should be extend before use
+    # @param    {Object}    api         Main app object
+    # @param    {Object}    connection  Request object
+    # @throw    {Object}                ServerError, this class should be extend
+    ###
     del: (api, connection)->
         errorObj = new apiErrors.ServerError(
             @name,

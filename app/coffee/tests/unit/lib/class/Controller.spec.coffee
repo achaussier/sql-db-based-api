@@ -28,21 +28,33 @@ describe 'Controller class', ->
         mocksUtils = clone mocks
         done()
 
+    ###*
+    # Check without param
+    ###
     it 'should not instantiate an object without param', ->
         controller = new Controller()
         controller.should.be.instanceof Array
         controller[0].should.be instanceof apiErrors.ParameterError
 
+    ###*
+    # Check with bad objectType
+    ###
     it 'should not instantiate an object with bad objectType param', ->
         controller = new Controller(null, true)
         controller.should.be.instanceof Array
         controller[0].should.be instanceof apiErrors.ParameterError
 
+    ###*
+    # Check with bad isGeneric
+    ###
     it 'should not instantiate an object with bad isGeneric param', ->
         controller = new Controller('foo', null)
         controller.should.be.instanceof Array
         controller[0].should.be instanceof apiErrors.ParameterError
 
+    ###*
+    # Check with good params for generic controller
+    ###
     it 'should instantiate an object', ->
         controller = new Controller('foo', true)
         controller.should.be.instanceof Controller
@@ -55,6 +67,9 @@ describe 'Controller class', ->
         controller.objType.should.be.eql 'Foo'
         controller.isGeneric.should.be.true
 
+    ###*
+    # Check with good params for a no generic controller
+    ###
     it 'should instantiate an object', ->
         controller = new Controller('foo', false)
         controller.should.be.instanceof Controller
@@ -67,6 +82,9 @@ describe 'Controller class', ->
         controller.objType.should.be.eql 'Foo'
         controller.isGeneric.should.be.false
 
+    ###*
+    # Check to call a method from this abstract class
+    ###
     it 'should reject if call a request method', ->
         controller = new Controller('foo', false)
         controller.get()
@@ -77,6 +95,9 @@ describe 'Controller class', ->
                     error.should.be.instanceof apiErrors.ServerError
             )
 
+    ###*
+    # Check to call a method from this abstract class
+    ###
     it 'should reject if call a request method', ->
         controller = new Controller('foo', false)
         controller.post()
@@ -87,6 +108,9 @@ describe 'Controller class', ->
                     error.should.be.instanceof apiErrors.ServerError
             )
 
+    ###*
+    # Check to call a method from this abstract class
+    ###
     it 'should reject if call a request method', ->
         controller = new Controller('foo', false)
         controller.put()
@@ -97,6 +121,9 @@ describe 'Controller class', ->
                     error.should.be.instanceof apiErrors.ServerError
             )
 
+    ###*
+    # Check to call a method from this abstract class
+    ###
     it 'should reject if call a request method', ->
         controller = new Controller('foo', false)
         controller.patch()
@@ -107,6 +134,9 @@ describe 'Controller class', ->
                     error.should.be.instanceof apiErrors.ServerError
             )
 
+    ###*
+    # Check to call a method from this abstract class
+    ###
     it 'should reject if call a request method', ->
         controller = new Controller('foo', false)
         controller.del()
