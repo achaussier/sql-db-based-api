@@ -1,5 +1,6 @@
 2015-04-05 Alexandre Chaussier <a.chaussier@infopen.pro>
 - Add a function to capitalize first letter of a string
+- Add Controller function
 
 2015-03-31 Alexandre Chaussier <a.chaussier@infopen.pro>
 - Add abstraction for database management
