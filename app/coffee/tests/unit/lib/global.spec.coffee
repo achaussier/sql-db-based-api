@@ -368,3 +368,41 @@ describe 'Global lib', ->
         it 'should return true', ->
             val = ['foo', 'bar']
             globalUtils.isStringArray(val).should.be.true
+
+    describe 'capitalizeFirstLetter', ->
+
+        ###*
+        # Check with a non empty string
+        ###
+        it 'should return first capitalized string', ->
+            globalUtils.capitalizeFirstLetter 'foo'
+                .then(
+                    (result) ->
+                        result.should.be.eql 'Foo'
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                )
+
+        ###*
+        # Check with a non empty string with first capitalized
+        ###
+        it 'should return first capitalized string', ->
+            globalUtils.capitalizeFirstLetter 'Foo'
+                .then(
+                    (result) ->
+                        result.should.be.eql 'Foo'
+                    ,(error) ->
+                        throw new Error 'Should not be go here in this test'
+                )
+
+        ###*
+        # Check with a non empty string with first capitalized
+        ###
+        it 'should return first capitalized string', ->
+            globalUtils.capitalizeFirstLetter null
+                .then(
+                    (result) ->
+                        throw new Error 'Should not be go here in this test'
+                    ,(error) ->
+                        error.should.be.instanceof apiErrors.ParameterError
+                )

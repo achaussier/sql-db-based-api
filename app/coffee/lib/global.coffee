@@ -176,3 +176,22 @@ isStringArray = (arrayToTest) ->
     onlyString
 
 exports.isStringArray = isStringArray
+
+###*
+# Capitalize the first letter of a string
+# @param    {String}    str     Source string
+# @return   {String}            Source string with its first letter capitalized
+# @throw    {Object}            ParameterError if not a non empty string
+###
+capitalizeFirstLetter = (str) ->
+    if not isNotEmptyString str
+        return Q.fcall ->
+            throw new apiErrors.ParameterError(
+                'str',
+                'not-empty-string',
+                str
+            )
+    Q.fcall ->
+        str.charAt(0).toUpperCase() + str.slice(1)
+
+exports.capitalizeFirstLetter = capitalizeFirstLetter
