@@ -3,7 +3,6 @@
 ###*
 # @fileOverview This file contains the GenericGetStructureConstraint class
 # @class GenericGetStructureConstraint
-# @todo Add 'addConstraint' and 'setConstraints' method
 ###
 
 isArray = require('util').isArray
