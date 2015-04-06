@@ -94,14 +94,14 @@ exports.default =
              * /api/:action for all actions
              * @type {Boolean}
             ###
-            simpleRouting : true
+            simpleRouting : false
 
             ###*
              * queryRouting allows an action to be defined via a URL param,
              * ie: /api?action=:action
              * @type {Boolean}
             ###
-            queryRouting : true
+            queryRouting : false
 
             ###*
              * The header which will be returned for all flat file served from
