@@ -21,11 +21,12 @@ class Controller
 
     ###*
     # Constructor for Controller objects
-    # @controller
-    # @param        {String}    objType     Type of object
-    # @param        {Boolean}   isGeneric   True if it is for database objects
-    # @return       {Object}                New controller instance
-    # @throw        {Object}                ParameterError or ServerError
+    # @constructor
+    # @param        {String}    objType         Type of object
+    # @param        {Boolean}   isGeneric       True for database objects
+    # @param        {String}    controllerName  Controller name
+    # @return       {Object}                    New controller instance
+    # @throw        {Object}                    ParameterError or ServerError
     ###
     constructor: (objType, isGeneric, controllerName) ->
 
@@ -49,10 +50,11 @@ class Controller
 
     ###*
     # Check constructor parameters
-    # @param        {String}    objType     Type of object
-    # @param        {Boolean}   isGeneric   True if it is for database objects
-    # @return       {Array}                 Empty array if no errors
-    # @throw        {Object}                ParameterError objects
+    # @param        {String}    objType         Type of object
+    # @param        {Boolean}   isGeneric       True for database objects
+    # @param        {String}    controllerName  Controller name
+    # @return       {Array}                     Empty array if no errors
+    # @throw        {Object}                    ParameterError objects
     ###
     checkConstructorParams: (objType, isGeneric, controllerName) ->
         errors = []
@@ -80,10 +82,10 @@ class Controller
     ###*
     # Method used when GET request, but should be extend before use
     # @param    {Object}    api         Main app object
-    # @param    {Object}    connection  Request object
+    # @param    {Object}    params      Params set by user
     # @throw    {Object}                ServerError, this class should be extend
     ###
-    get: (api, connection) ->
+    get: (api, params) ->
         errorObj = new apiErrors.ServerError(
             @name,
             'get-method-not-implemented',
@@ -95,10 +97,10 @@ class Controller
     ###*
     # Method used when POST request, but should be extend before use
     # @param    {Object}    api         Main app object
-    # @param    {Object}    connection  Request object
+    # @param    {Object}    params      Params set by user
     # @throw    {Object}                ServerError, this class should be extend
     ###
-    post: (api, connection)->
+    post: (api, params)->
         errorObj = new apiErrors.ServerError(
             @name,
             'post-method-not-implemented',
@@ -110,10 +112,10 @@ class Controller
     ###*
     # Method used when PUT request, but should be extend before use
     # @param    {Object}    api         Main app object
-    # @param    {Object}    connection  Request object
+    # @param    {Object}    params      Params set by user
     # @throw    {Object}                ServerError, this class should be extend
     ###
-    put: (api, connection) ->
+    put: (api, params) ->
         errorObj = new apiErrors.ServerError(
             @name,
             'put-method-not-implemented',
@@ -125,10 +127,10 @@ class Controller
     ###*
     # Method used when PATCH request, but should be extend before use
     # @param    {Object}    api         Main app object
-    # @param    {Object}    connection  Request object
+    # @param    {Object}    params      Params set by user
     # @throw    {Object}                ServerError, this class should be extend
     ###
-    patch: (api, connection)->
+    patch: (api, params)->
         errorObj = new apiErrors.ServerError(
             @name,
             'patch-method-not-implemented',
@@ -140,10 +142,10 @@ class Controller
     ###*
     # Method used when DELETE request, but should be extend before use
     # @param    {Object}    api         Main app object
-    # @param    {Object}    connection  Request object
+    # @param    {Object}    params      Params set by user
     # @throw    {Object}                ServerError, this class should be extend
     ###
-    del: (api, connection)->
+    del: (api, params)->
         errorObj = new apiErrors.ServerError(
             @name,
             'del-method-not-implemented',
