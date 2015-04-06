@@ -343,3 +343,11 @@ exports.databaseConfig =
     selector : 'foo'
     masters  : []
     slaves   : []
+
+###*
+# Fake Factory object
+###
+exports.Factory =
+    name        : 'Foo'
+    objType     : 'Foo'
+    isGeneric   : false
