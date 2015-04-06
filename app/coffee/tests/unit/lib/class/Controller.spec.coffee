@@ -40,7 +40,7 @@ describe 'Controller class', ->
     # Check with bad objectType
     ###
     it 'should not instantiate an object with bad objectType param', ->
-        controller = new Controller(null, true)
+        controller = new Controller(null, true, 'foobar')
         controller.should.be.instanceof Array
         controller[0].should.be instanceof apiErrors.ParameterError
 
@@ -48,7 +48,15 @@ describe 'Controller class', ->
     # Check with bad isGeneric
     ###
     it 'should not instantiate an object with bad isGeneric param', ->
-        controller = new Controller('foo', null)
+        controller = new Controller('foo', null, 'foobar')
+        controller.should.be.instanceof Array
+        controller[0].should.be instanceof apiErrors.ParameterError
+
+    ###*
+    # Check with bad controllerName
+    ###
+    it 'should not instantiate an object with bad isGeneric param', ->
+        controller = new Controller('foo', null, null)
         controller.should.be.instanceof Array
         controller[0].should.be instanceof apiErrors.ParameterError
 
@@ -56,14 +64,14 @@ describe 'Controller class', ->
     # Check with good params for generic controller
     ###
     it 'should instantiate an object', ->
-        controller = new Controller('foo', true)
+        controller = new Controller('foo', true, 'foobar')
         controller.should.be.instanceof Controller
         controller.should.have.keys [
             'objType'
             'isGeneric'
             'name'
         ]
-        controller.name.should.be.eql 'GenericFoo'
+        controller.name.should.be.eql 'Foobar'
         controller.objType.should.be.eql 'Foo'
         controller.isGeneric.should.be.true
 
@@ -71,14 +79,14 @@ describe 'Controller class', ->
     # Check with good params for a no generic controller
     ###
     it 'should instantiate an object', ->
-        controller = new Controller('foo', false)
+        controller = new Controller('foo', false, 'foobar')
         controller.should.be.instanceof Controller
         controller.should.have.keys [
             'objType'
             'isGeneric'
             'name'
         ]
-        controller.name.should.be.eql 'Foo'
+        controller.name.should.be.eql 'Foobar'
         controller.objType.should.be.eql 'Foo'
         controller.isGeneric.should.be.false
 
@@ -86,7 +94,7 @@ describe 'Controller class', ->
     # Check to call a method from this abstract class
     ###
     it 'should reject if call a request method', ->
-        controller = new Controller('foo', false)
+        controller = new Controller('foo', false, 'foobar')
         controller.get()
             .then(
                 (result) ->
@@ -99,7 +107,7 @@ describe 'Controller class', ->
     # Check to call a method from this abstract class
     ###
     it 'should reject if call a request method', ->
-        controller = new Controller('foo', false)
+        controller = new Controller('foo', false, 'foobar')
         controller.post()
             .then(
                 (result) ->
@@ -112,7 +120,7 @@ describe 'Controller class', ->
     # Check to call a method from this abstract class
     ###
     it 'should reject if call a request method', ->
-        controller = new Controller('foo', false)
+        controller = new Controller('foo', false, 'foobar')
         controller.put()
             .then(
                 (result) ->
@@ -125,7 +133,7 @@ describe 'Controller class', ->
     # Check to call a method from this abstract class
     ###
     it 'should reject if call a request method', ->
-        controller = new Controller('foo', false)
+        controller = new Controller('foo', false, 'foobar')
         controller.patch()
             .then(
                 (result) ->
@@ -138,7 +146,7 @@ describe 'Controller class', ->
     # Check to call a method from this abstract class
     ###
     it 'should reject if call a request method', ->
-        controller = new Controller('foo', false)
+        controller = new Controller('foo', false, 'foobar')
         controller.del()
             .then(
                 (result) ->

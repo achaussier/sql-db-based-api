@@ -27,14 +27,15 @@ class Controller
     # @return       {Object}                New controller instance
     # @throw        {Object}                ParameterError or ServerError
     ###
-    constructor: (objType, isGeneric) ->
+    constructor: (objType, isGeneric, controllerName) ->
 
         ###*
         # Check params received
         ###
         checkParams = @checkConstructorParams(
             objType,
-            isGeneric
+            isGeneric,
+            controllerName
         )
         if checkParams.length isnt 0
             return checkParams
@@ -43,12 +44,8 @@ class Controller
         # Params are OK, so set basic informations for controller
         ###
         @isGeneric  = isGeneric
-        @objType = capitalizeFirstLetter(objType)
-
-        if isGeneric
-            @name = 'Generic' + @objType
-        else
-            @name = @objType
+        @objType    = capitalizeFirstLetter(objType)
+        @name       = capitalizeFirstLetter(controllerName)
 
     ###*
     # Check constructor parameters
@@ -57,7 +54,7 @@ class Controller
     # @return       {Array}                 Empty array if no errors
     # @throw        {Object}                ParameterError objects
     ###
-    checkConstructorParams: (objType, isGeneric) ->
+    checkConstructorParams: (objType, isGeneric, controllerName) ->
         errors = []
 
         if not isNotEmptyString objType
@@ -71,6 +68,12 @@ class Controller
                 'isGeneric',
                 'boolean'
                 isGeneric
+            )
+        if not isNotEmptyString controllerName
+            errors.push new apiErrors.ParameterError(
+                'controllerName',
+                'not-empty-string'
+                controllerName
             )
         errors
 
@@ -110,7 +113,7 @@ class Controller
     # @param    {Object}    connection  Request object
     # @throw    {Object}                ServerError, this class should be extend
     ###
-    put: (api, connection)->
+    put: (api, connection) ->
         errorObj = new apiErrors.ServerError(
             @name,
             'put-method-not-implemented',
