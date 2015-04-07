@@ -51,6 +51,7 @@ exports.api =
             Q.fcall ->
                 release: ->
     log: ->
+    queryBuilder: () ->
     stats:
         getAll: (cb) ->
             cb null, { 'foo': 'bar'}

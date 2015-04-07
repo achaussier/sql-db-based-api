@@ -50,6 +50,8 @@ describe 'Initializer : mysql', ->
         cb.calledOnce.should.be.true
         val = mocksUtils.api.database?
         val.should.be.true
+        val = mocksUtils.api.queryBuilder?
+        val.should.be.true
 
     ###*
     # Check initialize section
@@ -61,6 +63,8 @@ describe 'Initializer : mysql', ->
         )
         cb.calledOnce.should.be.true
         val = mocksUtils.api.database?
+        val.should.be.true
+        val = mocksUtils.api.queryBuilder?
         val.should.be.true
 
     ###*

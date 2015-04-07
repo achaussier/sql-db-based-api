@@ -7,8 +7,9 @@
 ###*
 # Required custom classess
 ###
-DatabaseWrapper = require '../../lib/class/DatabaseWrapper.js'
-Maria10Database = require '../../lib/class/Maria10Database.js'
+DatabaseWrapper     = require '../../lib/class/DatabaseWrapper.js'
+Maria10Database     = require '../../lib/class/Maria10Database.js'
+Maria10QueryBuilder = require '../../lib/class/Maria10QueryBuilder.js'
 
 ###*
 # Required modules
@@ -16,7 +17,51 @@ Maria10Database = require '../../lib/class/Maria10Database.js'
 apiErrors       = require '../../lib/errors.js'
 mysql           = require 'mysql'
 
+###*
+# Custom functions used with this initializer
+###
 
+###*
+# Check if the dialect configured is managed by this initializer
+# @param    {String}    dialect     Dialect in database configuration
+# @return   {Boolean}               True if managed, else false
+###
+isDialectManaged = (dialect) ->
+    if not dialect?
+        false
+    else if not /^mysql.*$/.test(dialect) and not /^maria.*$/.test(dialect)
+        false
+    else
+        true
+
+###*
+# Get good class for this dialect (Database class and QueryBuilder class)
+# @param    {String}    dialect     Dialect in database configuration
+# @return   {Array}                 Database class and QueryBuilder class
+# @throw    {Object}                ServerError if no Database class for dialect
+###
+getDialectClasses = (dialect) ->
+
+    dbObj           = null
+    queryBuilder    = null
+
+    switch dialect
+        when 'maria10'
+            dbObj           = new Maria10Database()
+            queryBuilder    = Maria10QueryBuilder
+
+    if not dbObj?
+        errorObj = new apiErrors.ServerError(
+            dialect,
+            'database-dialect-not-implemented'
+        )
+        return [errorObj, null]
+
+    [dbObj, queryBuilder]
+
+###*
+# Initializer create
+###
 module.exports =
     loadPriority    : 1000
     startPriority   : 100
@@ -30,6 +75,12 @@ module.exports =
         if not api.database?
             api.database = null
 
+        ###*
+        # Create namespace for query builder
+        ###
+        if not api.queryBuilder?
+            api.queryBuilder = null
+
         next()
 
     start: (api, next) ->
@@ -39,24 +90,16 @@ module.exports =
         ###*
         # Only process this initializer for maria or mysql databases
         ###
-        if not dialect?
-            return next()
-        else if not /^mysql.*$/.test(dialect) and not /^maria.*$/.test(dialect)
+        if not isDialectManaged dialect
             return next()
 
         ###*
         # Check if this database dialect is managed by this initializer
         ###
-        dbObj = switch dialect
-            when 'maria10' then new Maria10Database()
-            else null
+        [dbObj, queryBuilder] = getDialectClasses dialect
 
-        if not dbObj?
-            errorObj = new apiErrors.ServerError(
-                dialect,
-                'database-dialect-not-implemented'
-            )
-            return next errorObj
+        if dbObj instanceof apiErrors.ServerError
+            return next dbObj
 
         ###*
         # Create pools and wrap methods
@@ -72,6 +115,7 @@ module.exports =
                     wrapper.executeSelect      = dbObj.executeSelect
                     wrapper.end                = dbObj.poolCluster.end
                     api.database               = wrapper
+                    api.queryBuilder           = queryBuilder
                     next()
                 ,(error) ->
                     throw error
