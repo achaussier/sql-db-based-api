@@ -232,4 +232,11 @@ class MysqlDatabase
 
         defer.promise
 
+    ###*
+    # Close all connections and disconnect properly
+    # @return   Nothing
+    ###
+    end: () =>
+        @poolCluster.end()
+
 module.exports = MysqlDatabase

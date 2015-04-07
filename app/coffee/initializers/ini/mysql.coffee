@@ -113,7 +113,7 @@ module.exports =
                     wrapper.getReadConnection  = dbObj.getReadConnection
                     wrapper.getWriteConnection = dbObj.getWriteConnection
                     wrapper.executeSelect      = dbObj.executeSelect
-                    wrapper.end                = dbObj.poolCluster.end
+                    wrapper.end                = dbObj.end
                     api.database               = wrapper
                     api.queryBuilder           = queryBuilder
                     next()

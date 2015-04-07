@@ -458,3 +458,19 @@ describe 'MysqlDatabase', ->
                     ,(error) ->
                         throw new Error 'Should not be go here in this test'
                 )
+
+    describe 'end', ->
+
+        beforeEach (done) ->
+            databaseConfig  = mocksUtils.databaseConfig
+            myDb            = new MysqlDatabase()
+            myDb.generatePools(databaseConfig)
+            done()
+
+        it 'should disconnect', ->
+            cb = sinon.spy(
+                myDb.poolCluster,
+                'end'
+            )
+            myDb.end()
+            cb.calledOnce.should.be.true

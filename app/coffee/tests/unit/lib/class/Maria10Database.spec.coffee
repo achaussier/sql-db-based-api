@@ -42,6 +42,7 @@ describe 'Maria10Database class', ->
             'writePool'
             'getDatabaseStructureQuery'
             'executeSelect'
+            'end'
         ]
 
     describe 'getDatabaseStructureQuery', ->
