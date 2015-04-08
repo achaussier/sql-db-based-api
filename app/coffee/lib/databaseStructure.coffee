@@ -225,7 +225,7 @@ setRelations = (dbStructure, table, part) ->
         # Build relation for origin table
         ###
         relation = new Relation(
-            originColumn:   part.tableName,
+            originColumn:   part.columnName,
             destTable:      part.refTableName,
             destColumn:     part.refColumnName
             isInverse:      false
